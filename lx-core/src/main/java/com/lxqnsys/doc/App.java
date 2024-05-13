@@ -1,13 +1,21 @@
 package com.lxqnsys.doc;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
+import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+@SpringBootApplication(exclude = RedisAutoConfiguration.class)
+@EnableScheduling
+@EnableTransactionManagement(proxyTargetClass = true)
+@MapperScan(basePackages = {"com.lxqnsys.doc.mapper"})
+@Slf4j
+public class App {
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
     }
 }

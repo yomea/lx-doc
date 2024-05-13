@@ -1,0 +1,58 @@
+log.home: /data/logs/lx-doc
+app.version: 1.0.0
+loglevel: debug
+app.name: lx-doc
+server:
+  port: 9222
+  servlet:
+    context-path: /${app.name}
+  tomcat:
+    threads:
+      max: 200 # Maximum amount of worker threads.
+      min-spare: 10 # Minimum amount of worker threads.
+
+mybatis:
+  mapper-locations: classpath*:/mybatis/*.xml
+  config-location: classpath:mybatis-config.xml
+
+spring:
+  datasource.confKey: hangu_im
+  application.name: ${app.name}
+  mvc:
+    format:
+      date-time: "yyyy-MM-dd HH:mm:ss"
+    dispatch-trace-request: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: NON_NULL
+    #https://www.cnblogs.com/woshimrf/p/LocalDate-serialize-json-springboot.html
+    serialization.WRITE_DATES_AS_TIMESTAMPS: false
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      stat-view-servlet.enabled: false
+      web-stat-filter.enabled: false
+      filters: stat
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      maxOpenPreparedStatements: 20
+      useGlobalDataSourceStat: false
+      connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=1000;druid.stat.logSlowSql=true
+      url: jdbc:mysql://hangu:3306/openerp_jiantou_platform?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
+      username: xxx
+      password: xxx
+public.redis.sentinel.node: redis1.public.banksteel.local:26379,redis2.public.banksteel.local:26379,redis3.public.banksteel.local:26379
+public.redis.sentinel.master: xxx
+public.redis.sentinel.password: xxx
