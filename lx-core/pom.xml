@@ -102,33 +102,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.mybatis.spring.boot</groupId>
-      <artifactId>mybatis-spring-boot-starter</artifactId>
-      <exclusions>
-        <exclusion>
-          <artifactId>spring-beans</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-core</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-tx</artifactId>
-          <groupId>org.springframework</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-boot-autoconfigure</artifactId>
-          <groupId>org.springframework.boot</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>spring-boot-starter</artifactId>
-          <groupId>org.springframework.boot</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>druid-spring-boot-starter</artifactId>
       <exclusions>
@@ -189,6 +162,26 @@
     <dependency>
       <groupId>redis.clients</groupId>
       <artifactId>jedis</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-boot-starter</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>swagger-bootstrap-ui</artifactId>
     </dependency>
 
   </dependencies>

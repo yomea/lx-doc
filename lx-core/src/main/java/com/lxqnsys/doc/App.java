@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication(exclude = RedisAutoConfiguration.class)
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
-@MapperScan(basePackages = {"com.lxqnsys.doc.mapper"})
+@MapperScan(basePackages = {"com.lxqnsys.doc.dao.mapper"})
 @Slf4j
 public class App {
 

@@ -11,12 +11,11 @@ server:
       max: 200 # Maximum amount of worker threads.
       min-spare: 10 # Minimum amount of worker threads.
 
-mybatis:
+mybatis-plus:
   mapper-locations: classpath*:/mybatis/*.xml
   config-location: classpath:mybatis-config.xml
 
 spring:
-  datasource.confKey: hangu_im
   application.name: ${app.name}
   mvc:
     format:

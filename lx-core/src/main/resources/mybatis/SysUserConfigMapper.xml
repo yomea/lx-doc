@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lxqnsys.doc.dao.mapper.SysUserConfigMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.lxqnsys.doc.dao.entity.SysUserConfig">
+        <id column="id" property="id" />
+        <result column="bussiness_type" property="bussinessType" />
+        <result column="layout_type" property="layoutType" />
+        <result column="rule" property="rule" />
+        <result column="version" property="version" />
+        <result column="user_id" property="userId" />
+        <result column="create_at" property="createAt" />
+        <result column="update_at" property="updateAt" />
+        <result column="status" property="status" />
+    </resultMap>
+
+</mapper>
