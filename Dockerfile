@@ -1,6 +1,6 @@
 FROM hub.uban360.com/library/jdk:jre-8u241
 
-ENV SERVICE task-scheduler
+ENV SERVICE lx-doc
 ENV MEMORY  512
 ENV ARGS=
 
