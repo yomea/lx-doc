@@ -7,4 +7,5 @@ package com.lxqnsys.doc.constants;
 public class RedissonLockPrefixCons {
 
     public static final String USER_REGISTER = "USER_REGISTER";
+    public static final String USER_UPDATE = "USER_UPDATE:USER_ID:${userInfoBO.id}";
 }

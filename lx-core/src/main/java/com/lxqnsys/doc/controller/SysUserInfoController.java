@@ -4,8 +4,10 @@ package com.lxqnsys.doc.controller;
 import cn.hutool.system.UserInfo;
 import com.laxqnsys.common.model.ResponseResult;
 import com.lxqnsys.doc.ao.SysUserInfoAO;
+import com.lxqnsys.doc.model.vo.UserInfoUpdateVO;
 import com.lxqnsys.doc.model.vo.UserInfoVO;
 import com.lxqnsys.doc.model.vo.UserLoginVO;
+import com.lxqnsys.doc.model.vo.UserPwdModifyVO;
 import com.lxqnsys.doc.model.vo.UserRegisterVO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,8 +59,14 @@ public class SysUserInfoController {
     }
 
     @PostMapping("/updateUserInfo")
-    public ResponseResult<Void> updateUserInfo(@RequestBody UserInfoVO userInfoVO) {
-        sysUserInfoAO.updateUserInfo(userInfoVO);
+    public ResponseResult<Void> updateUserInfo(@RequestBody UserInfoUpdateVO userInfoUpdateVO) {
+        sysUserInfoAO.updateUserInfo(userInfoUpdateVO);
+        return ResponseResult.ok();
+    }
+
+    @PostMapping("/changePassword")
+    public ResponseResult<Void> changePassword(@RequestBody UserPwdModifyVO userPwdModifyVO) {
+        sysUserInfoAO.changePassword(userPwdModifyVO);
         return ResponseResult.ok();
     }
 

@@ -20,6 +20,12 @@
   <dependencies>
 
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+
+    <dependency>
       <groupId>com.lxqnsys.doc</groupId>
       <artifactId>lx-common</artifactId>
       <version>1.0-SNAPSHOT</version>

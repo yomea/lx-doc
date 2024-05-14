@@ -13,8 +13,10 @@ import com.lxqnsys.doc.context.LoginContext;
 import com.lxqnsys.doc.dao.entity.SysUserInfo;
 import com.lxqnsys.doc.enums.UserStatusEnum;
 import com.lxqnsys.doc.model.bo.UserInfoBO;
+import com.lxqnsys.doc.model.vo.UserInfoUpdateVO;
 import com.lxqnsys.doc.model.vo.UserInfoVO;
 import com.lxqnsys.doc.model.vo.UserLoginVO;
+import com.lxqnsys.doc.model.vo.UserPwdModifyVO;
 import com.lxqnsys.doc.model.vo.UserRegisterVO;
 import com.lxqnsys.doc.service.ISysUserInfoService;
 import com.lxqnsys.doc.util.WebUtil;
@@ -138,18 +140,39 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
     }
 
     @Override
-    public void updateUserInfo(UserInfoVO userInfoVO) {
-        Long id = userInfoVO.getId();
-        SysUserInfo userInfo = sysUserInfoService.getById(id);
+    public void updateUserInfo(UserInfoUpdateVO userInfoUpdateVO) {
+        Long userId = LoginContext.getUserId();
+        SysUserInfo userInfo = sysUserInfoService.getById(userId);
         if (Objects.isNull(userInfo)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                String.format("未获取到id为%s的登录人信息！", id));
+                String.format("未获取到id为%s的登录人信息！", userId));
         }
         this.userStatusCheck(userInfo);
         SysUserInfo update = new SysUserInfo();
-        update.setId(userInfoVO.getId());
-        update.setUserName(userInfoVO.getUserName());
-        update.setAvatar(userInfoVO.getAvatar());
+        update.setId(userId);
+        update.setUserName(userInfoUpdateVO.getUserName());
+        update.setAvatar(userInfoUpdateVO.getAvatar());
+        sysUserInfoService.updateById(update);
+    }
+
+    @Override
+    public void changePassword(UserPwdModifyVO userPwdModifyVO) {
+        Long userId = LoginContext.getUserId();
+        SysUserInfo sysUserInfo = sysUserInfoService.getById(userId);
+        if(Objects.isNull(sysUserInfo)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                String.format("未获取到id为%s的登录人信息！", userId));
+        }
+        String oldPassword = userPwdModifyVO.getOldPassword();
+        String password = sysUserInfo.getPassword();
+        if(!password.equals(AESUtil.encrypt(oldPassword, CommonCons.AES_KEY))) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "原秘密输入不正确！");
+        }
+        String newPassword = userPwdModifyVO.getNewPassword();
+        String newPwd = AESUtil.encrypt(newPassword, CommonCons.AES_KEY);
+        SysUserInfo update = new SysUserInfo();
+        update.setId(userId);
+        update.setPassword(newPwd);
         sysUserInfoService.updateById(update);
     }
 

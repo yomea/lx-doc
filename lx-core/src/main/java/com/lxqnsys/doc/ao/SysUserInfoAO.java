@@ -1,7 +1,9 @@
 package com.lxqnsys.doc.ao;
 
+import com.lxqnsys.doc.model.vo.UserInfoUpdateVO;
 import com.lxqnsys.doc.model.vo.UserInfoVO;
 import com.lxqnsys.doc.model.vo.UserLoginVO;
+import com.lxqnsys.doc.model.vo.UserPwdModifyVO;
 import com.lxqnsys.doc.model.vo.UserRegisterVO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,5 +22,7 @@ public interface SysUserInfoAO {
 
     UserInfoVO getUserInfo();
 
-    void updateUserInfo(UserInfoVO userInfoVO);
+    void updateUserInfo(UserInfoUpdateVO userInfoUpdateVO);
+
+    void changePassword(UserPwdModifyVO userPwdModifyVO);
 }
