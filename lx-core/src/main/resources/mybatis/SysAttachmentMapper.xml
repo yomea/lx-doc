@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.lxqnsys.doc.dao.mapper.SysAttachmentMapper">
+<mapper namespace="com.laxqnsys.core.sys.dao.mapper.SysAttachmentMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.lxqnsys.doc.dao.entity.SysAttachment">
+    <resultMap id="BaseResultMap" type="com.laxqnsys.core.sys.dao.entity.SysAttachment">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="path" property="path" />

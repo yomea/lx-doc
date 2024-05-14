@@ -1,6 +1,6 @@
 log.home: /data/logs/lx-doc
 app.version: 1.0.0
-loglevel: debug
+loglevel: info
 app.name: lx-doc
 server:
   port: 9222

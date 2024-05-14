@@ -200,7 +200,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
         <configuration>
-          <mainClass>com.lxqnsys.doc.App</mainClass>
+          <mainClass>com.laxqnsys.core.App</mainClass>
         </configuration>
         <executions>
           <execution>
