@@ -5,7 +5,7 @@ app.name: lx-doc
 server:
   port: 9222
   servlet:
-    context-path: /${app.name}
+    context-path: /
   tomcat:
     threads:
       max: 200 # Maximum amount of worker threads.
@@ -16,11 +16,14 @@ mybatis-plus:
   config-location: classpath:mybatis-config.xml
 
 spring:
+  resources:
+    static-locations: file:///C:/Users/95164/Pictures/Saved%20Pictures  # 配置静态资源在磁盘中的位置
   application.name: ${app.name}
   mvc:
     format:
       date-time: "yyyy-MM-dd HH:mm:ss"
     dispatch-trace-request: true
+    static-path-pattern: /static/** #配置请求静态资源的匹配路径
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

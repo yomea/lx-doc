@@ -52,7 +52,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public com.laxqnsys.doc.util.RedissonLock redisLock(RedissonClient redissonClient) {
-        return new com.laxqnsys.doc.util.RedissonLock(redissonClient);
+    public com.laxqnsys.common.util.RedissonLock redisLock(RedissonClient redissonClient) {
+        return new com.laxqnsys.common.util.RedissonLock(redissonClient);
     }
 }

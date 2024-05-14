@@ -1,4 +1,4 @@
-package com.laxqnsys.doc.util;
+package com.laxqnsys.common.util;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +26,24 @@ public class RedissonLock {
         }
         try {
             if(lock.tryLock(waitTime, leaseTime, unit)) {
+                runnable.run();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (lock != null) {
+                lock.unlock();
+            }
+        }
+    }
+
+    public void tryLock(String lockKey, long waitTime, TimeUnit unit, Runnable runnable) {
+        RLock lock = redissonClient.getLock(lockKey);
+        if(Objects.isNull(lock)) {
+            return;
+        }
+        try {
+            if(lock.tryLock(waitTime, unit)) {
                 runnable.run();
             }
         } catch (InterruptedException e) {
