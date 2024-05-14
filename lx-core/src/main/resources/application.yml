@@ -49,9 +49,20 @@ spring:
       maxOpenPreparedStatements: 20
       useGlobalDataSourceStat: false
       connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=1000;druid.stat.logSlowSql=true
-      url: jdbc:mysql://hangu:3306/openerp_jiantou_platform?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
+      url: jdbc:mysql://127.0.0.1:3306/database_name?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
       username: xxx
       password: xxx
-public.redis.sentinel.node: redis1.public.banksteel.local:26379,redis2.public.banksteel.local:26379,redis3.public.banksteel.local:26379
+  redis:
+    sentinel:
+      master: xxx
+      nodes: redis1.public.banksteel.local:26379,redis2.public.banksteel.local:26379,redis3.public.banksteel.local:26379
+    password: xxx
+    lettuce:
+      pool:
+        max-active: 30
+        min-idle: 8
+        max-idle: 20
+        time-between-eviction-runs: 30000
+public.redis.sentinel.node: redis1.domain:26379,redis2.domain:26379,redis3.domain:26379
 public.redis.sentinel.master: xxx
-public.redis.sentinel.password: xxx
+public.redis.sentinel.password:
