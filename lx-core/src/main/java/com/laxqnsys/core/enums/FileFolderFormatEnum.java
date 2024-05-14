@@ -5,18 +5,20 @@ import lombok.Getter;
 
 /**
  * @author wuzhenhong
- * @date 2024/5/14 16:39
+ * @date 2024/5/14 20:03
  */
 @Getter
 @AllArgsConstructor
-public enum DelStatusEnum {
+public enum FileFolderFormatEnum {
 
-    NORMAL(0, "正常"),
-    DEL(-1, "删除"),
-    FACT_DEL(-2, "彻底删除")
+    FOLDER(1, "文件夹"),
+    FILE(2, "文件"),
+
     ;
 
-    private Integer status;
+    private Integer format;
+
     private String desc;
+
 
 }

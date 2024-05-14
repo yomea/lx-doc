@@ -5,9 +5,8 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.laxqnsys.core.sys.dao.entity.SysUserConfig">
         <id column="id" property="id" />
-        <result column="bussiness_type" property="bussinessType" />
-        <result column="layout_type" property="layoutType" />
-        <result column="rule" property="rule" />
+        <result column="config_type" property="configType" />
+        <result column="config_content" property="configContent" />
         <result column="version" property="version" />
         <result column="user_id" property="userId" />
         <result column="create_at" property="createAt" />

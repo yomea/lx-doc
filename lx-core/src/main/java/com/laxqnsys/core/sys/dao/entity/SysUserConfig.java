@@ -30,14 +30,11 @@ public class SysUserConfig implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "业务类型, 目前只有lx-doc")
-    private String bussinessType;
-
-    @ApiModelProperty(value = "子类型，布局类型")
-    private String layoutType;
+    @ApiModelProperty(value = "配置类型")
+    private String configType;
 
     @ApiModelProperty(value = "配置规则JSON")
-    private String rule;
+    private String configContent;
 
     @ApiModelProperty(value = "版本号")
     private Integer version;

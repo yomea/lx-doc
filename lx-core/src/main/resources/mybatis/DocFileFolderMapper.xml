@@ -9,7 +9,7 @@
         <result column="name" property="name" />
         <result column="leaf" property="leaf" />
         <result column="format" property="format" />
-        <result column="type" property="type" />
+        <result column="file_type" property="fileType" />
         <result column="collected" property="collected" />
         <result column="img" property="img" />
         <result column="version" property="version" />
