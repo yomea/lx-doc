@@ -23,6 +23,7 @@ public class WebMvcConfigure implements WebMvcConfigurer {
         loginHandlerInterceptor.addWhiteUrl("/user/login");
         loginHandlerInterceptor.addWhiteUrl("/user/register");
         loginHandlerInterceptor.addWhiteUrl("/static/**");
+        loginHandlerInterceptor.addWhiteUrl("/system/error");
         registry.addInterceptor(loginHandlerInterceptor);
     }
 }

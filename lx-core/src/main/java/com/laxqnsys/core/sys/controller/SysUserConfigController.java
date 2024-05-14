@@ -2,7 +2,7 @@ package com.laxqnsys.core.sys.controller;
 
 
 import com.laxqnsys.common.model.ResponseResult;
-import com.laxqnsys.core.doc.model.vo.SysUserConfigVO;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigVO;
 import com.laxqnsys.core.sys.ao.SysUserConfigAO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

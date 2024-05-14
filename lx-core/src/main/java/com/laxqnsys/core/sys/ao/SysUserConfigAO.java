@@ -1,6 +1,6 @@
 package com.laxqnsys.core.sys.ao;
 
-import com.laxqnsys.core.doc.model.vo.SysUserConfigVO;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigVO;
 import java.util.List;
 
 /**

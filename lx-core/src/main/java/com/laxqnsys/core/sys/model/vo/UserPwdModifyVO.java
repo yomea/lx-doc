@@ -1,4 +1,4 @@
-package com.laxqnsys.core.doc.model.vo;
+package com.laxqnsys.core.sys.model.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

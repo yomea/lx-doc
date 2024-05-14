@@ -13,6 +13,7 @@ public enum ErrorCodeEnum {
 
     SUCCESS(0, "成功"),
     UN_LOGIN(401, "未登录"),
+    NOT_FOUND(404, "资源未找到"),
     ERROR(500, "失败")
     ;
 

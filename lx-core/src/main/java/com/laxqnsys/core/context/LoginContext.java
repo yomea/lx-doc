@@ -1,6 +1,6 @@
 package com.laxqnsys.core.context;
 
-import com.laxqnsys.core.doc.model.bo.UserInfoBO;
+import com.laxqnsys.core.sys.model.bo.UserInfoBO;
 import java.util.Objects;
 
 /**

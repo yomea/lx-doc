@@ -37,6 +37,13 @@ public class ResponseResult<T> {
         return responseResult;
     }
 
+    public static <T> ResponseResult fail(Integer code, String msg) {
+        ResponseResult<T> responseResult = new ResponseResult<>();
+        responseResult.setCode(code);
+        responseResult.setMessage(msg);
+        return responseResult;
+    }
+
     public static <T> ResponseResult fail(String msg) {
         ResponseResult<T> responseResult = new ResponseResult<>();
         responseResult.setCode(ErrorCodeEnum.ERROR.getCode());

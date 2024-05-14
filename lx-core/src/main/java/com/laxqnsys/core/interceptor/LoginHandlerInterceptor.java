@@ -6,7 +6,7 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.doc.model.bo.UserInfoBO;
+import com.laxqnsys.core.sys.model.bo.UserInfoBO;
 import com.laxqnsys.core.util.WebUtil;
 import java.util.List;
 import java.util.concurrent.TimeUnit;

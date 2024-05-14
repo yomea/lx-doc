@@ -10,14 +10,24 @@ server:
     threads:
       max: 200 # Maximum amount of worker threads.
       min-spare: 10 # Minimum amount of worker threads.
+  error:
+    path: /system/error
 
 mybatis-plus:
   mapper-locations: classpath*:/mybatis/*.xml
   config-location: classpath:mybatis-config.xml
 
+file:
+  upload:
+    path: D:\work\attament
+
 spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
   resources:
-    static-locations: file:///C:/Users/95164/Pictures/Saved%20Pictures  # 配置静态资源在磁盘中的位置
+    static-locations: file:///${file.upload.path}  # 配置静态资源在磁盘中的位置
   application.name: ${app.name}
   mvc:
     format:
@@ -66,6 +76,3 @@ spring:
         min-idle: 8
         max-idle: 20
         time-between-eviction-runs: 30000
-public.redis.sentinel.node: redis1.domain:26379,redis2.domain:26379,redis3.domain:26379
-public.redis.sentinel.master: xxx
-public.redis.sentinel.password:

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.doc.model.vo.SysUserConfigVO;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigVO;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.sys.ao.SysUserConfigAO;
 import com.laxqnsys.core.sys.dao.entity.SysUserConfig;

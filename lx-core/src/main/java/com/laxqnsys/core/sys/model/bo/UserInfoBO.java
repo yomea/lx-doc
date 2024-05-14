@@ -1,4 +1,4 @@
-package com.laxqnsys.core.doc.model.bo;
+package com.laxqnsys.core.sys.model.bo;
 
 import lombok.Data;
 
