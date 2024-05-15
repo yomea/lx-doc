@@ -7,5 +7,7 @@ package com.laxqnsys.core.constants;
 public class RedissonLockPrefixCons {
 
     public static final String USER_REGISTER = "USER_REGISTER";
-    public static final String USER_UPDATE = "USER_UPDATE:USER_ID:${userInfoBO.id}";
+    public static final String USER_PREFIX = "USER_ID:${userInfoBO.id}";
+    public static final String USER_UPDATE = "USER_UPDATE:" + USER_PREFIX;
+    public static final String USER_CONFIG_SAVE_OR_UPDATE = "USER_CONFIG_SAVE_OR_UPDATE:" + USER_PREFIX;
 }

@@ -2,6 +2,7 @@ package com.laxqnsys.core.doc.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +14,9 @@ import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
  */
 public interface IDocFileFolderService extends IService<DocFileFolder> {
 
+    int updateFileCount(List<Long> folderIdList, int i);
+
+    int updateFolderCount(List<Long> folderIdList, int i);
+
+    int batchDeltaUpdate(List<DocFileFolder> updateList);
 }

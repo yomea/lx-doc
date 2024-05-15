@@ -1,22 +1,22 @@
 package com.laxqnsys.core.sys.ao.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.aspect.lock.ConcurrentLock;
+import com.laxqnsys.core.constants.RedissonLockPrefixCons;
 import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.sys.model.vo.SysUserConfigVO;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.sys.ao.SysUserConfigAO;
 import com.laxqnsys.core.sys.dao.entity.SysUserConfig;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigQueryVO;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigReqVO;
 import com.laxqnsys.core.sys.service.ISysUserConfigService;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * @author wuzhenhong
@@ -30,28 +30,36 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
 
 
     @Override
-    public List<SysUserConfigVO> getUserConfig() {
+    public String getUserConfig(String configType) {
+        if(!StringUtils.hasText(configType)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "configType必传！");
+        }
         Long userId = LoginContext.getUserId();
-        List<SysUserConfig> sysUserConfigList = sysUserConfigService.list(Wrappers.<SysUserConfig>lambdaQuery()
+        SysUserConfig sysUserConfig = sysUserConfigService.getOne(Wrappers.<SysUserConfig>lambdaQuery()
             .eq(SysUserConfig::getUserId, userId)
-            .eq(SysUserConfig::getStatus, DelStatusEnum.NORMAL.getStatus()));
-        return sysUserConfigList.stream().map(config -> {
-            SysUserConfigVO configVO = new SysUserConfigVO();
-            BeanUtils.copyProperties(config, configVO);
-            return configVO;
-        }).collect(Collectors.toList());
+            .eq(SysUserConfig::getConfigType, configType)
+            .eq(SysUserConfig::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .last("limit 1"));
+        if(Objects.isNull(sysUserConfig)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("该用户没有设置名为%s的配置", configType));
+        }
+        return sysUserConfig.getConfigContent();
     }
 
     @Override
-    public void saveOrUpdateUserConfig(SysUserConfigVO sysUserConfigVO) {
-        Long id = sysUserConfigVO.getId();
+    @ConcurrentLock(key = RedissonLockPrefixCons.USER_CONFIG_SAVE_OR_UPDATE + ":${sysUserConfigVO.configType}", expire = 2)
+    public void saveOrUpdateUserConfig(SysUserConfigReqVO sysUserConfigVO) {
+        String configType = sysUserConfigVO.getConfigType();
         Long userId = LoginContext.getUserId();
-        if (Objects.isNull(id)) {
-            SysUserConfig sysUserConfig = new SysUserConfig();
-            sysUserConfig.setBussinessType(StringUtils.isBlank(sysUserConfigVO.getBussinessType())
-                ? "lx-doc" : sysUserConfigVO.getBussinessType());
-            sysUserConfig.setLayoutType(sysUserConfigVO.getLayoutType());
-            sysUserConfig.setRule(sysUserConfigVO.getRule());
+        SysUserConfig sysUserConfig = sysUserConfigService.getOne(Wrappers.<SysUserConfig>lambdaQuery()
+            .eq(SysUserConfig::getUserId, userId)
+            .eq(SysUserConfig::getConfigType, configType)
+            .eq(SysUserConfig::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .last("limit 1"));
+        if (Objects.isNull(sysUserConfig)) {
+            sysUserConfig = new SysUserConfig();
+            sysUserConfig.setConfigType(configType);
+            sysUserConfig.setConfigContent(sysUserConfigVO.getConfigContent());
             sysUserConfig.setUserId(userId);
             sysUserConfig.setVersion(0);
             sysUserConfig.setCreateAt(LocalDateTime.now());
@@ -59,14 +67,9 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
             sysUserConfig.setStatus(DelStatusEnum.NORMAL.getStatus());
             sysUserConfigService.save(sysUserConfig);
         } else {
-            SysUserConfig sysUserConfig = sysUserConfigService.getById(id);
-            if (Objects.isNull(sysUserConfig)) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的用户配置不存在！", userId));
-            }
             SysUserConfig update = new SysUserConfig();
-            update.setId(id);
-            update.setLayoutType(sysUserConfigVO.getLayoutType());
-            update.setRule(sysUserConfigVO.getRule());
+            update.setId(sysUserConfig.getId());
+            update.setConfigContent(sysUserConfigVO.getConfigContent());
             sysUserConfigService.updateById(update);
         }
     }

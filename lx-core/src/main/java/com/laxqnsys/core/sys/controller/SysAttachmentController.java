@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 2024-05-13
  */
 @RestController
-@RequestMapping("/attachment")
+@RequestMapping("")
 public class SysAttachmentController {
 
     @Autowired

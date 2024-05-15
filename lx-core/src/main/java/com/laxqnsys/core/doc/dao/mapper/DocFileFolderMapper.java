@@ -2,6 +2,8 @@ package com.laxqnsys.core.doc.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +15,8 @@ import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
  */
 public interface DocFileFolderMapper extends BaseMapper<DocFileFolder> {
 
+    int updateFileCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
+    int updateFolderCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
+
+    int batchDeltaUpdate(List<DocFileFolder> updateList);
 }

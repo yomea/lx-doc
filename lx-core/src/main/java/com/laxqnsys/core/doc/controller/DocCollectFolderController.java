@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-05-13
  */
 @RestController
-@RequestMapping("/collectFolder")
+@RequestMapping("")
 public class DocCollectFolderController {
 
 }

@@ -11,7 +11,9 @@ import java.util.List;
  */
 public interface DocFileFolderAO {
 
-    List<DocFileFolderResVO> getFolderTree(FileFolderQueryVO queryVO);
+    List<DocFileFolderResVO> getFolderTree(Long folderId);
 
     DocFileAndFolderResVO getFolderAndFileList(FileFolderQueryVO queryVO);
+
+    DocFileAndFolderResVO searchFolderAndFile(FileFolderQueryVO queryVO);
 }

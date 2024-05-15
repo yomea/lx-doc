@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.dao.mapper.DocFileFolderMapper;
 import com.laxqnsys.core.doc.service.IDocFileFolderService;
+import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * <p>
@@ -18,4 +20,21 @@ import org.springframework.stereotype.Service;
 public class DocFileFolderServiceImpl extends ServiceImpl<DocFileFolderMapper, DocFileFolder> implements
     IDocFileFolderService {
 
+    @Override
+    public int updateFileCount(List<Long> folderIdList, int i) {
+        return super.baseMapper.updateFileCount(folderIdList, i);
+    }
+
+    @Override
+    public int updateFolderCount(List<Long> folderIdList, int i) {
+        return super.baseMapper.updateFolderCount(folderIdList, i);
+    }
+
+    @Override
+    public int batchDeltaUpdate(List<DocFileFolder> updateList) {
+        if(CollectionUtils.isEmpty(updateList)) {
+            return 0;
+        }
+        return super.baseMapper.batchDeltaUpdate(updateList);
+    }
 }

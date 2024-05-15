@@ -2,10 +2,10 @@ package com.laxqnsys.core.doc.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -33,11 +33,17 @@ public class DocFileFolder implements Serializable {
     @ApiModelProperty(value = "父文件夹ID，顶级节点为0")
     private Long parentId;
 
+    @ApiModelProperty(value = "所在文件夹路径，路径逗号分割")
+    private String path;
+
     @ApiModelProperty(value = "文件名")
     private String name;
 
-    @ApiModelProperty(value = "是否叶子节点，0：否，1：是")
-    private Boolean leaf;
+    @ApiModelProperty(value = "文件计数，本菜单下的直接文件数量")
+    private Integer fileCount;
+
+    @ApiModelProperty(value = "菜单计数，本菜单下的直接菜单数量")
+    private Integer folderCount;
 
     @ApiModelProperty(value = "文件格式，1：文件夹，2：文件")
     private Integer format;

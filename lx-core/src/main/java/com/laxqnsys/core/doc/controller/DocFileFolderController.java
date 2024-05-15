@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,21 +26,27 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2024-05-13
  */
 @RestController
-@RequestMapping("/fileFolder")
+@RequestMapping("")
 public class DocFileFolderController {
 
     @Autowired
     private DocFileFolderAO docFileFolderAO;
 
     @GetMapping(value = "/getFolderTree")
-    public ResponseResult<List<DocFileFolderResVO>> getFolderTree(@RequestBody FileFolderQueryVO queryVO) {
-        List<DocFileFolderResVO> resVOS = docFileFolderAO.getFolderTree(queryVO);
+    public ResponseResult<List<DocFileFolderResVO>> getFolderTree(@RequestParam  Long folderId) {
+        List<DocFileFolderResVO> resVOS = docFileFolderAO.getFolderTree(folderId);
         return ResponseResult.ok(resVOS);
     }
 
-    @PostMapping(value = "/getFolderAndFileList")
-    public ResponseResult<DocFileAndFolderResVO> getFolderAndFileList(@RequestBody FileFolderQueryVO queryVO) {
+    @GetMapping(value = "/getFolderAndFileList")
+    public ResponseResult<DocFileAndFolderResVO> getFolderAndFileList(FileFolderQueryVO queryVO) {
         DocFileAndFolderResVO resVO = docFileFolderAO.getFolderAndFileList(queryVO);
+        return ResponseResult.ok(resVO);
+    }
+
+    @PostMapping(value = "/searchFolderAndFile")
+    public ResponseResult<DocFileAndFolderResVO> searchFolderAndFile(@RequestBody FileFolderQueryVO queryVO) {
+        DocFileAndFolderResVO resVO = docFileFolderAO.searchFolderAndFile(queryVO);
         return ResponseResult.ok(resVO);
     }
 }

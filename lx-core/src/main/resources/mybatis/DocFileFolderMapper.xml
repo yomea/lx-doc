@@ -6,8 +6,10 @@
     <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocFileFolder">
         <id column="id" property="id" />
         <result column="parent_id" property="parentId" />
+        <result column="path" property="path" />
         <result column="name" property="name" />
-        <result column="leaf" property="leaf" />
+        <result column="file_count" property="fileCount" />
+        <result column="folder_count" property="folderCount" />
         <result column="format" property="format" />
         <result column="file_type" property="fileType" />
         <result column="collected" property="collected" />
@@ -18,5 +20,48 @@
         <result column="update_at" property="updateAt" />
         <result column="status" property="status" />
     </resultMap>
+
+    <update id="updateFileCount">
+        update doc_file_folder
+            set file_count = file_count + #{delta}
+        where id in
+            <foreach collection="folderIdList" index="index" close=")" open="(" item="item" separator=",">
+                #{item}
+            </foreach>
+    </update>
+
+    <update id="updateFolderCount">
+        update doc_file_folder
+        set file_count = file_count + #{delta}
+        where id in
+        <foreach collection="folderIdList" index="index" close=")" open="(" item="item" separator=",">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="batchDeltaUpdate" parameterType="list">
+
+        update doc_file_folder
+        <set>
+            <trim prefix="file_count = case" suffix="else file_count end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.fileCount !=null">
+                        when id=#{item.id} then file_count + #{item.fileCount}
+                    </if>
+                </foreach>
+            </trim>
+            <trim prefix="folder_count = case" suffix="else folder_count end,">
+                <foreach collection="list" item="item" index="index">
+                    <if test="item.folderCount !=null">
+                        when id=#{item.id} then folder_count + #{item.folderCount}
+                    </if>
+                </foreach>
+            </trim>
+        </set>
+        where id in
+        <foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+            #{item.id}
+        </foreach>
+    </update>
 
 </mapper>

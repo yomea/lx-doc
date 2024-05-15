@@ -15,6 +15,9 @@ public class FileFolderQueryVO {
     @ApiModelProperty(value = "文件夹id")
     private Long folderId;
 
+    @ApiModelProperty(value = "文件名-模糊搜索")
+    private String name;
+
     /**
      * @see
      */

@@ -12,5 +12,5 @@ public class DocFileAndFolderResVO {
 
     private List<DocFileFolderResVO> folderList;
 
-    private List<DocFileFolderResVO> fileList;
+    private List<DocFileResVO> fileList;
 }
