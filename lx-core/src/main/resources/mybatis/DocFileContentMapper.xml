@@ -14,4 +14,21 @@
         <result column="status" property="status" />
     </resultMap>
 
+  <insert id="copyByFileIdList" parameterType="list">
+    insert into doc_file_content(file_id,content,creator_id,create_at,update_at)
+    select (
+    case
+    <foreach collection="list" separator="," item="item" open="(" close=")" index="index">
+      when file_id = #{item.oldFileId} then #{item.newFileId}
+    </foreach>
+    else 0
+    end
+    ) as file_id
+    ,content,#{userId} as creator_id,NOW(),NOW() from doc_file_content
+    where file_id in
+    <foreach collection="list" separator="," item="item" open="(" close=")" index="index">
+      #{item.oldFileId}
+    </foreach>
+  </insert>
+
 </mapper>

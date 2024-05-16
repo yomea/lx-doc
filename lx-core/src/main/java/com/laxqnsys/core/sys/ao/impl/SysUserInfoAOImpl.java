@@ -135,7 +135,7 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
         userInfoVO.setAccount(userInfo.getAccount());
         userInfoVO.setUserName(userInfo.getUserName());
         userInfoVO.setAvatar(userInfo.getAvatar());
-        userInfoVO.setCreateAt(CommonCons.YYYY_MM_SS_HH_MM_SS.format(userInfo.getCreateAt()));
+        userInfoVO.setCreateAt(userInfo.getCreateAt());
         return userInfoVO;
     }
 

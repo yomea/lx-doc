@@ -16,6 +16,10 @@ public interface IDocFileFolderService extends IService<DocFileFolder> {
 
     int updateFileCount(List<Long> folderIdList, int i);
 
+    int updateFileCount(Long folderId, int i);
+
+    int updateFolderCount(Long folderId, int i);
+
     int updateFolderCount(List<Long> folderIdList, int i);
 
     int batchDeltaUpdate(List<DocFileFolder> updateList);

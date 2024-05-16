@@ -1,6 +1,7 @@
 package com.laxqnsys.core.doc.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -33,9 +34,6 @@ public class DocFileFolder implements Serializable {
     @ApiModelProperty(value = "父文件夹ID，顶级节点为0")
     private Long parentId;
 
-    @ApiModelProperty(value = "所在文件夹路径，路径逗号分割")
-    private String path;
-
     @ApiModelProperty(value = "文件名")
     private String name;
 
@@ -45,6 +43,9 @@ public class DocFileFolder implements Serializable {
     @ApiModelProperty(value = "菜单计数，本菜单下的直接菜单数量")
     private Integer folderCount;
 
+    /**
+     * @see com.laxqnsys.core.enums.FileFolderFormatEnum
+     */
     @ApiModelProperty(value = "文件格式，1：文件夹，2：文件")
     private Integer format;
 
@@ -72,5 +73,6 @@ public class DocFileFolder implements Serializable {
     @ApiModelProperty(value = "0：正常，-1：回收，-2：彻底删除")
     private Integer status;
 
-
+    @TableField(exist = false)
+    private Long oldId;
 }

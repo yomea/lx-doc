@@ -4,7 +4,9 @@ package com.laxqnsys.core.doc.controller;
 import com.laxqnsys.common.model.ResponseResult;
 import com.laxqnsys.core.doc.ao.DocFileContentAO;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
+import com.laxqnsys.core.doc.model.vo.DocFileCopyReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
+import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,18 @@ public class DocFileContentController {
     @PostMapping(value = "/moveFile")
     public ResponseResult<Void> moveFile(@RequestBody @Validated DocFileMoveReqVO reqVO) {
         docFileContentAO.moveFile(reqVO);
+        return ResponseResult.ok();
+    }
+
+    @PostMapping(value = "/copyFile")
+    public ResponseResult<Void> copyFile(@RequestBody @Validated DocFileCopyReqVO reqVO) {
+        docFileContentAO.copyFile(reqVO);
+        return ResponseResult.ok();
+    }
+
+    @PostMapping(value = "/deleteFile")
+    public ResponseResult<Void> deleteFile(@RequestBody @Validated DocFileDelReqVO reqVO) {
+        docFileContentAO.deleteFile(reqVO);
         return ResponseResult.ok();
     }
 

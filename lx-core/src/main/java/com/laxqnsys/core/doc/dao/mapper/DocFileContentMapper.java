@@ -2,6 +2,9 @@ package com.laxqnsys.core.doc.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.laxqnsys.core.doc.dao.entity.DocFileContent;
+import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.laxqnsys.core.doc.dao.entity.DocFileContent;
  */
 public interface DocFileContentMapper extends BaseMapper<DocFileContent> {
 
+    int copyByFileIdList(@Param("list") List<DocFileCopyDTO> copyList, @Param("userId") Long userId);
 }

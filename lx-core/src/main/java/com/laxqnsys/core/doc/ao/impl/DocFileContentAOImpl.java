@@ -4,15 +4,18 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
+import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileContentAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileContent;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
+import com.laxqnsys.core.doc.model.vo.DocFileCopyReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
+import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
 import com.laxqnsys.core.doc.service.IDocFileContentService;
-import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
@@ -20,24 +23,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.util.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author wuzhenhong
  * @date 2024/5/15 16:29
  */
 @Service
-public class DocFileContentAOImpl implements DocFileContentAO {
-
-    @Autowired
-    private TransactionTemplate transactionTemplate;
-
-    @Autowired
-    private IDocFileFolderService docFileFolderService;
+public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements DocFileContentAO {
 
     @Autowired
     private IDocFileContentService docFileContentService;
@@ -58,16 +55,8 @@ public class DocFileContentAOImpl implements DocFileContentAO {
     @Override
     public DocFileContentResVO createFile(DocFileCreateReqVO createReqVO) {
 
-        DocFileFolder parentFolder = docFileFolderService.getById(createReqVO.getFolderId());
-        if (Objects.isNull(parentFolder) || DelStatusEnum.NORMAL.getStatus().equals(parentFolder.getStatus())) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "父文件夹不存在或已被删除！");
-        }
-
-        String path = parentFolder.getPath();
         DocFileFolder fileFolder = new DocFileFolder();
         fileFolder.setParentId(createReqVO.getFolderId());
-        fileFolder.setPath(StringUtils.hasText(path) ? path + "," + createReqVO.getFolderId()
-            : String.valueOf(createReqVO.getFolderId()));
         fileFolder.setName(createReqVO.getName());
         fileFolder.setFileCount(0);
         fileFolder.setFolderCount(0);
@@ -90,7 +79,7 @@ public class DocFileContentAOImpl implements DocFileContentAO {
 
         transactionTemplate.execute(status -> {
             docFileFolderService.save(fileFolder);
-            docFileFolderService.updateFileCount(Collections.singletonList(createReqVO.getFolderId()), 1);
+            docFileFolderService.updateFileCount(createReqVO.getFolderId(), 1);
             saveFileContent.setFileId(fileFolder.getId());
             docFileContentService.save(saveFileContent);
             return null;
@@ -136,13 +125,6 @@ public class DocFileContentAOImpl implements DocFileContentAO {
     public void moveFile(DocFileMoveReqVO reqVO) {
 
         List<Long> idList = reqVO.getIds();
-        List<DocFileFolder> updateList = idList.stream().map(id -> {
-            DocFileFolder update = new DocFileFolder();
-            update.setId(id);
-            update.setParentId(reqVO.getNewFolderId());
-            return update;
-        }).collect(Collectors.toList());
-
         List<DocFileFolder> fileFolders = docFileFolderService.listByIds(idList);
         Map<Long, Integer> parentIdMapSizeMap = fileFolders.stream()
             .collect(Collectors.groupingBy(DocFileFolder::getParentId,
@@ -150,13 +132,74 @@ public class DocFileContentAOImpl implements DocFileContentAO {
         List<DocFileFolder> updateOldFolderList = parentIdMapSizeMap.entrySet().stream().map(entry -> {
             DocFileFolder update = new DocFileFolder();
             update.setId(entry.getKey());
-            update.setFileCount(entry.getValue());
+            update.setFileCount(-entry.getValue());
+            return update;
+        }).collect(Collectors.toList());
+        List<DocFileFolder> updateList = idList.stream().map(id -> {
+            DocFileFolder update = new DocFileFolder();
+            update.setId(id);
+            update.setParentId(reqVO.getNewFolderId());
             return update;
         }).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
             docFileFolderService.batchDeltaUpdate(updateOldFolderList);
-            docFileFolderService.updateFileCount(Collections.singletonList(reqVO.getNewFolderId()), updateList.size());
+            docFileFolderService.updateFileCount(reqVO.getNewFolderId(), updateList.size());
             docFileFolderService.updateBatchById(updateList);
+            return null;
+        });
+    }
+
+    @Override
+    public void copyFile(DocFileCopyReqVO reqVO) {
+
+        List<Long> originIdList = reqVO.getIds();
+        List<DocFileFolder> fileFolders = docFileFolderService.listByIds(originIdList).stream()
+            .filter(e -> !e.getParentId().equals(reqVO.getNewFolderId())).collect(Collectors.toList());
+        if(CollectionUtils.isEmpty(fileFolders)) {
+            return;
+        }
+        fileFolders.stream().forEach(e -> {
+            e.setOldId(e.getId());
+            e.setId(null);
+            e.setParentId(reqVO.getNewFolderId());
+        });
+        Long userId = LoginContext.getUserId();
+        transactionTemplate.execute(status -> {
+            docFileFolderService.saveBatch(fileFolders);
+            docFileFolderService.updateFileCount(reqVO.getNewFolderId(), fileFolders.size());
+            List<DocFileCopyDTO> updateList = fileFolders.stream().map(file -> {
+                DocFileCopyDTO update = new DocFileCopyDTO();
+                update.setOldFileId(file.getOldId());
+                update.setNewFileId(file.getId());
+                return update;
+            }).collect(Collectors.toList());
+            docFileContentService.copyByFileIdList(updateList, userId);
+            return null;
+        });
+    }
+
+    @Override
+    public void deleteFile(DocFileDelReqVO reqVO) {
+
+        List<Long> idList = reqVO.getIds();
+        List<DocFileFolder> fileFolders = docFileFolderService.listByIds(idList);
+        Map<Long, Integer> parentIdMapSizeMap = fileFolders.stream()
+            .collect(Collectors.groupingBy(DocFileFolder::getParentId,
+                Collectors.summingInt(x -> 1)));
+        List<DocFileFolder> updateOldFolderList = parentIdMapSizeMap.entrySet().stream().map(entry -> {
+            DocFileFolder update = new DocFileFolder();
+            update.setId(entry.getKey());
+            update.setFileCount(-entry.getValue());
+            return update;
+        }).collect(Collectors.toList());
+        transactionTemplate.execute(status -> {
+            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+                .in(DocFileFolder::getId, idList)
+                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
+            docFileContentService.update(Wrappers.<DocFileContent>lambdaUpdate()
+                .in(DocFileContent::getFileId, idList)
+                .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));
+            docFileFolderService.batchDeltaUpdate(updateOldFolderList);
             return null;
         });
     }

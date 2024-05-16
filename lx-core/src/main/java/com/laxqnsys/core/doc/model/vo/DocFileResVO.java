@@ -1,6 +1,7 @@
 package com.laxqnsys.core.doc.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
@@ -19,9 +20,4 @@ public class DocFileResVO extends DocFileFolderBaseResVO {
     @ApiModelProperty(value = "是否被收藏")
     private boolean collected;
 
-    @ApiModelProperty(value = "创建时间")
-    private String createAt;
-
-    @ApiModelProperty(value = "更新时间")
-    private String updateAt;
 }

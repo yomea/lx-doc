@@ -1,6 +1,5 @@
 package com.laxqnsys.core.doc.model.vo;
 
-import java.util.List;
 import lombok.Data;
 
 /**
@@ -11,6 +10,4 @@ import lombok.Data;
 public class DocFileFolderResVO extends DocFileFolderBaseResVO {
 
     private boolean leaf;
-
-    private List<DocFileFolderBaseResVO> path;
 }

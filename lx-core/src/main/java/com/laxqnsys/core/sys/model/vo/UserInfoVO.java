@@ -1,6 +1,7 @@
 package com.laxqnsys.core.sys.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
+import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -26,5 +27,5 @@ public class UserInfoVO {
     private String avatar;
 
     @ApiModelProperty(value = "注册时间", example = "2024-01-01 10:10:10")
-    private String createAt;
+    private LocalDateTime createAt;
 }

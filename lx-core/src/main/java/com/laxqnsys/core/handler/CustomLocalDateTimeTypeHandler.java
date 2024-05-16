@@ -1,7 +1,5 @@
 package com.laxqnsys.core.handler;
 
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.laxqnsys.core.constants.CommonCons;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -43,23 +41,20 @@ public class CustomLocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTim
  
     @Override
     public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-        String target = rs.getString(columnIndex);
-        if (StringUtils.isBlank(target)) {
+        Timestamp target = rs.getTimestamp(columnIndex);
+        if (Objects.isNull(target)) {
             return null;
         }
-        // 日期值后面多了.0，去掉
-        target = target.substring(0, target.length() - 2);
-        return LocalDateTime.parse(target, CommonCons.YYYY_MM_SS_HH_MM_SS);
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(target.getTime()), ZoneId.systemDefault());
     }
  
     @Override
     public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-        String target = cs.getString(columnIndex);
-        if (StringUtils.isBlank(target)) {
+        Timestamp target = cs.getTimestamp(columnIndex);
+        if (Objects.isNull(target)) {
             return null;
         }
-        // 日期值后面多了.0，去掉
-        target = target.substring(0, target.length() - 2);
-        return LocalDateTime.parse(target, CommonCons.YYYY_MM_SS_HH_MM_SS);
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(target.getTime()), ZoneId.systemDefault());
+
     }
 }

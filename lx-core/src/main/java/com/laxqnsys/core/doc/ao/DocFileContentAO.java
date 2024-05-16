@@ -1,7 +1,9 @@
 package com.laxqnsys.core.doc.ao;
 
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
+import com.laxqnsys.core.doc.model.vo.DocFileCopyReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
+import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
 
@@ -18,4 +20,8 @@ public interface DocFileContentAO {
     void updateFile(DocFileUpdateReqVO updateReqVO);
 
     void moveFile(DocFileMoveReqVO reqVO);
+
+    void copyFile(DocFileCopyReqVO reqVO);
+
+    void deleteFile(DocFileDelReqVO reqVO);
 }
