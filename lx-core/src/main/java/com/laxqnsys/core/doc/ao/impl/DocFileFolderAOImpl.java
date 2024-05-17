@@ -8,6 +8,8 @@ import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileFolderAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import com.laxqnsys.core.doc.dao.entity.DocRecycle;
+import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
@@ -17,17 +19,18 @@ import com.laxqnsys.core.doc.model.vo.FileFolderDelVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderMoveVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderQueryVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderUpdateVO;
-import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -36,9 +39,6 @@ import org.springframework.util.StringUtils;
  */
 @Service
 public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocFileFolderAO {
-
-    @Autowired
-    private IDocFileFolderService docFileFolderService;
 
     @Override
     public List<DocFileFolderResVO> getFolderTree(Long folderId) {
@@ -138,6 +138,12 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         if (Objects.isNull(parentFolderId) || parentFolderId <= 0L) {
             // 根文件夹
             parentFolderId = 0L;
+        } else {
+            // 检查父文件夹是否合法合理
+            DocFileFolder parent = super.getById(parentFolderId);
+            if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只允许在文件夹下创建文件！");
+            }
         }
         DocFileFolder docFileFolder = new DocFileFolder();
         docFileFolder.setParentId(parentFolderId);
@@ -188,10 +194,17 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         childList.add(docFileFolder);
         super.getChild(Collections.singletonList(delVO.getId()), childList);
         List<Long> idList = childList.stream().map(DocFileFolder::getId).distinct().collect(Collectors.toList());
+        DocRecycle docRecycle = new DocRecycle();
+        docRecycle.setFolderId(docFileFolder.getId());
+        docRecycle.setName(docFileFolder.getName());
+        docRecycle.setUserId(LoginContext.getUserId());
+        docRecycle.setCreateAt(LocalDateTime.now());
         transactionTemplate.execute(status -> {
             docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
                 .in(DocFileFolder::getId, idList)
                 .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
+            // 扔回收站
+            docRecycleService.save(docRecycle);
             Long parentId = docFileFolder.getParentId();
             if (Objects.nonNull(parentId) && parentId > 0L) {
                 docFileFolderService.updateFolderCount(parentId, -1);
@@ -203,10 +216,14 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
     @Override
     public void moveFolder(FileFolderMoveVO moveVO) {
         Long id = moveVO.getId();
-        DocFileFolder currentFolder = super.getById(id);
-
         Long newFolderId = moveVO.getNewFolderId();
+        Map<Long, DocFileFolder> map = super.getByIdList(Arrays.asList(id, newFolderId));
+        DocFileFolder parent = map.get(newFolderId);
+        if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只允许迁移到文件夹下");
+        }
 
+        DocFileFolder currentFolder = map.get(id);
         DocFileFolder update = new DocFileFolder();
         update.setId(id);
         update.setParentId(newFolderId);
@@ -239,15 +256,56 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
 
     @Override
     public void copyFolder(FileFolderCopyVO copyVO) {
-        DocFileFolder docFileFolder = super.getById(copyVO.getId());
+        Map<Long, DocFileFolder> map = super.getByIdList(Arrays.asList(copyVO.getId(), copyVO.getFolderId()));
+        DocFileFolder docFileFolder = map.get(copyVO.getId());
         // 如果是复制到同一个目录，不做任何操作
         if (docFileFolder.getParentId().equals(copyVO.getFolderId())) {
             return;
         }
-        // TODO：待续。。。。。。
-        DocFileFolder targetFolder = super.getById(copyVO.getFolderId());
+        // 目标目录
+        DocFileFolder targetFolder = map.get(copyVO.getFolderId());
+        if (FileFolderFormatEnum.FILE.getFormat().equals(targetFolder.getFormat())) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只允许复制到文件夹下！");
+        }
+        // 获取要移动的文件夹及它的所有子目录和文件
         List<DocFileFolder> childs = Lists.newArrayList();
+        childs.add(docFileFolder);
         super.getChild(Collections.singletonList(copyVO.getId()), childs);
+        Long userId = LoginContext.getUserId();
+        childs.stream().forEach(child -> {
+            child.setOldId(child.getId());
+            child.setId(null);
+            child.setCreatorId(userId);
+            // 暂时先不显示
+            child.setStatus(DelStatusEnum.DISPLAY.getStatus());
+        });
+
+        transactionTemplate.execute(status -> {
+            // 批量保存
+            docFileFolderService.saveBatch(childs);
+            Map<Long, Long> oldMapNew = childs.stream()
+                .collect(Collectors.toMap(DocFileFolder::getOldId, DocFileFolder::getId, (v1, v2) -> v1));
+            List<DocFileFolder> updateList = childs.stream().map(e -> {
+                DocFileFolder update = new DocFileFolder();
+                update.setId(e.getId());
+                update.setParentId(oldMapNew.getOrDefault(e.getParentId(), 0L));
+                update.setStatus(DelStatusEnum.NORMAL.getStatus());
+                return update;
+            }).collect(Collectors.toList());
+            docFileFolderService.updateBatchById(updateList);
+            List<DocFileCopyDTO> copyList = childs.stream()
+                .filter(e -> FileFolderFormatEnum.FILE.getFormat().equals(e.getFormat())).map(file -> {
+                    DocFileCopyDTO update = new DocFileCopyDTO();
+                    update.setOldFileId(file.getOldId());
+                    update.setNewFileId(file.getId());
+                    return update;
+                }).collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(copyList)) {
+                docFileContentService.copyByFileIdList(copyList, userId);
+            }
+            docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
+            return null;
+        });
     }
 
     private void getParentFolders(Long parentId, List<DocFileFolder> parentFileFolders) {

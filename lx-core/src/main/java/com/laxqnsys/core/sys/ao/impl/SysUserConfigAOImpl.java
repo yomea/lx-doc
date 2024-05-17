@@ -9,7 +9,6 @@ import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.sys.ao.SysUserConfigAO;
 import com.laxqnsys.core.sys.dao.entity.SysUserConfig;
-import com.laxqnsys.core.sys.model.vo.SysUserConfigQueryVO;
 import com.laxqnsys.core.sys.model.vo.SysUserConfigReqVO;
 import com.laxqnsys.core.sys.service.ISysUserConfigService;
 import java.time.LocalDateTime;
@@ -31,7 +30,7 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
 
     @Override
     public String getUserConfig(String configType) {
-        if(!StringUtils.hasText(configType)) {
+        if (!StringUtils.hasText(configType)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "configType必传！");
         }
         Long userId = LoginContext.getUserId();
@@ -40,14 +39,16 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
             .eq(SysUserConfig::getConfigType, configType)
             .eq(SysUserConfig::getStatus, DelStatusEnum.NORMAL.getStatus())
             .last("limit 1"));
-        if(Objects.isNull(sysUserConfig)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("该用户没有设置名为%s的配置", configType));
+        if (Objects.isNull(sysUserConfig)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                String.format("该用户没有设置名为%s的配置", configType));
         }
         return sysUserConfig.getConfigContent();
     }
 
     @Override
-    @ConcurrentLock(key = RedissonLockPrefixCons.USER_CONFIG_SAVE_OR_UPDATE + ":${sysUserConfigVO.configType}", expire = 2)
+    @ConcurrentLock(key = RedissonLockPrefixCons.USER_CONFIG_SAVE_OR_UPDATE
+        + ":${sysUserConfigVO.configType}", expire = 2)
     public void saveOrUpdateUserConfig(SysUserConfigReqVO sysUserConfigVO) {
         String configType = sysUserConfigVO.getConfigType();
         Long userId = LoginContext.getUserId();

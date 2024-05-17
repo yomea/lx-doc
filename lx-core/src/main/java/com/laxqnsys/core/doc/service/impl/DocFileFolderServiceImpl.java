@@ -43,7 +43,7 @@ public class DocFileFolderServiceImpl extends ServiceImpl<DocFileFolderMapper, D
 
     @Override
     public int batchDeltaUpdate(List<DocFileFolder> updateList) {
-        if(CollectionUtils.isEmpty(updateList)) {
+        if (CollectionUtils.isEmpty(updateList)) {
             return 0;
         }
         return super.baseMapper.batchDeltaUpdate(updateList);

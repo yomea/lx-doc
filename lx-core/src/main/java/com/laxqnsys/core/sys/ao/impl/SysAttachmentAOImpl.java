@@ -50,8 +50,9 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
     @Override
     public String uploadImg(SysAttachmentVO sysAttachmentVO) {
         String encodedString = sysAttachmentVO.getImgData();
-        if(!imgBase64Pattern.matcher(encodedString).matches()) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传的图片base64格式不正确，请传入形如：data:image/png;base64,iVBORw0KGgo...的图片格式");
+        if (!imgBase64Pattern.matcher(encodedString).matches()) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                "上传的图片base64格式不正确，请传入形如：data:image/png;base64,iVBORw0KGgo...的图片格式");
         }
         String[] split = encodedString.split(",");
         String dataType = split[0];

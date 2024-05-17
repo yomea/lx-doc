@@ -8,12 +8,13 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Description：Mybatis配置
+ *
  * @version 1.0.0
  * @date 2021/10/8
  */
 @Configuration
 public class MybatisConfigurationCustomizer implements ConfigurationCustomizer {
- 
+
     @Override
     public void customize(MybatisConfiguration configuration) {
         TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();

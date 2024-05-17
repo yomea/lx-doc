@@ -1,13 +1,13 @@
 package com.laxqnsys.core.sys.controller;
 
 
+import com.laxqnsys.common.model.ResponseResult;
 import com.laxqnsys.core.sys.ao.SysUserInfoAO;
 import com.laxqnsys.core.sys.model.vo.UserInfoUpdateVO;
 import com.laxqnsys.core.sys.model.vo.UserInfoVO;
 import com.laxqnsys.core.sys.model.vo.UserLoginVO;
 import com.laxqnsys.core.sys.model.vo.UserPwdModifyVO;
 import com.laxqnsys.core.sys.model.vo.UserRegisterVO;
-import com.laxqnsys.common.model.ResponseResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,11 +24,11 @@ public class RedissonLock {
 
     public void tryLock(String lockKey, long waitTime, long leaseTime, TimeUnit unit, Runnable runnable) {
         RLock lock = redissonClient.getLock(lockKey);
-        if(Objects.isNull(lock)) {
+        if (Objects.isNull(lock)) {
             return;
         }
         try {
-            if(lock.tryLock(waitTime, leaseTime, unit)) {
+            if (lock.tryLock(waitTime, leaseTime, unit)) {
                 runnable.run();
             }
         } catch (InterruptedException e) {
@@ -42,11 +42,11 @@ public class RedissonLock {
 
     public void tryLock(String lockKey, long waitTime, TimeUnit unit, Runnable runnable) {
         RLock lock = redissonClient.getLock(lockKey);
-        if(Objects.isNull(lock)) {
+        if (Objects.isNull(lock)) {
             return;
         }
         try {
-            if(lock.tryLock(waitTime, unit)) {
+            if (lock.tryLock(waitTime, unit)) {
                 runnable.run();
             }
         } catch (InterruptedException e) {
@@ -61,11 +61,11 @@ public class RedissonLock {
     public Object tryLock(String lockKey, long waitTime, TimeUnit unit, Callable<Object> runnable) {
         RLock lock = redissonClient.getLock(lockKey);
         try {
-            if(lock.tryLock(waitTime, unit)) {
+            if (lock.tryLock(waitTime, unit)) {
                 try {
                     return runnable.call();
                 } catch (BusinessException e) {
-                   throw e;
+                    throw e;
                 } catch (Exception e) {
                     throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "调用失败！", e);
                 }

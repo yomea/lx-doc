@@ -7,6 +7,6 @@ import lombok.Data;
  * @date 2024/5/14 13:54
  */
 @Data
-public class UserLoginVO extends UserBaseVO{
+public class UserLoginVO extends UserBaseVO {
 
 }

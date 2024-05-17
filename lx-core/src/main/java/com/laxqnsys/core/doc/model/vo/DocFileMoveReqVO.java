@@ -3,7 +3,6 @@ package com.laxqnsys.core.doc.model.vo;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**

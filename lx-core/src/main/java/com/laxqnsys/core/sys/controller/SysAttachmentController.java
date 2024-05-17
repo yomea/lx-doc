@@ -28,7 +28,7 @@ public class SysAttachmentController {
     @Autowired
     private SysAttachmentAO sysAttachmentAO;
 
-    @PostMapping(value = "/uploadFiles", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    @PostMapping(value = "/uploadFiles", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseResult<List<String>> uploadFiles(MultipartFile[] file) {
         List<String> urlList = sysAttachmentAO.uploadFiles(file);
         return ResponseResult.ok(urlList);

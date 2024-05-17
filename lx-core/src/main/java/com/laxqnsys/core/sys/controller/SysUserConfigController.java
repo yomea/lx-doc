@@ -2,9 +2,8 @@ package com.laxqnsys.core.sys.controller;
 
 
 import com.laxqnsys.common.model.ResponseResult;
-import com.laxqnsys.core.sys.model.vo.SysUserConfigQueryVO;
-import com.laxqnsys.core.sys.model.vo.SysUserConfigReqVO;
 import com.laxqnsys.core.sys.ao.SysUserConfigAO;
+import com.laxqnsys.core.sys.model.vo.SysUserConfigReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

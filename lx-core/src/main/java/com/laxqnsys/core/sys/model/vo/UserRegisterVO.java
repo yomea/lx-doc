@@ -8,4 +8,5 @@ import lombok.Data;
  */
 @Data
 public class UserRegisterVO extends UserBaseVO {
+
 }

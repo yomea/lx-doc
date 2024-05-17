@@ -22,7 +22,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="DocFileFolder对象", description="文档-文件夹")
+@ApiModel(value = "DocFileFolder对象", description = "文档-文件夹")
 public class DocFileFolder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -70,7 +70,7 @@ public class DocFileFolder implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateAt;
 
-    @ApiModelProperty(value = "0：正常，-1：回收，-2：彻底删除")
+    @ApiModelProperty(value = "0：正常，-1：删除")
     private Integer status;
 
     @TableField(exist = false)

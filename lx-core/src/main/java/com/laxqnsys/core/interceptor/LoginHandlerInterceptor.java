@@ -7,7 +7,7 @@ import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.sys.model.bo.UserInfoBO;
-import com.laxqnsys.core.util.WebUtil;
+import com.laxqnsys.core.util.web.WebUtil;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
@@ -37,15 +37,15 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 
         String uri = request.getRequestURI();
         boolean match = whiteUrlList.stream().anyMatch(url -> antPathMatcher.match(url, uri));
-        if(match) {
+        if (match) {
             return true;
         }
         String token = WebUtil.getCookie(request, CommonCons.TOKEN_KEY);
-        if(!StringUtils.hasText(token)) {
+        if (!StringUtils.hasText(token)) {
             throw new BusinessException(ErrorCodeEnum.UN_LOGIN.getCode(), ErrorCodeEnum.UN_LOGIN.getDesc());
         }
         String userJsonInfo = stringRedisTemplate.opsForValue().get(token);
-        if(!StringUtils.hasText(userJsonInfo)) {
+        if (!StringUtils.hasText(userJsonInfo)) {
             throw new BusinessException(ErrorCodeEnum.UN_LOGIN.getCode(), ErrorCodeEnum.UN_LOGIN.getDesc());
         }
         UserInfoBO userInfoBO = JSONUtil.toBean(userJsonInfo, UserInfoBO.class);

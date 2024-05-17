@@ -1,4 +1,4 @@
-package com.laxqnsys.core.util;
+package com.laxqnsys.core.util.web;
 
 import com.laxqnsys.core.constants.CommonCons;
 import javax.servlet.http.Cookie;

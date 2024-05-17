@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
-@MapperScan(basePackages = {"com.laxqnsys.core.doc.dao.mapper","com.laxqnsys.core.sys.dao.mapper"})
+@MapperScan(basePackages = {"com.laxqnsys.core.doc.dao.mapper", "com.laxqnsys.core.sys.dao.mapper"})
 @Slf4j
 public class App {
 

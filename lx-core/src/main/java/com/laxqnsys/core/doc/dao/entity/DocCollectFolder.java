@@ -2,10 +2,10 @@ package com.laxqnsys.core.doc.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -21,7 +21,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="DocCollectFolder对象", description="文档-文件收藏夹")
+@ApiModel(value = "DocCollectFolder对象", description = "文档-文件收藏夹")
 public class DocCollectFolder implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -33,20 +33,12 @@ public class DocCollectFolder implements Serializable {
     @ApiModelProperty(value = "文件夹ID")
     private Long folderId;
 
+    @ApiModelProperty(value = "文件名")
+    private String name;
+
     @ApiModelProperty(value = "收藏人ID")
     private Long userId;
 
     @ApiModelProperty(value = "收藏时间")
     private LocalDateTime createAt;
-
-    @ApiModelProperty(value = "更新时间")
-    private LocalDateTime updateAt;
-
-    @ApiModelProperty(value = "0：正常，-1：删除")
-    private Integer status;
-
-    @ApiModelProperty(value = "版本号")
-    private Integer version;
-
-
 }

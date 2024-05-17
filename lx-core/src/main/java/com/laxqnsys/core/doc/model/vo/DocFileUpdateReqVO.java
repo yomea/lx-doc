@@ -1,7 +1,6 @@
 package com.laxqnsys.core.doc.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 

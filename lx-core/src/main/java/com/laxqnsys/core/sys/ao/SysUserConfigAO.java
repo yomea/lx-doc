@@ -1,6 +1,5 @@
 package com.laxqnsys.core.sys.ao;
 
-import com.laxqnsys.core.sys.model.vo.SysUserConfigQueryVO;
 import com.laxqnsys.core.sys.model.vo.SysUserConfigReqVO;
 
 /**

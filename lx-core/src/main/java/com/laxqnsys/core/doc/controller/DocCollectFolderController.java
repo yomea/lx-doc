@@ -1,8 +1,17 @@
 package com.laxqnsys.core.doc.controller;
 
 
+import com.laxqnsys.common.model.ResponseResult;
+import com.laxqnsys.core.doc.ao.DocCollectFolderAO;
+import com.laxqnsys.core.doc.model.vo.DocCollectReqVO;
+import com.laxqnsys.core.doc.model.vo.DocFileResVO;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,4 +26,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("")
 public class DocCollectFolderController {
 
+    @Autowired
+    private DocCollectFolderAO docCollectFolderAO;
+
+    @GetMapping(value = "/getCollectFileList")
+    public ResponseResult<List<DocFileResVO>> getCollectFileList(@RequestParam String name) {
+        List<DocFileResVO> resVOs = docCollectFolderAO.getCollectFileList(name);
+        return ResponseResult.ok(resVOs);
+    }
+
+    @PostMapping(value = "/cancelCollect")
+    public ResponseResult<Void> cancelCollect(@RequestBody DocCollectReqVO reqVO) {
+        docCollectFolderAO.cancelCollect(reqVO);
+        return ResponseResult.ok();
+    }
+
+    @PostMapping(value = "/collect")
+    public ResponseResult<Void> collect(@RequestBody DocCollectReqVO reqVO) {
+        docCollectFolderAO.collect(reqVO);
+        return ResponseResult.ok();
+    }
 }

@@ -16,6 +16,7 @@ import org.apache.ibatis.annotations.Param;
 public interface DocFileFolderMapper extends BaseMapper<DocFileFolder> {
 
     int updateFileCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
+
     int updateFolderCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
 
     int batchDeltaUpdate(List<DocFileFolder> updateList);

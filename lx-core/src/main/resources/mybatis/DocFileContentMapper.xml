@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.laxqnsys.core.doc.dao.mapper.DocFileContentMapper">
-
-    <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocFileContent">
-        <id column="id" property="id" />
-        <result column="file_id" property="fileId" />
-        <result column="content" property="content" />
-        <result column="version" property="version" />
-        <result column="creator_id" property="creatorId" />
-        <result column="create_at" property="createAt" />
-        <result column="update_at" property="updateAt" />
-        <result column="status" property="status" />
-    </resultMap>
+  <!-- 通用查询映射结果 -->
+  <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocFileContent">
+    <id column="id" property="id"/>
+    <result column="file_id" property="fileId"/>
+    <result column="content" property="content"/>
+    <result column="version" property="version"/>
+    <result column="creator_id" property="creatorId"/>
+    <result column="create_at" property="createAt"/>
+    <result column="update_at" property="updateAt"/>
+    <result column="status" property="status"/>
+  </resultMap>
 
   <insert id="copyByFileIdList" parameterType="list">
     insert into doc_file_content(file_id,content,creator_id,create_at,update_at)
@@ -30,5 +29,4 @@
       #{item.oldFileId}
     </foreach>
   </insert>
-
 </mapper>

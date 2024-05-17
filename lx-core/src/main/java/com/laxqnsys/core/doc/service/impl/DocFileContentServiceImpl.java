@@ -1,10 +1,10 @@
 package com.laxqnsys.core.doc.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
-import com.laxqnsys.core.doc.service.IDocFileContentService;
 import com.laxqnsys.core.doc.dao.entity.DocFileContent;
 import com.laxqnsys.core.doc.dao.mapper.DocFileContentMapper;
+import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
+import com.laxqnsys.core.doc.service.IDocFileContentService;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

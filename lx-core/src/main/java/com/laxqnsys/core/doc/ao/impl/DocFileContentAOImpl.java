@@ -8,6 +8,7 @@ import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileContentAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileContent;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import com.laxqnsys.core.doc.dao.entity.DocRecycle;
 import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileCopyReqVO;
@@ -15,17 +16,13 @@ import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
-import com.laxqnsys.core.doc.service.IDocFileContentService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -35,9 +32,6 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements DocFileContentAO {
-
-    @Autowired
-    private IDocFileContentService docFileContentService;
 
     @Override
     public DocFileContentResVO getFileContent(Long id) {
@@ -55,6 +49,10 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public DocFileContentResVO createFile(DocFileCreateReqVO createReqVO) {
 
+        DocFileFolder parent = super.getById(createReqVO.getFolderId());
+        if(FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只需要在文件夹下创建文件");
+        }
         DocFileFolder fileFolder = new DocFileFolder();
         fileFolder.setParentId(createReqVO.getFolderId());
         fileFolder.setName(createReqVO.getName());
@@ -96,12 +94,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public void updateFile(DocFileUpdateReqVO updateReqVO) {
         Long fileId = updateReqVO.getId();
-
-        DocFileFolder docFileFolder = docFileFolderService.getById(fileId);
-        if (Objects.isNull(docFileFolder)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                String.format("id为%s的文件不存在或已被删除！", fileId));
-        }
+        // 校验
+        super.getById(fileId);
+        DocFileContent docFileContent = this.getByFileId(fileId);
 
         transactionTemplate.execute(status -> {
             DocFileFolder updateFolder = new DocFileFolder();
@@ -111,7 +106,6 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             updateFolder.setUpdateAt(LocalDateTime.now());
             docFileFolderService.updateById(updateFolder);
 
-            DocFileContent docFileContent = this.getByFileId(fileId);
             DocFileContent update = new DocFileContent();
             update.setId(docFileContent.getId());
             update.setContent(updateReqVO.getContent());
@@ -124,9 +118,15 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public void moveFile(DocFileMoveReqVO reqVO) {
 
+        Long newFolderId = reqVO.getNewFolderId();
+        DocFileFolder parent = super.getById(newFolderId);
+        if(FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能迁移到文件夹下！");
+        }
         List<Long> idList = reqVO.getIds();
-        List<DocFileFolder> fileFolders = docFileFolderService.listByIds(idList);
+        List<DocFileFolder> fileFolders = super.selectByIdList(idList);
         Map<Long, Integer> parentIdMapSizeMap = fileFolders.stream()
+            .filter(e -> Objects.nonNull(e.getParentId()) && e.getParentId() > 0L)
             .collect(Collectors.groupingBy(DocFileFolder::getParentId,
                 Collectors.summingInt(x -> 1)));
         List<DocFileFolder> updateOldFolderList = parentIdMapSizeMap.entrySet().stream().map(entry -> {
@@ -142,7 +142,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             return update;
         }).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
-            docFileFolderService.batchDeltaUpdate(updateOldFolderList);
+            if(!CollectionUtils.isEmpty(updateOldFolderList)) {
+                docFileFolderService.batchDeltaUpdate(updateOldFolderList);
+            }
             docFileFolderService.updateFileCount(reqVO.getNewFolderId(), updateList.size());
             docFileFolderService.updateBatchById(updateList);
             return null;
@@ -152,10 +154,15 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public void copyFile(DocFileCopyReqVO reqVO) {
 
+        Long newFolderId = reqVO.getNewFolderId();
+        DocFileFolder parent = super.getById(newFolderId);
+        if(FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
+          throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能复制到文件夹下！");
+        }
         List<Long> originIdList = reqVO.getIds();
         List<DocFileFolder> fileFolders = docFileFolderService.listByIds(originIdList).stream()
             .filter(e -> !e.getParentId().equals(reqVO.getNewFolderId())).collect(Collectors.toList());
-        if(CollectionUtils.isEmpty(fileFolders)) {
+        if (CollectionUtils.isEmpty(fileFolders)) {
             return;
         }
         fileFolders.stream().forEach(e -> {
@@ -182,8 +189,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     public void deleteFile(DocFileDelReqVO reqVO) {
 
         List<Long> idList = reqVO.getIds();
-        List<DocFileFolder> fileFolders = docFileFolderService.listByIds(idList);
+        List<DocFileFolder> fileFolders = super.selectByIdList(idList);
         Map<Long, Integer> parentIdMapSizeMap = fileFolders.stream()
+            .filter(e -> Objects.nonNull(e.getParentId()) && e.getParentId() > 0L)
             .collect(Collectors.groupingBy(DocFileFolder::getParentId,
                 Collectors.summingInt(x -> 1)));
         List<DocFileFolder> updateOldFolderList = parentIdMapSizeMap.entrySet().stream().map(entry -> {
@@ -192,6 +200,16 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             update.setFileCount(-entry.getValue());
             return update;
         }).collect(Collectors.toList());
+        LocalDateTime recycleTime = LocalDateTime.now();
+        Long userId = LoginContext.getUserId();
+        List<DocRecycle> docRecycleList = fileFolders.stream().map(e -> {
+            DocRecycle docRecycle = new DocRecycle();
+            docRecycle.setFolderId(e.getId());
+            docRecycle.setName(e.getName());
+            docRecycle.setUserId(userId);
+            docRecycle.setCreateAt(recycleTime);
+            return docRecycle;
+        }).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
             docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
                 .in(DocFileFolder::getId, idList)
@@ -199,7 +217,11 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             docFileContentService.update(Wrappers.<DocFileContent>lambdaUpdate()
                 .in(DocFileContent::getFileId, idList)
                 .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));
-            docFileFolderService.batchDeltaUpdate(updateOldFolderList);
+            // 扔回收站
+            docRecycleService.saveBatch(docRecycleList);
+            if(!CollectionUtils.isEmpty(updateOldFolderList)) {
+                docFileFolderService.batchDeltaUpdate(updateOldFolderList);
+            }
             return null;
         });
     }
@@ -210,6 +232,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             .last("limit 1"));
         if (Objects.isNull(docFileContent)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));
+        }
+        if (!docFileContent.getCreatorId().equals(LoginContext.getUserId())) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "非法访问！");
         }
         return docFileContent;
     }

@@ -57,7 +57,7 @@ CREATE TABLE lx_doc.`doc_file_folder`
     `creator_id`   bigint(20) NOT NULL COMMENT '创建人ID',
     `create_at`    datetime    NOT NULL COMMENT '创建时间',
     `update_at`    datetime    NOT NULL COMMENT '更新时间',
-    `status`       int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：回收，-2：彻底删除',
+    `status`       int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
     PRIMARY KEY (`id`),
     key            `idx_parent_id`(parent_id),
     key            `idx_creator_id`(creator_id)
@@ -72,7 +72,7 @@ CREATE TABLE lx_doc.`doc_file_content`
     `creator_id` bigint(20) NOT NULL COMMENT '创建人ID',
     `create_at`  datetime NOT NULL COMMENT '创建时间',
     `update_at`  datetime NOT NULL COMMENT '更新时间',
-    `status`     int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：回收，-2：彻底删除',
+    `status`     int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
     PRIMARY KEY (`id`),
     UNIQUE `uk_file_id`(file_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件内容';
@@ -83,9 +83,17 @@ CREATE TABLE lx_doc.`doc_collect_folder`
     `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
     `user_id`   bigint(20) NOT NULL COMMENT '收藏人ID',
     `create_at` DATETIME NOT NULL COMMENT '收藏时间',
-    `update_at` DATETIME NOT NULL COMMENT '更新时间',
-    `status`    int      NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
-    `version`   int(11) NOT NULL DEFAULT '0' COMMENT '版本号',
     PRIMARY KEY (`id`),
     UNIQUE `uk_uf_id`(user_id, folder_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件收藏夹';
+
+CREATE TABLE lx_doc.`doc_recycle`
+(
+    `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
+    `name`      varchar(64) NOT NULL COMMENT '文件名',
+    `user_id`   bigint(20) NOT NULL COMMENT '回收人ID',
+    `create_at` DATETIME    NOT NULL COMMENT '回收时间',
+    PRIMARY KEY (`id`),
+    UNIQUE `uk_uf_id`(user_id, folder_id)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-回收站';

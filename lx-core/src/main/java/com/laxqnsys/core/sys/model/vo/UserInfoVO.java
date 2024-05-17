@@ -2,7 +2,6 @@ package com.laxqnsys.core.sys.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
-import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 

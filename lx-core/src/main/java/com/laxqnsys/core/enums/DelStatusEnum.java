@@ -13,7 +13,7 @@ public enum DelStatusEnum {
 
     NORMAL(0, "正常"),
     DEL(-1, "删除"),
-    FACT_DEL(-2, "彻底删除")
+    DISPLAY(-2, "隐藏"),
     ;
 
     private Integer status;

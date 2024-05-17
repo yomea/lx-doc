@@ -2,24 +2,24 @@ package com.laxqnsys.core.sys.ao.impl;
 
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.laxqnsys.core.sys.ao.SysUserInfoAO;
-import com.laxqnsys.core.constants.CommonCons;
-import com.laxqnsys.core.constants.RedissonLockPrefixCons;
-import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.sys.model.bo.UserInfoBO;
-import com.laxqnsys.core.sys.model.vo.UserRegisterVO;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.AESUtil;
 import com.laxqnsys.common.util.RedissonLock;
-import com.laxqnsys.core.sys.dao.entity.SysUserInfo;
+import com.laxqnsys.core.constants.CommonCons;
+import com.laxqnsys.core.constants.RedissonLockPrefixCons;
+import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.enums.UserStatusEnum;
+import com.laxqnsys.core.sys.ao.SysUserInfoAO;
+import com.laxqnsys.core.sys.dao.entity.SysUserInfo;
+import com.laxqnsys.core.sys.model.bo.UserInfoBO;
 import com.laxqnsys.core.sys.model.vo.UserInfoUpdateVO;
 import com.laxqnsys.core.sys.model.vo.UserInfoVO;
 import com.laxqnsys.core.sys.model.vo.UserLoginVO;
 import com.laxqnsys.core.sys.model.vo.UserPwdModifyVO;
+import com.laxqnsys.core.sys.model.vo.UserRegisterVO;
 import com.laxqnsys.core.sys.service.ISysUserInfoService;
-import com.laxqnsys.core.util.WebUtil;
+import com.laxqnsys.core.util.web.WebUtil;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -159,13 +159,13 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
     public void changePassword(UserPwdModifyVO userPwdModifyVO) {
         Long userId = LoginContext.getUserId();
         SysUserInfo sysUserInfo = sysUserInfoService.getById(userId);
-        if(Objects.isNull(sysUserInfo)) {
+        if (Objects.isNull(sysUserInfo)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 String.format("未获取到id为%s的登录人信息！", userId));
         }
         String oldPassword = userPwdModifyVO.getOldPassword();
         String password = sysUserInfo.getPassword();
-        if(!password.equals(AESUtil.encrypt(oldPassword, CommonCons.AES_KEY))) {
+        if (!password.equals(AESUtil.encrypt(oldPassword, CommonCons.AES_KEY))) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "原秘密输入不正确！");
         }
         String newPassword = userPwdModifyVO.getNewPassword();
@@ -180,7 +180,7 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
 
         String key = CommonCons.LOGIN_USER_TOKE_KEY + userId;
         String oldToken = stringRedisTemplate.opsForValue().get(key);
-        if(StringUtils.hasText(oldToken)) {
+        if (StringUtils.hasText(oldToken)) {
             // 踢掉其他的登录信息
             stringRedisTemplate.delete(oldToken);
         }

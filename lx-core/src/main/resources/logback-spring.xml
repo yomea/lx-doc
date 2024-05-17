@@ -1,113 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration debug="false">
 
-	<springProperty scope="context" name="loglevel" source="loglevel" defaultValue="info"/>
-	<springProperty scope="context" name="log.home" source="log.home" />
+  <springProperty scope="context" name="loglevel" source="loglevel" defaultValue="info"/>
+  <springProperty scope="context" name="log.home" source="log.home"/>
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d %p (%file:%line\)- %m%n</pattern>
-			<!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
-			<charset>UTF-8</charset>
-		</encoder>
-	</appender>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d %p (%file:%line\)- %m%n</pattern>
+      <!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
+      <charset>UTF-8</charset>
+    </encoder>
+  </appender>
 
-	<appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.home}/error.log</file>
-		<append>true</append>
-		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>${log.home}/error.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
-			<maxFileSize>500MB</maxFileSize>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>5GB</totalSizeCap>
-		</rollingPolicy>
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>error</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
-		</layout>
-	</appender>
+  <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.home}/error.log</file>
+    <append>true</append>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${log.home}/error.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>5GB</totalSizeCap>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>error</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
+    </layout>
+  </appender>
 
-	<appender name="INFO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.home}/info.log</file>
-		<append>true</append>
-		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>${log.home}/info.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
-			<maxFileSize>500MB</maxFileSize>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>5GB</totalSizeCap>
-		</rollingPolicy>
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>info</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
-		</layout>
-	</appender>
+  <appender name="INFO_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.home}/info.log</file>
+    <append>true</append>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${log.home}/info.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>5GB</totalSizeCap>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>info</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
+    </layout>
+  </appender>
 
-	<appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.home}/debug.log</file>
-		<append>true</append>
-		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>${log.home}/debug.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
-			<maxFileSize>500MB</maxFileSize>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>2GB</totalSizeCap>
-		</rollingPolicy>
-		<filter class="ch.qos.logback.classic.filter.LevelFilter">
-			<level>debug</level>
-			<onMatch>ACCEPT</onMatch>
-			<onMismatch>DENY</onMismatch>
-		</filter>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
-		</layout>
-	</appender>
+  <appender name="PROJECT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.home}/debug.log</file>
+    <append>true</append>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${log.home}/debug.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>2GB</totalSizeCap>
+    </rollingPolicy>
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>debug</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - %X{session} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
+    </layout>
+  </appender>
 
-	<appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.home}/sql.log</file>
-		<append>true</append>
-		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>${log.home}/sql.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
-			<maxFileSize>500MB</maxFileSize>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>5GB</totalSizeCap>
-		</rollingPolicy>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
-		</layout>
-	</appender>
+  <appender name="SQL" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.home}/sql.log</file>
+    <append>true</append>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${log.home}/sql.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>5GB</totalSizeCap>
+    </rollingPolicy>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
+    </layout>
+  </appender>
 
-	<appender name="SLOW_SQL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${log.home}/slow-sql.log</file>
-		<append>true</append>
-		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<FileNamePattern>${log.home}/slow-sql.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
-			<maxFileSize>500MB</maxFileSize>
-			<maxHistory>30</maxHistory>
-			<totalSizeCap>5GB</totalSizeCap>
-		</rollingPolicy>
-		<layout class="ch.qos.logback.classic.PatternLayout">
-			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
-		</layout>
-	</appender>
+  <appender name="SLOW_SQL_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.home}/slow-sql.log</file>
+    <append>true</append>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <FileNamePattern>${log.home}/slow-sql.log.%d{yyyy-MM-dd}-%i.gz</FileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <maxHistory>30</maxHistory>
+      <totalSizeCap>5GB</totalSizeCap>
+    </rollingPolicy>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} - [%thread] %-5level - %logger{35} - %msg%n</pattern>
+    </layout>
+  </appender>
 
-	<!--slow sql-->
-	<Logger name="com.alibaba.druid.filter.stat.StatFilter" additivity="false">
-		<level value="error" />
-		<appender-ref ref="SLOW_SQL_LOG" />
-	</Logger>
+  <!--slow sql-->
+  <Logger name="com.alibaba.druid.filter.stat.StatFilter" additivity="false">
+    <level value="error"/>
+    <appender-ref ref="SLOW_SQL_LOG"/>
+  </Logger>
 
-	<root>
-		<level value="${loglevel}" />
-		<appender-ref ref="PROJECT" />
-		<appender-ref ref="ERROR_LOG" />
-		<appender-ref ref="INFO_LOG" />
-		<appender-ref ref="STDOUT" />
-	</root>
+  <root>
+    <level value="${loglevel}"/>
+    <appender-ref ref="PROJECT"/>
+    <appender-ref ref="ERROR_LOG"/>
+    <appender-ref ref="INFO_LOG"/>
+    <appender-ref ref="STDOUT"/>
+  </root>
 </configuration>

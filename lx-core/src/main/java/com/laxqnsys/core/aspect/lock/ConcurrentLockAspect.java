@@ -1,10 +1,11 @@
 package com.laxqnsys.core.aspect.lock;
 
 import cn.hutool.json.JSONUtil;
-import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.RedissonLock;
+import com.laxqnsys.core.context.LoginContext;
+import com.laxqnsys.core.util.spel.SpringElUtil;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.ognl.Ognl;
-import org.apache.ibatis.ognl.OgnlException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -25,6 +24,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+
+/**
+ * @author wuzhenhong
+ * @date 2024/5/14 8:48
+ */
 @Slf4j
 @Aspect
 @Component
@@ -78,7 +82,7 @@ public class ConcurrentLockAspect {
         }
     }
 
-    private String getKey(ConcurrentLock lock, String[] parameterNames, Object[] parameters) throws OgnlException {
+    private String getKey(ConcurrentLock lock, String[] parameterNames, Object[] parameters) {
         String key = lock.key();
         Map<String, Object> context = new HashMap<>();
         for (int i = 0; i < parameters.length; i++) {
@@ -91,10 +95,11 @@ public class ConcurrentLockAspect {
         StringBuffer sb = new StringBuffer();
         Matcher matcher = pattern.matcher(key);
         while (matcher.find()) {
-            Object value = Ognl.getValue(matcher.group(2), context);
+//            Object value = Ognl.getValue(matcher.group(2), context);
+            Object value = SpringElUtil.evaluate(matcher.group(2), context);
             if (value == null) {
                 log.error("未找到对应值: key={}, parameters={}", lock.key(), JSONUtil.toJsonStr(parameters));
-                throw new OgnlException("未找到对应值");
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "未找到对应值");
             }
             matcher.appendReplacement(sb, String.valueOf(value));
         }

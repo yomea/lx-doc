@@ -14,22 +14,22 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 import org.springframework.stereotype.Component;
- 
+
 @Component
 //定义转换器支持的JAVA类型
 @MappedTypes(LocalDateTime.class)
 //定义转换器支持的数据库类型
 @MappedJdbcTypes(value = JdbcType.TIMESTAMP, includeNullJdbcType = true)
 public class CustomLocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
- 
+
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, LocalDateTime parameter, JdbcType jdbcType)
-            throws SQLException {
+        throws SQLException {
         if (parameter != null) {
             ps.setTimestamp(i, Timestamp.valueOf(parameter));
         }
     }
- 
+
     @Override
     public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
         Timestamp target = rs.getTimestamp(columnName);
@@ -38,7 +38,7 @@ public class CustomLocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTim
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(target.getTime()), ZoneId.systemDefault());
     }
- 
+
     @Override
     public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         Timestamp target = rs.getTimestamp(columnIndex);
@@ -47,7 +47,7 @@ public class CustomLocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTim
         }
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(target.getTime()), ZoneId.systemDefault());
     }
- 
+
     @Override
     public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         Timestamp target = cs.getTimestamp(columnIndex);
