@@ -20,8 +20,8 @@ public class WebMvcConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         LoginHandlerInterceptor loginHandlerInterceptor = new LoginHandlerInterceptor(stringRedisTemplate);
-        loginHandlerInterceptor.addWhiteUrl("/user/login");
-        loginHandlerInterceptor.addWhiteUrl("/user/register");
+        loginHandlerInterceptor.addWhiteUrl("/login");
+        loginHandlerInterceptor.addWhiteUrl("/register");
         loginHandlerInterceptor.addWhiteUrl("/static/**");
         loginHandlerInterceptor.addWhiteUrl("/system/error");
         registry.addInterceptor(loginHandlerInterceptor);

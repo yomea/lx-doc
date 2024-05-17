@@ -68,7 +68,7 @@ spring:
   redis:
     sentinel:
       master: xxx
-      nodes: redis1.public.banksteel.local:26379,redis2.public.banksteel.local:26379,redis3.public.banksteel.local:26379
+      nodes: redis1.domain:26379,redis2.domain:26379,redis3.domain:26379
     password: xxx
     lettuce:
       pool:
