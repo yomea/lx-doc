@@ -81,11 +81,13 @@ CREATE TABLE lx_doc.`doc_collect_folder`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
+    `name`      varchar(64) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '收藏人ID',
-    `create_at` DATETIME NOT NULL COMMENT '收藏时间',
+    `create_at` DATETIME    NOT NULL COMMENT '收藏时间',
+    `status`    int         NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
     PRIMARY KEY (`id`),
     UNIQUE `uk_uf_id`(user_id, folder_id)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件收藏夹';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件收藏夹（暂时定位个人云文档，未使用，后续协作，分享之后再启用）';
 
 CREATE TABLE lx_doc.`doc_recycle`
 (
