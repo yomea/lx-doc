@@ -30,7 +30,7 @@ public class DocCollectFolderController {
     private DocCollectFolderAO docCollectFolderAO;
 
     @GetMapping(value = "/getCollectFileList")
-    public ResponseResult<List<DocFileResVO>> getCollectFileList(@RequestParam String name) {
+    public ResponseResult<List<DocFileResVO>> getCollectFileList(@RequestParam(defaultValue = "") String name) {
         List<DocFileResVO> resVOs = docCollectFolderAO.getCollectFileList(name);
         return ResponseResult.ok(resVOs);
     }

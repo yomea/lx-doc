@@ -11,9 +11,13 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
  */
 public class StandardBeanExpressionResolverExt extends StandardBeanExpressionResolver {
 
+    public StandardBeanExpressionResolverExt() {
+        this.setExpressionPrefix("${");
+        this.setExpressionSuffix("}");
+    }
+
     @Override
     public Object evaluate(String value, BeanExpressionContext evalContext) throws BeansException {
-        value = "#{" + value + "}";
         return super.evaluate(value, evalContext);
     }
 

@@ -31,7 +31,7 @@ public class DocRecycleController {
     private DocRecycleAO docRecycleAO;
 
     @GetMapping(value = "/getRecycleFolderAndFileList")
-    public ResponseResult<DocFileAndFolderResVO> getRecycleFolderAndFileList(@RequestParam String name) {
+    public ResponseResult<DocFileAndFolderResVO> getRecycleFolderAndFileList(@RequestParam(defaultValue = "") String name) {
         DocFileAndFolderResVO resVO = docRecycleAO.getRecycleFolderAndFileList(name);
         return ResponseResult.ok(resVO);
     }

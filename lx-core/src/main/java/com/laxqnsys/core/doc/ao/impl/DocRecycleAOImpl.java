@@ -67,7 +67,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
         List<DocFileResVO> fileList = this.filterFileList(folderList);
         docFileAndFolderResVO.setFolderList(fileFolderBaseResVOList);
         docFileAndFolderResVO.setFileList(fileList);
-        return null;
+        return docFileAndFolderResVO;
     }
 
     @Override

@@ -110,7 +110,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             update.setId(docFileContent.getId());
             update.setContent(updateReqVO.getContent());
             update.setUpdateAt(updateFolder.getUpdateAt());
-            docFileContentService.updateById(docFileContent);
+            docFileContentService.updateById(update);
             return null;
         });
     }

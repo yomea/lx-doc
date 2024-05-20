@@ -1,8 +1,10 @@
 package com.laxqnsys.core.config;
 
+import com.laxqnsys.core.converter.StringToLongConverter;
 import com.laxqnsys.core.interceptor.LoginHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.format.FormatterRegistry;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -25,5 +27,10 @@ public class WebMvcConfigure implements WebMvcConfigurer {
         loginHandlerInterceptor.addWhiteUrl("/static/**");
         loginHandlerInterceptor.addWhiteUrl("/system/error");
         registry.addInterceptor(loginHandlerInterceptor);
+    }
+
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        registry.addConverter(new StringToLongConverter());
     }
 }

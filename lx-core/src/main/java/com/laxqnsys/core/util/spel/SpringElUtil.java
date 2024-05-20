@@ -47,12 +47,12 @@ public class SpringElUtil {
         contextExt.setObject("folder", folder);
         contextExt.setObject("contextExt", contextExt);
 
-//        Object value = sbere.evaluate("a+b > 20", contextExt);
-        Object v = SBERE.evaluate("folder.name = 'hello world!'", contextExt);
+//        Object value = SBERE.evaluate("a+b > 20", contextExt);
+        Object v = SBERE.evaluate("${folder.name = 'hello world!'}", contextExt);
         Object v1 = SBERE.evaluate("folder.setName('hello world! baby!')", contextExt);
         Object v2 = SBERE.evaluate("contextExt.setObject('a', 'a')", contextExt);
-        Object v3 = SBERE.evaluate("aa = 'bb'", contextExt);
-        Object value = SBERE.evaluate("aa", contextExt);
+        Object v3 = SBERE.evaluate("${aa = 'bb'}", contextExt);
+        Object value = SBERE.evaluate("asdsfsf_${folder.name}", contextExt);
         System.out.println(value);
     }
 }

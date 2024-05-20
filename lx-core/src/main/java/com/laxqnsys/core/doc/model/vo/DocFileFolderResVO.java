@@ -9,5 +9,5 @@ import lombok.Data;
 @Data
 public class DocFileFolderResVO extends DocFileFolderBaseResVO {
 
-    private boolean leaf;
+    private Boolean leaf;
 }

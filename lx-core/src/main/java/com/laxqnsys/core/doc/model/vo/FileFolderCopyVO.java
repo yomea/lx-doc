@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2024/5/14 19:19
  */
 @Data
-@ApiModel(value = "文件夹移动VO")
+@ApiModel(value = "文件夹复制VO")
 public class FileFolderCopyVO {
 
     @ApiModelProperty(value = "文件夹id")

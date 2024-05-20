@@ -16,6 +16,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -59,6 +60,9 @@ public class GlobalExceptionHandler {
         } else if (th instanceof HttpRequestMethodNotSupportedException) {
             HttpRequestMethodNotSupportedException notSupportedException = (HttpRequestMethodNotSupportedException) th;
             responseResult = ResponseResult.fail(String.format("请求方法%s不支持", notSupportedException.getMethod()));
+        } else if (th instanceof MissingServletRequestParameterException) {
+            MissingServletRequestParameterException parameterException = (MissingServletRequestParameterException) th;
+            responseResult = ResponseResult.fail(String.format("参数%s必传！", parameterException.getParameterName()));
         } else if (th.getCause() != null) {
             responseResult = this.getMessage(th.getCause());
         } else {
