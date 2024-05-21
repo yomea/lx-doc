@@ -1,27 +1,20 @@
-FROM hub.uban360.com/library/jdk:jre-8u241
+# 拉取基础镜像
+FROM openjdk:8-jdk-alpine
+# 维护人
+MAINTAINER 951645267@qq.com
 
 ENV SERVICE lx-doc
-ENV MEMORY  512
-ENV ARGS=
 
 USER root
 
-COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas
+EXPOSE 9222
 
-RUN rpm -ivh https://mirrors.aliyun.com/centos/7/os/x86_64/Packages/unzip-6.0-20.el7.x86_64.rpm
+RUN mkdir -p /usr/app/${SERVICE}
+RUN mkdir -p /usr/logs/${SERVICE}
 
-COPY --from=hengyunabc/arthas:latest /opt/arthas /opt/arthas
+ADD run_in_docker.sh /usr/app/${SERVICE}
+COPY target/lx-doc.jar /usr/app/${SERVICE}/
 
-RUN mkdir -p /home/admin/
+WORKDIR /usr/app/${SERVICE}
 
-ADD ${SERVICE}.zip /home/admin/
-
-RUN unzip -o /home/admin/${SERVICE}.zip -d /home/admin/
-
-#RUN sed -i 's/9980/8080/g' /home/admin/${SERVICE}/config/application.yml
-
-ADD run.sh /home/admin/${SERVICE}/
-
-WORKDIR /home/admin/${SERVICE}
-
-ENTRYPOINT ["sh","run.sh"]
+ENTRYPOINT ["sh", "run_in_docker.sh", "start"]
