@@ -5,6 +5,10 @@
 
 本仓库为后端仓库，前端代码仓库请移步：[wanglin2/lx-doc](https://github.com/wanglin2/lx-doc/tree/main)。
 
+本项目分为两个版本：
+- 分支master使用了redis，主要是为了后续集群部署（后续需要接入文件服务器，有条件的开发者可以拉取当前代码自行扩展）
+- 分支 personal 用于单机部署，不支持集群。
+
 重要提示！！！：
 
 1.不支持协同编辑；
@@ -23,12 +27,13 @@
 和[java](https://www.oracle.com/java/technologies/downloads/#java8-linux)开发环境，如果您嫌麻烦，可以直接拉取本人在镜像仓库构建好的镜像
 
 ```shell
+# 集群版本
 docker pull registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc:1.0
+# 个人版本
+docker pull registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc_personal:1.0
 ```
 
 ## 不使用容器部署
-
-
 
 ```shell
 # maven 构建工具打包命令，执行该命令之后会在当前目录下生成一个叫target的目录，该目录下会生成一个 lx-doc.jar
@@ -38,7 +43,12 @@ mvn -DskipTests -U clean package
 sh run_no_in_docker.sh start 512m
 ```
 
-由于本项目还使用到了redis哨兵模式和数据库
+在启动前，您还需要准备以下环境
+
+- 安装mysql，mysql初始化脚本在本项目的doc.sql里，数据库名默认是lx-doc，如果有需要可以修改成自己的库名
+- 安装redis，个人版本，可以忽略，自己画画图，根本不需要这么麻烦，安装redis主要是为了解决高可用，分布式集群产生的问题（个人压根不需要集群，也没啥瓶颈）
+
+
 
 
 
