@@ -19,7 +19,7 @@ mybatis-plus:
 
 file:
   upload:
-    path: D:\work\attament
+    path: /usr/attament
 
 spring:
   servlet:
