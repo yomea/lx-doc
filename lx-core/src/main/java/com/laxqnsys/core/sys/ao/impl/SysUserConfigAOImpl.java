@@ -48,7 +48,7 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
 
     @Override
     @ConcurrentLock(key = RedissonLockPrefixCons.USER_CONFIG_SAVE_OR_UPDATE
-        + ":${sysUserConfigVO.configType}", expire = 2)
+        + ":${sysUserConfigVO.configType}")
     public void saveOrUpdateUserConfig(SysUserConfigReqVO sysUserConfigVO) {
         String configType = sysUserConfigVO.getConfigType();
         Long userId = LoginContext.getUserId();

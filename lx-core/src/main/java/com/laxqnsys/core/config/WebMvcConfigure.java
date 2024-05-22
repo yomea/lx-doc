@@ -2,8 +2,8 @@ package com.laxqnsys.core.config;
 
 import com.laxqnsys.core.converter.StringToLongConverter;
 import com.laxqnsys.core.interceptor.LoginHandlerInterceptor;
+import com.laxqnsys.core.manager.service.UserLoginManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -17,11 +17,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfigure implements WebMvcConfigurer {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private UserLoginManager userLoginManager;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        LoginHandlerInterceptor loginHandlerInterceptor = new LoginHandlerInterceptor(stringRedisTemplate);
+        LoginHandlerInterceptor loginHandlerInterceptor = new LoginHandlerInterceptor(userLoginManager);
         loginHandlerInterceptor.addWhiteUrl("/api/login");
         loginHandlerInterceptor.addWhiteUrl("/api/register");
         loginHandlerInterceptor.addWhiteUrl("/static/**");

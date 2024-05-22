@@ -6,13 +6,12 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.context.LoginContext;
+import com.laxqnsys.core.manager.service.UserLoginManager;
 import com.laxqnsys.core.sys.model.bo.UserInfoBO;
 import com.laxqnsys.core.util.web.WebUtil;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -25,10 +24,10 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 
     private List<String> whiteUrlList = Lists.newArrayList();
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
-    private StringRedisTemplate stringRedisTemplate;
+    private UserLoginManager userLoginManager;
 
-    public LoginHandlerInterceptor(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
+    public LoginHandlerInterceptor(UserLoginManager userLoginManager) {
+        this.userLoginManager = userLoginManager;
     }
 
     @Override
@@ -44,16 +43,16 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         if (!StringUtils.hasText(token)) {
             throw new BusinessException(ErrorCodeEnum.UN_LOGIN.getCode(), ErrorCodeEnum.UN_LOGIN.getDesc());
         }
-        String userJsonInfo = stringRedisTemplate.opsForValue().get(token);
+        String userJsonInfo = userLoginManager.get(token);
         if (!StringUtils.hasText(userJsonInfo)) {
             throw new BusinessException(ErrorCodeEnum.UN_LOGIN.getCode(), ErrorCodeEnum.UN_LOGIN.getDesc());
         }
         UserInfoBO userInfoBO = JSONUtil.toBean(userJsonInfo, UserInfoBO.class);
         LoginContext.setUserInfo(userInfoBO);
         // 续期
-        stringRedisTemplate.expire(token, CommonCons.LOGIN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        userLoginManager.expire(token, CommonCons.LOGIN_EXPIRE_SECONDS);
         String key = CommonCons.LOGIN_USER_TOKE_KEY + LoginContext.getUserId();
-        stringRedisTemplate.expire(key, CommonCons.LOGIN_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        userLoginManager.expire(key, CommonCons.LOGIN_TOKEN_EXPIRE_SECONDS);
         return true;
     }
 

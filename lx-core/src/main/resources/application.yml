@@ -65,14 +65,3 @@ spring:
       url: jdbc:mysql://127.0.0.1:3306/database_name?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true
       username: xxx
       password: xxx
-  redis:
-    sentinel:
-      master: xxx
-      nodes: redis1.domain:26379,redis2.domain:26379,redis3.domain:26379
-    password: xxx
-    lettuce:
-      pool:
-        max-active: 30
-        min-idle: 8
-        max-idle: 20
-        time-between-eviction-runs: 30000
