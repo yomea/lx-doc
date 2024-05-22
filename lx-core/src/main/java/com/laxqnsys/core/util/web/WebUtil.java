@@ -24,10 +24,10 @@ public class WebUtil {
         return "";
     }
 
-    public static void saveCookie(HttpServletResponse response, String token, Integer loginExpireSeconds) {
+    public static void saveCookie(HttpServletResponse response, String token, long loginExpireSeconds) {
 
         Cookie cookie = new Cookie(CommonCons.TOKEN_KEY, token);
-        cookie.setMaxAge(loginExpireSeconds);
+        cookie.setMaxAge((int)(loginExpireSeconds / 1000));
         cookie.setPath("/");
         response.addCookie(cookie);
     }

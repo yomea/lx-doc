@@ -5,11 +5,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.AESUtil;
-import com.laxqnsys.common.util.RedissonLock;
 import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.constants.RedissonLockPrefixCons;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.enums.UserStatusEnum;
+import com.laxqnsys.core.manager.service.UserLoginManager;
 import com.laxqnsys.core.sys.ao.SysUserInfoAO;
 import com.laxqnsys.core.sys.dao.entity.SysUserInfo;
 import com.laxqnsys.core.sys.model.bo.UserInfoBO;
@@ -21,13 +21,13 @@ import com.laxqnsys.core.sys.model.vo.UserRegisterVO;
 import com.laxqnsys.core.sys.service.ISysUserInfoService;
 import com.laxqnsys.core.util.web.WebUtil;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -38,14 +38,14 @@ import org.springframework.util.StringUtils;
 @Service
 public class SysUserInfoAOImpl implements SysUserInfoAO {
 
+    private static final Object OBJECT = new Object();
+    private static final Map<String, Object> LOCK = new ConcurrentHashMap<>();
+
     @Autowired
     private ISysUserInfoService sysUserInfoService;
 
     @Autowired
-    private RedissonLock redissonLock;
-
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private UserLoginManager userLoginManager;
 
     @Override
     public void register(UserRegisterVO userRegisterVO) {
@@ -57,11 +57,15 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
         }
 
         String lockKey = RedissonLockPrefixCons.USER_REGISTER + "_" + userRegisterVO.getAccount();
-        redissonLock.tryLock(lockKey, 1, TimeUnit.SECONDS, () -> {
+        while (LOCK.putIfAbsent(lockKey, OBJECT) != null) {
+            Thread.yield();
+        }
+        try {
             long c = sysUserInfoService.count(Wrappers.<SysUserInfo>lambdaQuery()
                 .eq(SysUserInfo::getAccount, userRegisterVO.getAccount()));
             if (c > 0L) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "名为%s的账户已存在，请设置其他的账户名！");
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                    "名为%s的账户已存在，请设置其他的账户名！");
             }
             SysUserInfo userInfo = new SysUserInfo();
             userInfo.setAccount(userRegisterVO.getAccount());
@@ -72,7 +76,9 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
             userInfo.setUpdateAt(LocalDateTime.now());
             userInfo.setStatus(UserStatusEnum.NORMAL.getStatus());
             sysUserInfoService.save(userInfo);
-        });
+        } finally {
+            LOCK.remove(lockKey);
+        }
 
     }
 
@@ -97,9 +103,8 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
         UserInfoBO userInfoBO = new UserInfoBO();
         userInfoBO.setAccount(userInfo.getAccount());
         userInfoBO.setId(userInfo.getId());
-        stringRedisTemplate.opsForValue()
-            .set(token, JSONUtil.toJsonStr(userInfoBO), CommonCons.LOGIN_EXPIRE_SECONDS, TimeUnit.SECONDS);
-        stringRedisTemplate.opsForValue().set(key, token, CommonCons.LOGIN_TOKEN_EXPIRE_SECONDS, TimeUnit.SECONDS);
+        userLoginManager.set(token, JSONUtil.toJsonStr(userInfoBO), CommonCons.LOGIN_EXPIRE_SECONDS);
+        userLoginManager.set(key, token, CommonCons.LOGIN_TOKEN_EXPIRE_SECONDS);
         WebUtil.saveCookie(response, token, CommonCons.LOGIN_EXPIRE_SECONDS);
     }
 
@@ -110,9 +115,9 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
             return;
         }
         WebUtil.saveCookie(response, token, 0);
-        stringRedisTemplate.delete(token);
+        userLoginManager.delete(token);
         String key = CommonCons.LOGIN_USER_TOKE_KEY + LoginContext.getUserId();
-        stringRedisTemplate.delete(key);
+        userLoginManager.delete(key);
     }
 
     @Override
@@ -179,10 +184,10 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
     private String downOldLogin(Long userId) {
 
         String key = CommonCons.LOGIN_USER_TOKE_KEY + userId;
-        String oldToken = stringRedisTemplate.opsForValue().get(key);
+        String oldToken = userLoginManager.get(key);
         if (StringUtils.hasText(oldToken)) {
             // 踢掉其他的登录信息
-            stringRedisTemplate.delete(oldToken);
+            userLoginManager.delete(oldToken);
         }
         return key;
     }
