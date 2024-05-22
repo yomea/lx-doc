@@ -1,7 +1,7 @@
 
 ## 理想文档
 
-定位于个人和小团队的云文档。我们倡导私有化部署，数据掌握在自己手里，不用受制于人。
+定位于个人和小团队的云文档（支持流程图，脑图，PDF，Excel，Word，BPMN，markdown文档编辑）。我们倡导私有化部署，数据掌握在自己手里，不用受制于人。
 
 本仓库为后端仓库，前端代码仓库请移步：[wanglin2/lx-doc](https://github.com/wanglin2/lx-doc/tree/main)。
 
