@@ -11,6 +11,7 @@ EXPOSE 9222
 
 RUN mkdir -p /usr/app/${SERVICE}
 RUN mkdir -p /usr/logs/${SERVICE}
+RUN mkdir -p /usr/attament/
 
 ADD run_in_docker.sh /usr/app/${SERVICE}
 COPY target/lx-doc.jar /usr/app/${SERVICE}/
