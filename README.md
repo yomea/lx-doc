@@ -24,14 +24,7 @@
 ### 使用docker部署
 
 如果您想自己使用docker构建镜像，那么可以参照 docker-build.sh 中的命令构建，但是前提您需要下载[maven](https://maven.apache.org/index)构建工具
-和[java](https://www.oracle.com/java/technologies/downloads/#java8-linux)开发环境，如果您嫌麻烦，可以直接拉取本人在镜像仓库构建好的镜像
-
-```shell
-# 集群版本
-docker pull registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc:1.0
-# 个人版本
-docker pull registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc_personal:1.0
-```
+和[java](https://www.oracle.com/java/technologies/downloads/#java8-linux)开发环境。
 
 ## 不使用容器部署
 
