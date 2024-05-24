@@ -3,6 +3,7 @@ package com.laxqnsys.core.sys.ao.impl;
 import cn.hutool.core.io.IoUtil;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.properties.LxDocWebProperties;
 import com.laxqnsys.core.sys.ao.SysAttachmentAO;
 import com.laxqnsys.core.sys.model.vo.SysAttachmentVO;
 import java.io.ByteArrayInputStream;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,14 +29,15 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class SysAttachmentAOImpl implements SysAttachmentAO {
 
-    @Value("${file.upload.path}")
-    private String fileUploadPath;
+    @Autowired
+    private LxDocWebProperties lxDocWebProperties;
 
     private Pattern imgBase64Pattern = Pattern.compile("^data:image/[a-zA-Z]+;base64,.*");
 
     @Override
     public List<String> uploadFiles(MultipartFile[] file) {
         List<String> urlList = Arrays.stream(file).map(f -> {
+            String fileUploadPath = lxDocWebProperties.getFileUploadPath();
             String path = fileUploadPath + File.separator + f.getOriginalFilename();
             try (InputStream inputStream = f.getInputStream();
                 FileOutputStream outputStream = new FileOutputStream(path)) {
@@ -60,6 +63,7 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
         String base64Image = split[1];
         byte[] data = Base64.getDecoder().decode(base64Image);
         String fileName = UUID.randomUUID() + "." + suffix;
+        String fileUploadPath = lxDocWebProperties.getFileUploadPath();
         String path = fileUploadPath + File.separator + fileName;
         try (InputStream inputStream = new ByteArrayInputStream(data);
             FileOutputStream outputStream = new FileOutputStream(path)) {
