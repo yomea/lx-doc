@@ -1,8 +1,10 @@
 package com.laxqnsys.core.sys.controller;
 
 import com.laxqnsys.core.properties.LxDocWebProperties;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -17,6 +19,9 @@ public class IndexController {
 
     @GetMapping(value = "/")
     public String index() {
-        return lxDocWebProperties.getIndexHtmlWebPath();
+        String indexHtmlWebPath = lxDocWebProperties.getIndexHtmlWebPath();
+        return "forward:" + (StringUtils.hasText(indexHtmlWebPath)
+            ? indexHtmlWebPath
+            : "/system/error");
     }
 }
