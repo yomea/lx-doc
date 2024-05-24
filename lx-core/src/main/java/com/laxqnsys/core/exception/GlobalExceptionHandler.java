@@ -37,10 +37,6 @@ public class GlobalExceptionHandler {
             MappingJackson2HttpMessageConverter mjhmc = new MappingJackson2HttpMessageConverter();
             ServletServerHttpResponse sshr = new ServletServerHttpResponse(
                 response);
-            // 由于与前端定义的返回数据格式不一样，未登录的编码换成0
-            if(ErrorCodeEnum.UN_LOGIN.getCode().equals(result.getCode())) {
-                result.setCode(0);
-            }
             mjhmc.write(result, MediaType.APPLICATION_JSON_UTF8, sshr);
         } catch (IOException e) {
             log.error("返回异常", e.getMessage());
