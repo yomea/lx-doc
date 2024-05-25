@@ -83,6 +83,7 @@ spring:
         max-idle: 20
         time-between-eviction-runs: 30000
 ```
+如果您不想修改application.yml配置文件，以上配置都可以通过启动参数指定，docker 启动时，可以通过 -e ARGS='--lx.doc.whiteUrlList=/,/api/login,/api/register,/static/**,/assets/**,/system/error' 指定。
 
 ## 开源协议
 
