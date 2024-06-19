@@ -2,6 +2,7 @@ package com.laxqnsys.core.doc.ao;
 
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
+import com.laxqnsys.core.doc.model.vo.DocSynthFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCopyVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCreateVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderDelVO;
@@ -33,4 +34,6 @@ public interface DocFileFolderAO {
     List<DocFileFolderResVO> getFolderPath(Long folderId);
 
     void copyFolder(FileFolderCopyVO copyVO);
+
+    List<DocSynthFileFolderResVO> getAllFolderTree();
 }

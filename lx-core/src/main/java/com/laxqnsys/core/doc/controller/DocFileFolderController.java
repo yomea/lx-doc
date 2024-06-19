@@ -5,6 +5,7 @@ import com.laxqnsys.common.model.ResponseResult;
 import com.laxqnsys.core.doc.ao.DocFileFolderAO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
+import com.laxqnsys.core.doc.model.vo.DocSynthFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCopyVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCreateVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderDelVO;
@@ -38,6 +39,12 @@ public class DocFileFolderController {
     @GetMapping(value = "/getFolderTree")
     public ResponseResult<List<DocFileFolderResVO>> getFolderTree(@RequestParam Long folderId) {
         List<DocFileFolderResVO> resVOS = docFileFolderAO.getFolderTree(folderId);
+        return ResponseResult.ok(resVOS);
+    }
+
+    @GetMapping(value = "/getAllFolderTree")
+    public ResponseResult<List<DocSynthFileFolderResVO>> getAllFolderTree() {
+        List<DocSynthFileFolderResVO> resVOS = docFileFolderAO.getAllFolderTree();
         return ResponseResult.ok(resVOS);
     }
 
