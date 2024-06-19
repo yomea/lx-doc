@@ -15,6 +15,7 @@ import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
+import com.laxqnsys.core.doc.model.vo.DocSynthFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCopyVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderCreateVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderDelVO;
@@ -333,6 +334,41 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
             return null;
         });
+    }
+
+    @Override
+    public List<DocSynthFileFolderResVO> getAllFolderTree() {
+        // 获取当前登录人的所有文件夹
+        List<DocFileFolder> docFileFolderList = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
+            .in(DocFileFolder::getCreatorId, LoginContext.getUserId())
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+        if(CollectionUtils.isEmpty(docFileFolderList)) {
+            return Collections.emptyList();
+        }
+        Map<Long, List<DocFileFolder>> parentIdMapFolderMap = docFileFolderList.stream().collect(Collectors.groupingBy(DocFileFolder::getParentId));
+        // 获取顶级目录
+        List<DocFileFolder> topFolders = parentIdMapFolderMap.get(0L);
+        if(CollectionUtils.isEmpty(topFolders)) {
+            return Collections.emptyList();
+        }
+        return topFolders.stream().map(folder -> this.buildDocSynthFileFolderResVO(folder, parentIdMapFolderMap))
+            .collect(Collectors.toList());
+    }
+
+    private DocSynthFileFolderResVO buildDocSynthFileFolderResVO(DocFileFolder folder,
+        Map<Long, List<DocFileFolder>> parentIdMapFolderMap) {
+
+        DocSynthFileFolderResVO resVO = new DocSynthFileFolderResVO();
+        resVO.setId(folder.getId());
+        resVO.setName(folder.getName());
+        resVO.setType(folder.getFileType());
+        resVO.setImg(folder.getImg());
+        resVO.setFolder(FileFolderFormatEnum.FOLDER.getFormat().equals(folder.getFormat()));
+
+        List<DocFileFolder> children = parentIdMapFolderMap.getOrDefault(folder.getId(), Collections.emptyList());
+        resVO.setChildren(children.stream().map(e -> this.buildDocSynthFileFolderResVO(e, parentIdMapFolderMap))
+            .collect(Collectors.toList()));
+        return resVO;
     }
 
     private void getParentFolders(Long parentId, List<DocFileFolder> parentFileFolders) {
