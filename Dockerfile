@@ -9,13 +9,13 @@ USER root
 
 EXPOSE 9222
 
-RUN mkdir -p /usr/app/${SERVICE}
-RUN mkdir -p /usr/logs/${SERVICE}
-RUN mkdir -p /usr/attament/
+RUN mkdir -p /usr/app/${SERVICE}/
+RUN mkdir -p /usr/logs/${SERVICE}/
+RUN mkdir -p /usr/attament/${SERVICE}/
 
-ADD run_in_docker.sh /usr/app/${SERVICE}
-COPY target/lx-doc.jar /usr/app/${SERVICE}/
+ADD run_in_docker.sh /usr/app/${SERVICE}/
+COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
-WORKDIR /usr/app/${SERVICE}
+WORKDIR /usr/app/${SERVICE}/
 
 ENTRYPOINT ["sh", "run_in_docker.sh", "start"]

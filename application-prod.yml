@@ -1,0 +1,15 @@
+# 该配置文件请放入启动脚本 --spring.config.location 指定的目录下面
+# 可参考 docker-build.sh 启动容器中的描述
+spring:
+  datasource:
+    druid:
+      url: jdbc:mysql://ip:3306/lx-doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+      username: xxx
+      password: yyy
+
+file:
+  upload:
+    path: /usr/attament/${app.name}
+log:
+  home: /usr/logs/${app.name}
+loglevel: INFO
