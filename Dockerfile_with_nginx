@@ -1,0 +1,27 @@
+# 拉取基础镜像
+FROM openjdk:8-jdk-alpine
+# 维护人
+MAINTAINER 951645267@qq.com
+
+ENV SERVICE lx-doc
+
+USER root
+
+EXPOSE 9222
+EXPOSE 80
+
+# 安装 nginx
+RUN apk add --no-cache nginx
+
+RUN mkdir -p /var/log/nginx
+RUN mkdir -p /usr/nginx/
+RUN mkdir -p /usr/app/${SERVICE}
+RUN mkdir -p /usr/logs/${SERVICE}
+RUN mkdir -p /usr/attament/
+
+ADD run_in_docker.sh /usr/app/${SERVICE}
+COPY target/lx-doc.jar /usr/app/${SERVICE}/
+
+WORKDIR /usr/app/${SERVICE}
+
+ENTRYPOINT ["sh", "run_in_docker_with_nginx.sh", "start"]
