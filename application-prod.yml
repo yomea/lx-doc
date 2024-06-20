@@ -12,9 +12,9 @@ spring:
       nodes: redis1.domain:26379,redis2.domain:26379,redis3.domain:26379
     password: xxx
 
-file:
-  upload:
-    path: /usr/attament/${app.name}
+lx:
+  doc:
+    fileUploadPath: /usr/attament/${app.name}
 log:
   home: /usr/logs/${app.name}
 loglevel: INFO
