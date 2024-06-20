@@ -22,7 +22,7 @@ RUN mkdir -p /usr/app/${SERVICE}/
 RUN mkdir -p /usr/logs/${SERVICE}/
 RUN mkdir -p /usr/attament/${SERVICE}/
 
-ADD run_in_docker.sh /usr/app/${SERVICE}/
+ADD run_in_docker_with_nginx.sh /usr/app/${SERVICE}/
 COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
 WORKDIR /usr/app/${SERVICE}/
