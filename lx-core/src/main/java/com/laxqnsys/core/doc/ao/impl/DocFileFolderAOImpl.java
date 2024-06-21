@@ -1,5 +1,6 @@
 package com.laxqnsys.core.doc.ao.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
@@ -77,7 +78,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         List<DocFileFolder> fileFolders = docFileFolderService.list(Wrappers.
             <DocFileFolder>query().orderBy(
                 StringUtils.hasText(queryVO.getSortField()) && StringUtils.hasText(queryVO.getSortType())
-                , "asc".equalsIgnoreCase(queryVO.getSortType()), queryVO.getSortField())
+                , "asc".equalsIgnoreCase(queryVO.getSortType()), StrUtil.toUnderlineCase(queryVO.getSortField()))
             .lambda()
             .eq(DocFileFolder::getParentId, folderId)
             .eq(DocFileFolder::getCreatorId, userId)
