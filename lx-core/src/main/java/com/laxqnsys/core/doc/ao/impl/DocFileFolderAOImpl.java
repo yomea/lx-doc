@@ -83,7 +83,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             .eq(DocFileFolder::getParentId, folderId)
             .eq(DocFileFolder::getCreatorId, userId)
             .apply(StringUtils.hasText(queryVO.getFileType()),
-                String.format("format = %s or (format = %s and file_type = '%s')",
+                String.format("(format = %s or (format = %s and file_type = '%s'))",
                     FileFolderFormatEnum.FOLDER.getFormat(), FileFolderFormatEnum.FILE.getFormat(),
                     queryVO.getFileType()))
             /*.eq(StringUtils.hasText(queryVO.getFileType()), DocFileFolder::getFileType, queryVO.getFileType()
