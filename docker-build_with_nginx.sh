@@ -25,3 +25,32 @@ docker run -dit --network host -h lx-doc --privileged \
 --name lx-doc lx-doc:1.0
 
 
+# 查看容易打印日志
+docker logs -f [containerId]
+
+# 更新了nginx.conf,需要重启nginx，命令如下：
+docker ps docker ps | grep 'lx-doc'
+docker exec -it [containerId] nginx -s reload -c /usr/nginx/config/nginx.conf
+
+# 修改了 application-prod.yml ，需重启容器
+docker restart [containerId]
+
+# 停止容器
+docker stop [containerId]
+
+# 清除所有停止的容器
+docker container prune
+# 删除指定容器
+docker rm [containerId or name]
+
+# 删除镜像
+docker rmi [imageId or tag]
+
+# 推送镜像到仓库
+docker login --username=用户名 registry.cn-hangzhou.aliyuncs.com
+docker tag [ImageId] registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc:[镜像版本号]
+docker push registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc:[镜像版本号]
+docker logout registry.cn-hangzhou.aliyuncs.com
+
+# 拉取镜像
+docker pull registry.cn-hangzhou.aliyuncs.com/wzh-yun/lx-doc:[镜像版本号]
