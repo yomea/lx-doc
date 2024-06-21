@@ -40,8 +40,7 @@ public class SysUserConfigAOImpl implements SysUserConfigAO {
             .eq(SysUserConfig::getStatus, DelStatusEnum.NORMAL.getStatus())
             .last("limit 1"));
         if (Objects.isNull(sysUserConfig)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                String.format("该用户没有设置名为%s的配置", configType));
+            return null;
         }
         return sysUserConfig.getConfigContent();
     }
