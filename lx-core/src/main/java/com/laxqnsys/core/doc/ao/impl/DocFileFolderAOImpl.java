@@ -86,8 +86,8 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
                 String.format("format = %s or (format = %s and file_type = '%s')",
                     FileFolderFormatEnum.FOLDER.getFormat(), FileFolderFormatEnum.FILE.getFormat(),
                     queryVO.getFileType()))
-            .eq(StringUtils.hasText(queryVO.getFileType()), DocFileFolder::getFileType, queryVO.getFileType()
-            ).eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            /*.eq(StringUtils.hasText(queryVO.getFileType()), DocFileFolder::getFileType, queryVO.getFileType()
+            )*/.eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
 
         List<DocFileFolderResVO> fileFolderBaseResVOList = fileFolders.stream()
             .filter(folder -> FileFolderFormatEnum.FOLDER.getFormat().equals(folder.getFormat()))
