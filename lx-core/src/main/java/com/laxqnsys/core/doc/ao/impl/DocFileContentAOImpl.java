@@ -36,10 +36,12 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public DocFileContentResVO getFileContent(Long id) {
 
+        DocFileFolder docFileFolder = super.getById(id);
         DocFileContent docFileContent = this.getByFileId(id);
 
         DocFileContentResVO resVO = new DocFileContentResVO();
         resVO.setId(id);
+        resVO.setName(docFileFolder.getName());
         resVO.setContent(docFileContent.getContent());
         resVO.setUpdateAt(docFileContent.getUpdateAt());
         resVO.setCreateAt(docFileContent.getCreateAt());
