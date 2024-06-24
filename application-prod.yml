@@ -3,7 +3,7 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://ip:3306/lx-doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+      url: jdbc:mysql://ip:3306/lx_doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
       username: xxx
       password: yyy
   redis:
