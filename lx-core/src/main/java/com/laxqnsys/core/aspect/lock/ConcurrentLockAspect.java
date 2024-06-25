@@ -1,6 +1,5 @@
 package com.laxqnsys.core.aspect.lock;
 
-import cn.hutool.json.JSONUtil;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
@@ -9,11 +8,8 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.ognl.Ognl;
 import org.apache.ibatis.ognl.OgnlException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -37,8 +33,6 @@ public class ConcurrentLockAspect {
 
     private Map<String, Object> LOCK = new ConcurrentHashMap<>();
 
-    // 非贪吃模式匹配
-    private Pattern pattern = Pattern.compile("(\\$\\{)([\\w\\W]+?)(\\})");
     /**
      * {@link ConcurrentLock}
      */
