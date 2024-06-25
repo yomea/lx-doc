@@ -92,6 +92,7 @@ CREATE TABLE lx_doc.`doc_recycle`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
+    `ids` varchar(1020) NOT NULL COMMENT '子文件夹ID，逗号分割',
     `name`      varchar(64) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '回收人ID',
     `create_at` DATETIME    NOT NULL COMMENT '回收时间',
