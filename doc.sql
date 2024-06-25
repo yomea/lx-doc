@@ -72,7 +72,6 @@ CREATE TABLE lx_doc.`doc_file_content`
     `creator_id` bigint(20) NOT NULL COMMENT '创建人ID',
     `create_at`  datetime NOT NULL COMMENT '创建时间',
     `update_at`  datetime NOT NULL COMMENT '更新时间',
-    `status`     int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
     PRIMARY KEY (`id`),
     UNIQUE `uk_file_id`(file_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件内容';

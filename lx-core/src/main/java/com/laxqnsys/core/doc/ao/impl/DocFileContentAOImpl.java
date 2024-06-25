@@ -75,7 +75,6 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         saveFileContent.setCreatorId(fileFolder.getCreatorId());
         saveFileContent.setCreateAt(fileFolder.getCreateAt());
         saveFileContent.setUpdateAt(fileFolder.getUpdateAt());
-        saveFileContent.setStatus(fileFolder.getStatus());
 
         transactionTemplate.execute(status -> {
             docFileFolderService.save(fileFolder);
@@ -213,12 +212,13 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             return docRecycle;
         }).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
-            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
-                .in(DocFileFolder::getId, idList)
-                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
-            docFileContentService.update(Wrappers.<DocFileContent>lambdaUpdate()
-                .in(DocFileContent::getFileId, idList)
-                .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));
+//            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+//                .in(DocFileFolder::getId, idList)
+//                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
+            docFileFolderService.updateDelCount(idList, 1);
+//            docFileContentService.update(Wrappers.<DocFileContent>lambdaUpdate()
+//                .in(DocFileContent::getFileId, idList)
+//                .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));
             // 扔回收站
             docRecycleService.saveBatch(docRecycleList);
             if(!CollectionUtils.isEmpty(updateOldFolderList)) {
@@ -229,8 +229,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     }
 
     private DocFileContent getByFileId(Long fileId) {
+        DocFileFolder docFileFolder = this.getById(fileId);
         DocFileContent docFileContent = docFileContentService.getOne(Wrappers.<DocFileContent>lambdaQuery()
-            .eq(DocFileContent::getFileId, fileId).eq(DocFileContent::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .eq(DocFileContent::getFileId, docFileFolder.getId())
             .last("limit 1"));
         if (Objects.isNull(docFileContent)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));

@@ -10,7 +10,6 @@
     <result column="creator_id" property="creatorId"/>
     <result column="create_at" property="createAt"/>
     <result column="update_at" property="updateAt"/>
-    <result column="status" property="status"/>
   </resultMap>
 
   <insert id="copyByFileIdList" parameterType="list">

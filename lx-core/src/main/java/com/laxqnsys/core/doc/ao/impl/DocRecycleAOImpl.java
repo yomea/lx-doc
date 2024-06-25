@@ -19,6 +19,7 @@ import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,16 +78,28 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
 
         List<DocFileFolder> childs = new ArrayList<>();
         childs.add(docFileFolder);
-        super.getChild(Collections.singletonList(id), childs);
+        super.getChild(Collections.singletonList(id), childs, false);
 
         transactionTemplate.execute(status -> {
-           docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
-               .in(DocFileFolder::getId, childs.stream().map(DocFileFolder::getId)
-                   .distinct().collect(Collectors.toList()))
-               .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+//           docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+//               .in(DocFileFolder::getId, childs.stream().map(DocFileFolder::getId)
+//                   .distinct().collect(Collectors.toList()))
+//               .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            docFileFolderService.updateDelCount(childs.stream().map(DocFileFolder::getId)
+                .distinct().collect(Collectors.toList()), -1);
            docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
                .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
                .eq(DocRecycle::getFolderId, id));
+            Integer format = docFileFolder.getFormat();
+            Long parentId = docFileFolder.getParentId();
+            if(Objects.nonNull(parentId) && parentId > 0L) {
+                if(FileFolderFormatEnum.FOLDER.getFormat().equals(format)) {
+                    docFileFolderService.updateFolderCount(parentId, 1);
+                }
+                if(FileFolderFormatEnum.FILE.getFormat().equals(format)) {
+                    docFileFolderService.updateFileCount(parentId, 1);
+                }
+            }
             return null;
         });
 
