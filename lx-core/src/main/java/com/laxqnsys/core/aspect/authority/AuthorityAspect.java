@@ -1,13 +1,16 @@
 package com.laxqnsys.core.aspect.authority;
 
+import com.laxqnsys.common.enums.ErrorCodeEnum;
+import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.util.spel.SpringElUtil;
+import com.laxqnsys.core.util.ongl.OnglUtils;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.ognl.OgnlException;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -56,7 +59,13 @@ public class AuthorityAspect implements ApplicationContextAware {
                 context.put(parameterNames[i], parameters[i]);
             }
             context.put("userInfoBO", LoginContext.getUserInfo());
-            finalArgs = Arrays.stream(spelArgs).map(args -> SpringElUtil.evaluate(args, context))
+            finalArgs = Arrays.stream(spelArgs).map(args -> {
+                    try {
+                        return OnglUtils.evaluate(args, context);
+                    } catch (OgnlException e) {
+                        throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "ongl表达式解析失败！", e);
+                    }
+                })
                 .toArray();
         }
 

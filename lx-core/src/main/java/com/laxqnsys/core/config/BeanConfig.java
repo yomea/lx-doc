@@ -8,16 +8,10 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.laxqnsys.core.handler.CustomLocalDateTimeTypeHandler;
-import com.laxqnsys.core.util.spel.SpringElUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +21,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2024/5/17 9:19
  */
 @Configuration
-public class BeanConfig implements BeanFactoryAware, InitializingBean {
-
-    private ConfigurableBeanFactory beanFactory;
+public class BeanConfig {
 
     @Bean
     public ConfigurationCustomizer configurationCustomizer() {
@@ -57,15 +49,5 @@ public class BeanConfig implements BeanFactoryAware, InitializingBean {
                 .serializerByType(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .serializerByType(LocalDateTime.class,
                     new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = (ConfigurableBeanFactory) beanFactory;
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        SpringElUtil.setBeanFactory(this.beanFactory);
     }
 }

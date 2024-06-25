@@ -5,6 +5,7 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.RedissonLock;
 import com.laxqnsys.core.context.LoginContext;
+import com.laxqnsys.core.util.ongl.OnglUtils;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,18 +94,6 @@ public class ConcurrentLockAspect {
         }
         context.put("userInfoBO", LoginContext.getUserInfo());
         String key = lock.key();
-        StringBuffer sb = new StringBuffer();
-        Matcher matcher = pattern.matcher(key);
-        while (matcher.find()) {
-            Object value = Ognl.getValue(matcher.group(2), context);
-            if (value == null) {
-                log.error("解析失败: key={}, parameterNames = {}, parameters={}", key,
-                    JSONUtil.toJsonStr(parameterNames), JSONUtil.toJsonStr(parameters));
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "key解析失败");
-            }
-            matcher.appendReplacement(sb, String.valueOf(value));
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
+        return OnglUtils.evaluate(key, context);
     }
 }
