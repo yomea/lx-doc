@@ -13,11 +13,13 @@ docker build -t lx-doc:1.0 .
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 docker run -dit --network host --privileged \
+ -v /etc/localtime:/etc/localtime:ro \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
- -e ARGS='--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc' \
---name lx-doc lx-doc:1.0
+ -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e TZ="Asia/Shanghai" \
+ --name lx-doc lx-doc:1.0
 
 # 注意：如果你的 docker 版本较低，可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
 # 可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -it 容器id ifconfig 得到的ip地址和宿主机
@@ -31,11 +33,13 @@ docker run -dit --network host --privileged \
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 docker run -dit --privileged \
+ -v /etc/localtime:/etc/localtime:ro \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
- -e ARGS='--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc' \
---name lx-doc lx-doc:1.0
+ -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e TZ="Asia/Shanghai" \
+ --name lx-doc lx-doc:1.0
 
 
 # 查看容易打印日志
