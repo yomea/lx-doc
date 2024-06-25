@@ -36,12 +36,12 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     @Override
     public DocFileContentResVO getFileContent(Long id) {
 
-        DocFileFolder docFileFolder = super.getById(id);
         DocFileContent docFileContent = this.getByFileId(id);
+        DocFileFolder docFileFolder = docFileFolderService.getById(id);
 
         DocFileContentResVO resVO = new DocFileContentResVO();
         resVO.setId(id);
-        resVO.setName(docFileFolder.getName());
+        resVO.setName(Objects.nonNull(docFileFolder) ? docFileFolder.getName() : "");
         resVO.setContent(docFileContent.getContent());
         resVO.setUpdateAt(docFileContent.getUpdateAt());
         resVO.setCreateAt(docFileContent.getCreateAt());
@@ -229,9 +229,8 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     }
 
     private DocFileContent getByFileId(Long fileId) {
-        DocFileFolder docFileFolder = this.getById(fileId);
         DocFileContent docFileContent = docFileContentService.getOne(Wrappers.<DocFileContent>lambdaQuery()
-            .eq(DocFileContent::getFileId, docFileFolder.getId())
+            .eq(DocFileContent::getFileId, fileId)
             .last("limit 1"));
         if (Objects.isNull(docFileContent)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));
