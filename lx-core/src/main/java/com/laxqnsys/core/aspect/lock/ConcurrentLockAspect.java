@@ -5,7 +5,6 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.RedissonLock;
 import com.laxqnsys.core.context.LoginContext;
-import com.laxqnsys.core.util.spel.SpringElUtil;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.ognl.Ognl;
+import org.apache.ibatis.ognl.OgnlException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -36,6 +37,9 @@ public class ConcurrentLockAspect {
 
     @Autowired
     private RedissonLock redissonLock;
+
+    // 非贪吃模式匹配
+    private Pattern pattern = Pattern.compile("(\\$\\{)([\\w\\W]+?)(\\})");
     /**
      * {@link ConcurrentLock}
      */
@@ -79,7 +83,7 @@ public class ConcurrentLockAspect {
         }
     }
 
-    private String getKey(ConcurrentLock lock, String[] parameterNames, Object[] parameters) {
+    private String getKey(ConcurrentLock lock, String[] parameterNames, Object[] parameters) throws OgnlException {
         Map<String, Object> context = new HashMap<>();
         for (int i = 0; i < parameters.length; i++) {
             // 以后根据需要加过滤， request和multipartFile类型的数据不可能作为redis key 主键内容
@@ -88,7 +92,19 @@ public class ConcurrentLockAspect {
             }
         }
         context.put("userInfoBO", LoginContext.getUserInfo());
-        Object value = SpringElUtil.evaluate(lock.key(), context);
-        return String.valueOf(value);
+        String key = lock.key();
+        StringBuffer sb = new StringBuffer();
+        Matcher matcher = pattern.matcher(key);
+        while (matcher.find()) {
+            Object value = Ognl.getValue(matcher.group(2), context);
+            if (value == null) {
+                log.error("解析失败: key={}, parameterNames = {}, parameters={}", key,
+                    JSONUtil.toJsonStr(parameterNames), JSONUtil.toJsonStr(parameters));
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "key解析失败");
+            }
+            matcher.appendReplacement(sb, String.valueOf(value));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
 }
