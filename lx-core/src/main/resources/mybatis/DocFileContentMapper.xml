@@ -16,7 +16,7 @@
     insert into doc_file_content(file_id,content,creator_id,create_at,update_at)
     select (
     case
-    <foreach collection="list" separator="," item="item" open="" close="" index="index">
+    <foreach collection="list" separator="" item="item" open="" close="" index="index">
       when file_id = #{item.oldFileId} then #{item.newFileId}
     </foreach>
     else 0
