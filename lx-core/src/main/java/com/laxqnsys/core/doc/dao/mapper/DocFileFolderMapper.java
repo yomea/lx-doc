@@ -20,4 +20,6 @@ public interface DocFileFolderMapper extends BaseMapper<DocFileFolder> {
     int updateFolderCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
 
     int batchDeltaUpdate(List<DocFileFolder> updateList);
+
+    int updateDelCount(@Param("folderIdList") List<Long> folderIdList, @Param("delta") int i);
 }

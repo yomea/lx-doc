@@ -48,8 +48,8 @@ public class DocFileContent implements Serializable {
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateAt;
 
-    @ApiModelProperty(value = "0：正常，-1：删除")
-    private Integer status;
+//    @ApiModelProperty(value = "0：正常，-1：删除")
+//    private Integer status;
 
 
 }

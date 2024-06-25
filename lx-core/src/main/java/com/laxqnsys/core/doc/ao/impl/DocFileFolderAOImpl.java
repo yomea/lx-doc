@@ -216,9 +216,10 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         docRecycle.setUserId(LoginContext.getUserId());
         docRecycle.setCreateAt(LocalDateTime.now());
         transactionTemplate.execute(status -> {
-            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
-                .in(DocFileFolder::getId, idList)
-                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
+            docFileFolderService.updateDelCount(idList, 1);
+//            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+//                .in(DocFileFolder::getId, idList)
+//                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
             // 扔回收站
             docRecycleService.save(docRecycle);
             Long parentId = docFileFolder.getParentId();
