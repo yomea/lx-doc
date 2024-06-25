@@ -37,15 +37,6 @@
     </foreach>
   </update>
 
-  <update id="updateDelCount">
-    update doc_file_folder
-    set status = status + #{delta}
-    where id in
-    <foreach collection="folderIdList" index="index" close=")" open="(" item="item" separator=",">
-      #{item}
-    </foreach>
-  </update>
-
   <update id="batchDeltaUpdate" parameterType="list">
     update doc_file_folder
     <set>

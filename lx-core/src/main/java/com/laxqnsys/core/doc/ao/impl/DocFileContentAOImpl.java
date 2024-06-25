@@ -206,16 +206,16 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         List<DocRecycle> docRecycleList = fileFolders.stream().map(e -> {
             DocRecycle docRecycle = new DocRecycle();
             docRecycle.setFolderId(e.getId());
+            docRecycle.setIds(String.valueOf(e.getId()));
             docRecycle.setName(e.getName());
             docRecycle.setUserId(userId);
             docRecycle.setCreateAt(recycleTime);
             return docRecycle;
         }).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
-//            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
-//                .in(DocFileFolder::getId, idList)
-//                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
-            docFileFolderService.updateDelCount(idList, 1);
+            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+                .in(DocFileFolder::getId, idList)
+                .set(DocFileFolder::getStatus, DelStatusEnum.DEL.getStatus()));
 //            docFileContentService.update(Wrappers.<DocFileContent>lambdaUpdate()
 //                .in(DocFileContent::getFileId, idList)
 //                .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));

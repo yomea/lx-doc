@@ -3,6 +3,8 @@ package com.laxqnsys.core.doc.ao.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.aspect.lock.ConcurrentLock;
+import com.laxqnsys.core.constants.RedissonLockPrefixCons;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocRecycleAO;
@@ -17,10 +19,12 @@ import com.laxqnsys.core.doc.service.IDocRecycleService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -31,6 +35,7 @@ import org.springframework.util.StringUtils;
  * @date 2024/5/17 16:37
  */
 @Service
+@Slf4j
 public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecycleAO {
 
     @Autowired
@@ -72,32 +77,55 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     }
 
     @Override
+    @ConcurrentLock(key = RedissonLockPrefixCons.RESTORE_FOLDER + "${reqVO.id}")
     public void restore(DocRecycleReqVO reqVO) {
         Long id = reqVO.getId();
+        DocRecycle docRecycle = docRecycleService.getOne(Wrappers.<DocRecycle>lambdaQuery()
+            .eq(DocRecycle::getFolderId, id).last("limit 1"));
+        if(Objects.isNull(docRecycle)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "该文件夹已被恢复请刷新列表！");
+        }
+        String ids = docRecycle.getIds();
+        if(!StringUtils.hasText(ids)) {
+            log.error("id为{}的文件数据恢复异常", id);
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "数据恢复异常，请联系管理员！");
+        }
+        List<Long> childIds = Arrays.stream(ids.split(",")).map(Long::parseLong)
+            .distinct().collect(Collectors.toList());
         DocFileFolder docFileFolder = this.getRecycleById(id);
-
-        List<DocFileFolder> childs = new ArrayList<>();
-        childs.add(docFileFolder);
-        super.getChild(Collections.singletonList(id), childs, false);
-
+        // 检查父级是否被删除，如果被删除，找到其上未被删除的父级，挂在下面
+        Long parentId = docFileFolder.getParentId();
+        while(Objects.nonNull(parentId) && parentId != 0L) {
+            DocFileFolder parent = docFileFolderService.getById(parentId);
+            if (Objects.isNull(parent)) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                    String.format("id为%s的父文件夹不存在", parentId));
+            }
+            if(DelStatusEnum.NORMAL.getStatus().equals(parent.getStatus())) {
+                break;
+            }
+            parentId = parent.getParentId();
+        }
+        Long finalParentId = parentId;
         transactionTemplate.execute(status -> {
-//           docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
-//               .in(DocFileFolder::getId, childs.stream().map(DocFileFolder::getId)
-//                   .distinct().collect(Collectors.toList()))
-//               .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
-            docFileFolderService.updateDelCount(childs.stream().map(DocFileFolder::getId)
-                .distinct().collect(Collectors.toList()), -1);
+           docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+               .in(DocFileFolder::getId, childIds)
+               .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
            docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
                .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
                .eq(DocRecycle::getFolderId, id));
             Integer format = docFileFolder.getFormat();
-            Long parentId = docFileFolder.getParentId();
-            if(Objects.nonNull(parentId) && parentId > 0L) {
+            if(finalParentId != docFileFolder.getParentId()) {
+                docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
+                    .set(DocFileFolder::getParentId, finalParentId)
+                    .eq(DocFileFolder::getId, id));
+            }
+            if(Objects.nonNull(finalParentId) && finalParentId > 0L) {
                 if(FileFolderFormatEnum.FOLDER.getFormat().equals(format)) {
-                    docFileFolderService.updateFolderCount(parentId, 1);
+                    docFileFolderService.updateFolderCount(finalParentId, 1);
                 }
                 if(FileFolderFormatEnum.FILE.getFormat().equals(format)) {
-                    docFileFolderService.updateFileCount(parentId, 1);
+                    docFileFolderService.updateFileCount(finalParentId, 1);
                 }
             }
             return null;

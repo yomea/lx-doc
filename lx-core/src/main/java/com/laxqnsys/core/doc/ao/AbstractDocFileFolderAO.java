@@ -83,18 +83,14 @@ public abstract class AbstractDocFileFolderAO {
     }
 
     protected void getChild(List<Long> parentIdList, List<DocFileFolder> child) {
-        this.getChild(parentIdList, child, true);
-    }
-
-    protected void getChild(List<Long> parentIdList, List<DocFileFolder> child, boolean normal) {
         if (CollectionUtils.isEmpty(parentIdList)) {
             return;
         }
         List<DocFileFolder> fileFolders = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
             .in(DocFileFolder::getParentId, parentIdList)
-            .eq(normal, DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
         child.addAll(fileFolders);
         List<Long> idList = fileFolders.stream().map(DocFileFolder::getId).distinct().collect(Collectors.toList());
-        this.getChild(idList, child, normal);
+        this.getChild(idList, child);
     }
 }

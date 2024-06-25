@@ -48,17 +48,4 @@ public class DocFileFolderServiceImpl extends ServiceImpl<DocFileFolderMapper, D
         }
         return super.baseMapper.batchDeltaUpdate(updateList);
     }
-
-    @Override
-    public int updateDelCount(Long folderId, int i) {
-        return this.updateDelCount(Collections.singletonList(folderId), i);
-    }
-
-    @Override
-    public int updateDelCount(List<Long> folderIdList, int i) {
-        if (CollectionUtils.isEmpty(folderIdList)) {
-            return 0;
-        }
-        return super.baseMapper.updateDelCount(folderIdList, i);
-    }
 }
