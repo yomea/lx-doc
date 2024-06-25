@@ -285,9 +285,9 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         Map<Long, DocFileFolder> map = super.getByIdList(Arrays.asList(copyVO.getId(), copyVO.getFolderId()));
         DocFileFolder docFileFolder = map.get(copyVO.getId());
         // 如果是复制到同一个目录，不做任何操作
-        if (docFileFolder.getParentId().equals(copyVO.getFolderId())) {
+        /*if (docFileFolder.getParentId().equals(copyVO.getFolderId())) {
             return;
-        }
+        }*/
         // 目标目录
         DocFileFolder targetFolder = map.get(copyVO.getFolderId());
         if (FileFolderFormatEnum.FILE.getFormat().equals(targetFolder.getFormat())) {
