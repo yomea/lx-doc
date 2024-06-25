@@ -1,6 +1,5 @@
 package com.laxqnsys.core.aspect.lock;
 
-import cn.hutool.json.JSONUtil;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.util.RedissonLock;
@@ -11,11 +10,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.ognl.Ognl;
 import org.apache.ibatis.ognl.OgnlException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -39,8 +35,6 @@ public class ConcurrentLockAspect {
     @Autowired
     private RedissonLock redissonLock;
 
-    // 非贪吃模式匹配
-    private Pattern pattern = Pattern.compile("(\\$\\{)([\\w\\W]+?)(\\})");
     /**
      * {@link ConcurrentLock}
      */
