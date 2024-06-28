@@ -161,7 +161,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
           throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能复制到文件夹下！");
         }
         List<Long> originIdList = reqVO.getIds();
-        List<DocFileFolder> fileFolders = docFileFolderService.listByIds(originIdList).stream()
+        List<DocFileFolder> fileFolders = super.selectByIdList(originIdList).stream()
             .filter(e -> !e.getParentId().equals(reqVO.getNewFolderId())).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(fileFolders)) {
             return;
