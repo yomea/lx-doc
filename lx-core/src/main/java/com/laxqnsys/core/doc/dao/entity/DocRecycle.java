@@ -2,10 +2,10 @@ package com.laxqnsys.core.doc.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -29,9 +29,6 @@ public class DocRecycle implements Serializable {
     @ApiModelProperty(value = "id")
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
-
-    @ApiModelProperty(value = "文件夹ID")
-    private Long folderId;
 
     @ApiModelProperty(value = "子文件夹ID，逗号分割")
     private String ids;

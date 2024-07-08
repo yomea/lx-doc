@@ -79,7 +79,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         transactionTemplate.execute(status -> {
             docFileFolderService.save(fileFolder);
             docFileFolderService.updateFileCount(createReqVO.getFolderId(), 1);
-            saveFileContent.setFileId(fileFolder.getId());
+            saveFileContent.setId(fileFolder.getId());
             docFileContentService.save(saveFileContent);
             return null;
         });
@@ -205,7 +205,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         Long userId = LoginContext.getUserId();
         List<DocRecycle> docRecycleList = fileFolders.stream().map(e -> {
             DocRecycle docRecycle = new DocRecycle();
-            docRecycle.setFolderId(e.getId());
+            docRecycle.setId(e.getId());
             docRecycle.setIds(String.valueOf(e.getId()));
             docRecycle.setName(e.getName());
             docRecycle.setUserId(userId);
@@ -230,7 +230,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 
     private DocFileContent getByFileId(Long fileId) {
         DocFileContent docFileContent = docFileContentService.getOne(Wrappers.<DocFileContent>lambdaQuery()
-            .eq(DocFileContent::getFileId, fileId)
+            .eq(DocFileContent::getId, fileId)
             .last("limit 1"));
         if (Objects.isNull(docFileContent)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));

@@ -212,7 +212,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         List<Long> idList = childList.stream().map(DocFileFolder::getId).distinct().collect(Collectors.toList());
         DocRecycle docRecycle = new DocRecycle();
         docRecycle.setIds(idList.stream().map(String::valueOf).collect(Collectors.joining(",")));
-        docRecycle.setFolderId(docFileFolder.getId());
+        docRecycle.setId(docFileFolder.getId());
         docRecycle.setName(docFileFolder.getName());
         docRecycle.setUserId(LoginContext.getUserId());
         docRecycle.setCreateAt(LocalDateTime.now());
