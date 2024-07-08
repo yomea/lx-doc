@@ -30,9 +30,6 @@ public class DocCollectFolder implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "文件夹ID")
-    private Long folderId;
-
     @ApiModelProperty(value = "文件名")
     private String name;
 

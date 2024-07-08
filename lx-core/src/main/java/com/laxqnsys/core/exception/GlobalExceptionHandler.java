@@ -1,6 +1,5 @@
 package com.laxqnsys.core.exception;
 
-import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.common.model.ResponseResult;
 import java.io.IOException;

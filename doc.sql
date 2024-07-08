@@ -66,36 +66,30 @@ CREATE TABLE lx_doc.`doc_file_folder`
 CREATE TABLE lx_doc.`doc_file_content`
 (
     `id`         bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `file_id`    bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
     `content`    longtext COMMENT '文件数据，excel，思维导图等文件内容',
     `version`    int(11) NOT NULL DEFAULT '0' COMMENT '版本号',
     `creator_id` bigint(20) NOT NULL COMMENT '创建人ID',
     `create_at`  datetime NOT NULL COMMENT '创建时间',
     `update_at`  datetime NOT NULL COMMENT '更新时间',
-    PRIMARY KEY (`id`),
-    UNIQUE `uk_file_id`(file_id)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件内容';
 
 CREATE TABLE lx_doc.`doc_collect_folder`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
     `name`      varchar(64) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '收藏人ID',
     `create_at` DATETIME    NOT NULL COMMENT '收藏时间',
     `status`    int         NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
-    PRIMARY KEY (`id`),
-    UNIQUE `uk_uf_id`(user_id, folder_id)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件收藏夹（暂时定位个人云文档，未使用，后续协作，分享之后再启用）';
 
 CREATE TABLE lx_doc.`doc_recycle`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `folder_id` bigint(20) unsigned NOT NULL COMMENT '文件夹ID',
     `ids` varchar(1020) NOT NULL COMMENT '子文件夹ID，逗号分割',
     `name`      varchar(64) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '回收人ID',
     `create_at` DATETIME    NOT NULL COMMENT '回收时间',
-    PRIMARY KEY (`id`),
-    UNIQUE `uk_uf_id`(user_id, folder_id)
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-回收站';

@@ -5,7 +5,6 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
-import com.laxqnsys.core.doc.service.IDocCollectFolderService;
 import com.laxqnsys.core.doc.service.IDocFileContentService;
 import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.doc.service.IDocRecycleService;

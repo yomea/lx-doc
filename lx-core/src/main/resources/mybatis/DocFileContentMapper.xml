@@ -4,7 +4,6 @@
   <!-- 通用查询映射结果 -->
   <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocFileContent">
     <id column="id" property="id"/>
-    <result column="file_id" property="fileId"/>
     <result column="content" property="content"/>
     <result column="version" property="version"/>
     <result column="creator_id" property="creatorId"/>
@@ -13,17 +12,17 @@
   </resultMap>
 
   <insert id="copyByFileIdList" parameterType="list">
-    insert into doc_file_content(file_id,content,creator_id,create_at,update_at)
+    insert into doc_file_content(id,content,creator_id,create_at,update_at)
     select (
     case
     <foreach collection="list" separator="" item="item" open="" close="" index="index">
-      when file_id = #{item.oldFileId} then #{item.newFileId}
+      when id = #{item.oldFileId} then #{item.newFileId}
     </foreach>
     else 0
     end
-    ) as file_id
+    ) as id
     ,content,#{userId} as creator_id,NOW(),NOW() from doc_file_content
-    where file_id in
+    where id in
     <foreach collection="list" separator="," item="item" open="(" close=")" index="index">
       #{item.oldFileId}
     </foreach>

@@ -18,7 +18,6 @@ import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.doc.service.IDocRecycleService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -57,7 +56,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
         if (CollectionUtils.isEmpty(docRecycleList)) {
             return docFileAndFolderResVO;
         }
-        List<Long> folderIdList = docRecycleList.stream().map(DocRecycle::getFolderId).distinct()
+        List<Long> folderIdList = docRecycleList.stream().map(DocRecycle::getId).distinct()
             .collect(Collectors.toList());
         List<DocFileFolder> folderList = docFileFolderService.listByIds(folderIdList);
 
@@ -81,7 +80,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     public void restore(DocRecycleReqVO reqVO) {
         Long id = reqVO.getId();
         DocRecycle docRecycle = docRecycleService.getOne(Wrappers.<DocRecycle>lambdaQuery()
-            .eq(DocRecycle::getFolderId, id).last("limit 1"));
+            .eq(DocRecycle::getId, id).last("limit 1"));
         if(Objects.isNull(docRecycle)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "该文件夹已被恢复请刷新列表！");
         }
@@ -113,7 +112,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
                .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
            docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
                .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
-               .eq(DocRecycle::getFolderId, id));
+               .eq(DocRecycle::getId, id));
             Integer format = docFileFolder.getFormat();
             if(finalParentId != docFileFolder.getParentId()) {
                 docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
@@ -139,7 +138,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
         DocFileFolder docFileFolder = this.getRecycleById(id);
         docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
             .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
-            .eq(DocRecycle::getFolderId, id));
+            .eq(DocRecycle::getId, id));
     }
 
     @Override

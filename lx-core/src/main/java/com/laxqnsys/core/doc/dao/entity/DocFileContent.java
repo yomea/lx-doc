@@ -30,9 +30,6 @@ public class DocFileContent implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "文件ID")
-    private Long fileId;
-
     @ApiModelProperty(value = "文件数据，excel，思维导图等文件内容")
     private String content;
 

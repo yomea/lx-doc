@@ -5,7 +5,6 @@
     <!-- 通用查询映射结果 -->
     <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocRecycle">
         <id column="id" property="id" />
-        <result column="folder_id" property="folderId" />
         <result column="ids" property="ids" />
         <result column="name" property="name" />
         <result column="user_id" property="userId" />
