@@ -19,7 +19,7 @@ public class FileFolderCreateVO {
 
     @ApiModelProperty(value = "文件名")
     @NotBlank(message = "文件夹名称不能为空！")
-    @Length(max = 64, message = "文件夹名称不能超过64个字符")
+    @Length(min = 1, max = 100, message = "文件夹名的字符长度请控制在1-100之间")
     private String name;
 
 }

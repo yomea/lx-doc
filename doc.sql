@@ -46,7 +46,7 @@ CREATE TABLE lx_doc.`doc_file_folder`
 (
     `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `parent_id`    bigint(20) unsigned NOT NULL COMMENT '父文件夹ID，顶级节点为0',
-    `name`         varchar(64) NOT NULL COMMENT '文件名',
+    `name`         varchar(128) NOT NULL COMMENT '文件名',
     `file_count`   int(11) NOT NULL DEFAULT '0' COMMENT '文件计数，本菜单下的直接文件数量',
     `folder_count` int(11) NOT NULL DEFAULT '0' COMMENT '菜单计数，本菜单下的直接菜单数量',
     `format`       int(11) NOT NULL COMMENT '文件格式，1：文件夹，2：文件',
@@ -77,7 +77,7 @@ CREATE TABLE lx_doc.`doc_file_content`
 CREATE TABLE lx_doc.`doc_collect_folder`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `name`      varchar(64) NOT NULL COMMENT '文件名',
+    `name`      varchar(128) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '收藏人ID',
     `create_at` DATETIME    NOT NULL COMMENT '收藏时间',
     `status`    int         NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
@@ -88,7 +88,7 @@ CREATE TABLE lx_doc.`doc_recycle`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `ids` varchar(1020) NOT NULL COMMENT '子文件夹ID，逗号分割',
-    `name`      varchar(64) NOT NULL COMMENT '文件名',
+    `name`      varchar(128) NOT NULL COMMENT '文件名',
     `user_id`   bigint(20) NOT NULL COMMENT '回收人ID',
     `create_at` DATETIME    NOT NULL COMMENT '回收时间',
     PRIMARY KEY (`id`)

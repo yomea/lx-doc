@@ -15,7 +15,7 @@ public class DocFileCreateReqVO {
 
     @ApiModelProperty(value = "文件名")
     @NotBlank(message = "文件名必填！")
-    @Length(max = 64, message = "文件名最大64个字符")
+    @Length(min = 1, max = 100, message = "文件名的字符长度请控制在1-100之间")
     private String name;
 
     @ApiModelProperty(value = "文件夹id")
