@@ -7,6 +7,7 @@ import com.laxqnsys.core.doc.model.vo.DocCollectReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,13 +37,13 @@ public class DocCollectFolderController {
     }
 
     @PostMapping(value = "/cancelCollect")
-    public ResponseResult<Void> cancelCollect(@RequestBody DocCollectReqVO reqVO) {
+    public ResponseResult<Void> cancelCollect(@RequestBody @Validated DocCollectReqVO reqVO) {
         docCollectFolderAO.cancelCollect(reqVO);
         return ResponseResult.ok();
     }
 
     @PostMapping(value = "/collect")
-    public ResponseResult<Void> collect(@RequestBody DocCollectReqVO reqVO) {
+    public ResponseResult<Void> collect(@RequestBody @Validated DocCollectReqVO reqVO) {
         docCollectFolderAO.collect(reqVO);
         return ResponseResult.ok();
     }

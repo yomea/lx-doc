@@ -6,6 +6,7 @@ import com.laxqnsys.core.doc.ao.DocRecycleAO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocRecycleReqVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,13 +36,13 @@ public class DocRecycleController {
     }
 
     @PostMapping(value = "/restore")
-    public ResponseResult<Void> restore(@RequestBody DocRecycleReqVO reqVO) {
+    public ResponseResult<Void> restore(@RequestBody @Validated DocRecycleReqVO reqVO) {
         docRecycleAO.restore(reqVO);
         return ResponseResult.ok();
     }
 
     @PostMapping(value = "/completelyDelete")
-    public ResponseResult<Void> completelyDelete(@RequestBody DocRecycleReqVO reqVO) {
+    public ResponseResult<Void> completelyDelete(@RequestBody @Validated DocRecycleReqVO reqVO) {
         docRecycleAO.completelyDelete(reqVO);
         return ResponseResult.ok();
     }

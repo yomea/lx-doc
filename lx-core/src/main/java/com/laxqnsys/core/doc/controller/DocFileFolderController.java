@@ -14,6 +14,7 @@ import com.laxqnsys.core.doc.model.vo.FileFolderQueryVO;
 import com.laxqnsys.core.doc.model.vo.FileFolderUpdateVO;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,31 +68,31 @@ public class DocFileFolderController {
     }
 
     @PostMapping(value = "/crateFolder")
-    public ResponseResult<DocFileFolderResVO> crateFolder(@RequestBody FileFolderCreateVO createVO) {
+    public ResponseResult<DocFileFolderResVO> crateFolder(@RequestBody @Validated FileFolderCreateVO createVO) {
         DocFileFolderResVO resVO = docFileFolderAO.crateFolder(createVO);
         return ResponseResult.ok(resVO);
     }
 
     @PostMapping(value = "/updateFolder")
-    public ResponseResult<Void> updateFolder(@RequestBody FileFolderUpdateVO updateVO) {
+    public ResponseResult<Void> updateFolder(@RequestBody @Validated FileFolderUpdateVO updateVO) {
         docFileFolderAO.updateFolder(updateVO);
         return ResponseResult.ok();
     }
 
     @PostMapping(value = "/deleteFolder")
-    public ResponseResult<Void> deleteFolder(@RequestBody FileFolderDelVO delVO) {
+    public ResponseResult<Void> deleteFolder(@RequestBody @Validated FileFolderDelVO delVO) {
         docFileFolderAO.deleteFolder(delVO);
         return ResponseResult.ok();
     }
 
     @PostMapping(value = "/moveFolder")
-    public ResponseResult<Void> moveFolder(@RequestBody FileFolderMoveVO moveVO) {
+    public ResponseResult<Void> moveFolder(@RequestBody @Validated FileFolderMoveVO moveVO) {
         docFileFolderAO.moveFolder(moveVO);
         return ResponseResult.ok();
     }
 
     @PostMapping(value = "/copyFolder")
-    public ResponseResult<Void> copyFolder(@RequestBody FileFolderCopyVO copyVO) {
+    public ResponseResult<Void> copyFolder(@RequestBody @Validated FileFolderCopyVO copyVO) {
         docFileFolderAO.copyFolder(copyVO);
         return ResponseResult.ok();
     }

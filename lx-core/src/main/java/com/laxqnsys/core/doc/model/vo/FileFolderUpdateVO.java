@@ -3,6 +3,7 @@ package com.laxqnsys.core.doc.model.vo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -15,6 +16,7 @@ import org.hibernate.validator.constraints.Length;
 public class FileFolderUpdateVO {
 
     @ApiModelProperty(value = "文件夹id")
+    @NotNull(message = "文件夹id不能为空！")
     private Long id;
 
     @ApiModelProperty(value = "文件名")
