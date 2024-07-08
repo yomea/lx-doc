@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * @author wuzhenhong
@@ -14,6 +15,7 @@ public class DocFileCreateReqVO {
 
     @ApiModelProperty(value = "文件名")
     @NotBlank(message = "文件名必填！")
+    @Length(max = 64, message = "文件名最大64个字符")
     private String name;
 
     @ApiModelProperty(value = "文件夹id")
