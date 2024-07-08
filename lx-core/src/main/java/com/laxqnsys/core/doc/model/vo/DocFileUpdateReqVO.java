@@ -3,6 +3,7 @@ package com.laxqnsys.core.doc.model.vo;
 import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 /**
  * @author wuzhenhong
@@ -16,6 +17,7 @@ public class DocFileUpdateReqVO {
     private Long id;
 
     @ApiModelProperty(value = "文件名")
+    @Length(max = 64, message = "文件名最大64个字符")
     private String name;
 
     @ApiModelProperty(value = "文件内容")
