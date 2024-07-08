@@ -166,9 +166,13 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         if (CollectionUtils.isEmpty(fileFolders)) {
             return;
         }
+        LocalDateTime currentLdt = LocalDateTime.now();
         fileFolders.stream().forEach(e -> {
             e.setOldId(e.getId());
             e.setId(null);
+            e.setCollected(false);
+            e.setCreateAt(currentLdt);
+            e.setUpdateAt(currentLdt);
             e.setParentId(reqVO.getNewFolderId());
         });
         Long userId = LoginContext.getUserId();

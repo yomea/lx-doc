@@ -26,6 +26,7 @@ import com.laxqnsys.core.doc.model.vo.FileFolderUpdateVO;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -298,9 +299,13 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         childs.add(docFileFolder);
         super.getChild(Collections.singletonList(copyVO.getId()), childs);
         Long userId = LoginContext.getUserId();
+        LocalDateTime currentLdt = LocalDateTime.now();
         childs.stream().forEach(child -> {
             child.setOldId(child.getId());
             child.setId(null);
+            child.setCollected(false);
+            child.setCreateAt(currentLdt);
+            child.setUpdateAt(currentLdt);
             child.setCreatorId(userId);
             // 暂时先不显示
             child.setStatus(DelStatusEnum.DISPLAY.getStatus());
