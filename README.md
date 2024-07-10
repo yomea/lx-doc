@@ -55,7 +55,7 @@
 如果您想自己使用docker构建镜像，那么可以参照 docker-build.sh 中的命令构建，但是前提您需要下载[maven](https://maven.apache.org/index)构建工具
 和[java](https://www.oracle.com/java/technologies/downloads/#java8-linux)开发环境。
 
-## 不使用容器部署
+### 不使用容器部署
 
 ```shell
 # maven 构建工具打包命令，执行该命令之后会在当前目录下生成一个叫target的目录，该目录下会生成一个 lx-doc.jar
@@ -70,7 +70,7 @@ sh run_no_in_docker.sh start 512m
 - 安装mysql，mysql初始化脚本在本项目的doc.sql里，数据库名默认是lx-doc，如果有需要可以修改成自己的库名
 - 安装redis，个人版本，可以忽略(请切换personal分支构建)，自己画画图，根本不需要这么麻烦，安装redis主要是为了解决高可用，分布式集群产生的问题（个人压根不需要集群，也没啥瓶颈）
 
-## 配置说明
+### 配置说明
 在启动应用之前，您还需要配置好参数才能启动应用，在项目里有一个叫做 application.yml 的配置文件，该配置预设了一些默认的参数，您只
 需要关注以下参数（请仔细阅读注释）：
 ```yaml
