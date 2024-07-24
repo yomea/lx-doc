@@ -26,7 +26,6 @@ docker run -dit --network host --privileged \
 
 # 你可以拉取github上的代码进行构建
 # 挂在的宿主目录请先创建
-# /usr/web/html/ 挂在的是前端资源目录
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 # /usr/app/mysql mysq存放数据路径
