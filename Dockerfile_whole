@@ -34,6 +34,10 @@ RUN mkdir -p /usr/attament/${SERVICE}/
 RUN apk add --update mysql mysql-client \
     && rm -f /var/cache/apk/*
 
+COPY lx-doc.zip /usr/web/html/
+RUN unzip -q -d /usr/web/html/ /usr/web/html/lx-doc.zip
+RUN rm -rf /usr/web/html/lx-doc.zip
+COPY nginx.conf /usr/nginx/config/
 COPY my.cnf /etc/mysql/my.cnf
 COPY mysql_init_start.sh /usr/app/${SERVICE}/
 COPY run_in_docker_whole.sh /usr/app/${SERVICE}/
