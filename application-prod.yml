@@ -3,9 +3,9 @@
 spring:
   datasource:
     druid:
-      url: jdbc:mysql://ip:3306/lx_doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
-      username: xxx
-      password: yyy
+      url: jdbc:mysql://127.0.0.1:3306/lx_doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
+      username: root
+      password: lx_doc_test
   redis:
     sentinel:
       master: xxx

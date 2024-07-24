@@ -126,7 +126,6 @@ spring:
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 docker run -dit --network host --privileged \
- -v /etc/localtime:/etc/localtime:ro \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
@@ -134,7 +133,6 @@ docker run -dit --network host --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
- -e TZ="Asia/Shanghai" \
 --name lx-doc lx-doc:1.0
 
 ```
@@ -154,7 +152,6 @@ ip地址或者修改容器的hosts，修改hosts可以在Dockerfile操作：
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 docker run -dit -p 9222:9222 -p 8090:8090 --privileged \
- -v /etc/localtime:/etc/localtime:ro \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
@@ -162,7 +159,6 @@ docker run -dit -p 9222:9222 -p 8090:8090 --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
- -e TZ="Asia/Shanghai" \
 --name lx-doc lx-doc:1.0
 
 ```

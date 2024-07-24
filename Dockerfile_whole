@@ -26,6 +26,7 @@ RUN mkdir -p /var/log/nginx/
 # web 静态资源存放目录，这个目录最好映射到宿主机
 RUN mkdir -p /usr/web/html/
 RUN mkdir -p /usr/nginx/config/
+RUN mkdir -p /usr/config/lx-doc/
 RUN mkdir -p /usr/app/${SERVICE}/
 RUN mkdir -p /usr/logs/${SERVICE}/
 RUN mkdir -p /usr/attament/${SERVICE}/
@@ -36,6 +37,7 @@ RUN apk add --update mysql mysql-client \
 COPY my.cnf /etc/mysql/my.cnf
 COPY mysql_init_start.sh /usr/app/${SERVICE}/
 COPY run_in_docker_whole.sh /usr/app/${SERVICE}/
+COPY application-prod.yml /usr/config/lx-doc/
 COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
 WORKDIR /usr/app/${SERVICE}/

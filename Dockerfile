@@ -9,6 +9,11 @@ USER root
 
 EXPOSE 9222
 
+# 处理时区
+RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+&& echo "Asia/Shanghai" > /etc/timezone \
+&& apk del tzdata
+
 RUN mkdir -p /usr/app/${SERVICE}/
 RUN mkdir -p /usr/logs/${SERVICE}/
 RUN mkdir -p /usr/attament/${SERVICE}/

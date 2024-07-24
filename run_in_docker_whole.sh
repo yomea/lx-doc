@@ -9,7 +9,7 @@ SERVICE=$(cd $(dirname $0); pwd | awk -F '/' '{print $(NF)}')
 MEMORY=512m
 
 # 启动mysql
-/bin/sh /usr/app/${SERVICE}/mysql_init_start.sh
+nohup /bin/sh /usr/app/${SERVICE}/mysql_init_start.sh &
 
 Start() {
     mem=$1
