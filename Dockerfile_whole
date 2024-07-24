@@ -35,7 +35,7 @@ RUN apk add --update mysql mysql-client \
 
 COPY my.cnf /etc/mysql/my.cnf
 COPY startup.sh /usr/app/${SERVICE}/
-COPY run_in_docker_with_nginx.sh /usr/app/${SERVICE}/
+COPY run_in_docker_whole.sh /usr/app/${SERVICE}/
 COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
 WORKDIR /usr/app/${SERVICE}/
