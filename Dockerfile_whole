@@ -1,0 +1,43 @@
+# 拉取基础镜像
+FROM openjdk:8-jdk-alpine
+# 维护人
+MAINTAINER 951645267@qq.com
+
+ENV SERVICE lx-doc
+ENV MYSQL_DATABASE=lx_doc
+ENV MYSQL_ROOT_PASSWORD=lx_doc_test
+
+USER root
+
+EXPOSE 9222
+EXPOSE 80
+EXPOSE 3306
+
+# 处理时区
+RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+&& echo "Asia/Shanghai" > /etc/timezone \
+&& apk del tzdata
+
+# 安装 nginx
+RUN apk add --no-cache nginx
+
+# nginx 日志目录
+RUN mkdir -p /var/log/nginx/
+# web 静态资源存放目录，这个目录最好映射到宿主机
+RUN mkdir -p /usr/web/html/
+RUN mkdir -p /usr/nginx/config/
+RUN mkdir -p /usr/app/${SERVICE}/
+RUN mkdir -p /usr/logs/${SERVICE}/
+RUN mkdir -p /usr/attament/${SERVICE}/
+
+RUN apk add --update mysql mysql-client \
+    && rm -f /var/cache/apk/*
+
+COPY my.cnf /etc/mysql/my.cnf
+COPY startup.sh /usr/app/${SERVICE}/
+COPY run_in_docker_with_nginx.sh /usr/app/${SERVICE}/
+COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
+
+WORKDIR /usr/app/${SERVICE}/
+
+ENTRYPOINT ["sh", "run_in_docker_whole.sh", "start"]
