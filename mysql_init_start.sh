@@ -47,6 +47,10 @@ EOF
     echo "----------------------"
   fi
 
+  current_path=$(pwd)
+  cat $current_path/doc.sql >> $tfile
+  rm -f $current_path/doc.sql
+
   /usr/bin/mysqld --user=root --bootstrap --verbose=0 < $tfile
   rm -f $tfile
 fi

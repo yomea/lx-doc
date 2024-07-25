@@ -1,4 +1,4 @@
-CREATE TABLE lx_doc.`sys_user_info`
+CREATE TABLE IF NOT EXISTS lx_doc.`sys_user_info`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `user_name` varchar(64)           DEFAULT NULL COMMENT '昵称，最多64个字符',
@@ -13,7 +13,7 @@ CREATE TABLE lx_doc.`sys_user_info`
     UNIQUE `uk_account`(account)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='系统-用户信息';
 
-CREATE TABLE lx_doc.`sys_attachment`
+CREATE TABLE IF NOT EXISTS lx_doc.`sys_attachment`
 (
     `id`         bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `name`       varchar(256)          DEFAULT NULL COMMENT '附件名称',
@@ -28,7 +28,7 @@ CREATE TABLE lx_doc.`sys_attachment`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='系统-附件';
 
-CREATE TABLE lx_doc.`sys_user_config`
+CREATE TABLE IF NOT EXISTS lx_doc.`sys_user_config`
 (
     `id`             bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `config_type`    varchar(32) NOT NULL COMMENT '配置类型',
@@ -42,7 +42,7 @@ CREATE TABLE lx_doc.`sys_user_config`
     unique `uk_user_id_config_type`(user_id, config_type)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='系统-用户配置';
 
-CREATE TABLE lx_doc.`doc_file_folder`
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_file_folder`
 (
     `id`           bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `parent_id`    bigint(20) unsigned NOT NULL COMMENT '父文件夹ID，顶级节点为0',
@@ -63,7 +63,7 @@ CREATE TABLE lx_doc.`doc_file_folder`
     key            `idx_creator_id`(creator_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件夹';
 
-CREATE TABLE lx_doc.`doc_file_content`
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_file_content`
 (
     `id`         bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `content`    longtext COMMENT '文件数据，excel，思维导图等文件内容',
@@ -74,7 +74,7 @@ CREATE TABLE lx_doc.`doc_file_content`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件内容';
 
-CREATE TABLE lx_doc.`doc_collect_folder`
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_collect_folder`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `name`      varchar(128) NOT NULL COMMENT '文件名',
@@ -84,7 +84,7 @@ CREATE TABLE lx_doc.`doc_collect_folder`
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件收藏夹（暂时定位个人云文档，未使用，后续协作，分享之后再启用）';
 
-CREATE TABLE lx_doc.`doc_recycle`
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_recycle`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `ids` varchar(1020) NOT NULL COMMENT '子文件夹ID，逗号分割',
