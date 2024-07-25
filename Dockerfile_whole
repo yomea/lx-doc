@@ -40,6 +40,7 @@ RUN rm -rf /usr/web/html/lx-doc.zip
 COPY nginx.conf /usr/nginx/config/
 COPY my.cnf /etc/mysql/my.cnf
 COPY mysql_init_start.sh /usr/app/${SERVICE}/
+COPY doc.sql /usr/app/${SERVICE}/
 COPY run_in_docker_whole.sh /usr/app/${SERVICE}/
 COPY application-prod.yml /usr/config/lx-doc/
 COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
