@@ -29,7 +29,7 @@ docker run -dit --network host --privileged \
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 # /usr/app/mysql mysq存放数据路径
-docker run -dit -p 9222:9222 -p 8090:8090 --privileged \
+docker run -dit -p 9222:9222 -p 8090:8090 -p 3306:3306 --privileged \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
