@@ -11,6 +11,17 @@ MEMORY=512m
 # 启动mysql
 nohup /bin/sh /usr/app/${SERVICE}/mysql_init_start.sh &
 
+MYSQL_PORT=${MYSQL_PORT:-"3306"}
+while true; do
+  if netstat -tuln | grep -q ":$MYSQL_PORT"; then
+      echo "MySQL is currently running..."
+      break
+  else
+      echo "wait mysql start..."
+      sleep 1
+  fi
+done
+
 Start() {
     mem=$1
     echo ${mem}
