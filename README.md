@@ -119,7 +119,7 @@ spring:
 
 - Dockerfile：JDK环境
 - Dockerfile_with_nginx：nginx，JDK环境
-- Dockerfile_whole：带有mysql，nginx，JDK环境，将前段文件，sql脚本，nginx配置文件，应用配置文件一并打入镜像,可以不修改任何配置，一键启动即可
+- Dockerfile_whole：带有mysql，nginx，JDK环境，将前端web文件，sql脚本，nginx配置文件，应用配置文件一并打入镜像,可以不修改任何配置，一键启动即可
 
 下面是 Dockerfile_with_nginx 打出来的镜像的容器启动命令说明（每种方案对应的Dockerfile都有一个对应docker-build*.sh，可以
 直接参考该文件里的docker启动命令）：
