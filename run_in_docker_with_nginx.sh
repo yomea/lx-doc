@@ -16,7 +16,7 @@ Start() {
         mem=$MEMORY
     fi
 
-    proc=$(ps -ef | grep /usr/app/${SERVICE}/${SERVICE}.jar | grep -v grep | wc -l)
+    proc=$(ps -ef | grep ${SERVICE} | grep -v grep | wc -l)
     if [[ $proc != 0  ]];then
         exit 5
     fi
@@ -26,7 +26,17 @@ Start() {
 
 
 Stop() {
-    /usr/bin/ps -ef | grep ${SERVICE} | grep -v grep | awk '{print $2}'| xargs kill -9
+     while true; do
+            proc=$(ps -ef | grep ${SERVICE} | grep -v grep | wc -l)
+            if [[ $proc != 0 ]]; then
+                echo "stop ${SERVICE} ..."
+                /usr/bin/ps -ef | grep ${SERVICE} | grep -v grep | awk '{print $2}'| xargs kill -5
+                sleep 1
+            else
+                echo "${SERVICE} not running now..."
+                break
+            fi
+          done
 }
 
 Restart() {

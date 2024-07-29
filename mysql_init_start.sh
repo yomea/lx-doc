@@ -47,7 +47,7 @@ EOF
     echo "----------------------"
   fi
 
-  current_path=$(pwd)
+  current_path=$(cd $(dirname $0); pwd)
   cat $current_path/doc.sql >> $tfile
   rm -f $current_path/doc.sql
 
