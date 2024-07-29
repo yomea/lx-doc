@@ -32,4 +32,4 @@ COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
 WORKDIR /usr/app/${SERVICE}/
 
-ENTRYPOINT ["sh", "run_in_docker_with_nginx.sh", "start"]
+ENTRYPOINT ["sh", "run_in_docker_with_nginx.sh", "initStart"]
