@@ -17,7 +17,7 @@ Start() {
         exit 5
     fi
 
-    java -server -Xms${mem} -Xmx${mem}  -jar "$SERVICE_DIR".jar  $ARGS
+    java -server -Xms${mem} -Xmx${mem}  -jar "$SERVICE_DIR".jar  $ARGS >> /usr/logs/${SERVICE}/${SERVICE}.log 2>&1 &
 }
 
 initStart() {
@@ -27,6 +27,9 @@ initStart() {
     nginx -g "daemon on;" -c /usr/nginx/config/nginx.conf
 
     Start $1
+
+    # 避免容器退出
+    tail -f /dev/null
 }
 
 Stop() {
@@ -48,7 +51,7 @@ Stop() {
             else
                 echo "Closed and waited for $in_stop_count seconds"
             fi
-            in_stop_count=$[in_stop_count+1]
+            in_stop_count=$((in_stop_count+1))
             sleep 1
         else
             echo "${SERVICE} not running now..."
