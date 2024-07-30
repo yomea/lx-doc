@@ -23,4 +23,4 @@ COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 
 WORKDIR /usr/app/${SERVICE}/
 
-ENTRYPOINT ["sh", "run_in_docker.sh", "start"]
+ENTRYPOINT ["sh", "run_in_docker.sh", "initStart"]
