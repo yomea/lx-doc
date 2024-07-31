@@ -12,7 +12,7 @@ docker build -t lx-doc:1.0 .
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
-docker run -dit --network host --privileged \
+docker run -d --network host --privileged \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
@@ -30,7 +30,7 @@ docker run -dit --network host --privileged \
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
-docker run -dit --privileged \
+docker run -d --privileged \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \

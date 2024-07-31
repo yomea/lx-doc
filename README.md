@@ -133,7 +133,7 @@ spring:
 # /usr/nginx/config 放置nginx相关的配置
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
-docker run -dit --network host --privileged \
+docker run -d --network host --privileged \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
@@ -159,7 +159,7 @@ ip地址或者修改容器的hosts，修改hosts可以在Dockerfile操作：
 # /usr/nginx/config 放置nginx相关的配置
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
-docker run -dit -p 9222:9222 -p 8090:8090 --privileged \
+docker run -d -p 9222:9222 -p 8090:8090 --privileged \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
