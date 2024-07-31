@@ -146,7 +146,7 @@ docker run -d --network host --privileged \
 ```
 
 注意：如果你的 docker 版本较低，可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
-可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -it 容器id ifconfig 得到的ip地址和宿主机
+可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -d 容器id ifconfig 得到的ip地址和宿主机
 不一致，那么这个时候你就不要使用 --network host 这个命令，你手动映射端口，除此之外如果使用了域名去连接mysql或者redis的可以改成
 ip地址或者修改容器的hosts，修改hosts可以在Dockerfile操作：
 
