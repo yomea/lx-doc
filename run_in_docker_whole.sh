@@ -20,8 +20,8 @@ Start() {
 }
 
 initStart() {
-    # 后台模式启动 nginx，并指定nginx配置文件路径，如果使用了 docekr 部署，这个配置文件请映射到宿主机
-    # 以便随时修改，每次修改之后可通过 docker exec -it 【容器id】 nginx -s reload -c /usr/nginx/config/nginx.conf
+    # 后台模式启动 nginx，并指定nginx配置文件路径，如果使用了 docker 部署，这个配置文件请映射到宿主机
+    # 以便随时修改，每次修改之后可通过 docker exec -d 【容器id】 nginx -s reload -c /usr/nginx/config/nginx.conf
     # 重启 nginx
     nginx -g "daemon on;" -c /usr/nginx/config/nginx.conf
 
