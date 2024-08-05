@@ -11,21 +11,22 @@ EXPOSE 9222
 EXPOSE 80
 
 # 处理时区
-RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-&& echo "Asia/Shanghai" > /etc/timezone \
-&& apk del tzdata
+RUN apk add tzdata  \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && apk del tzdata
 
 # 安装 nginx
 RUN apk add --no-cache nginx
 
 # nginx 日志目录
-RUN mkdir -p /var/log/nginx/
+RUN mkdir -p /var/log/nginx/ \
 # web 静态资源存放目录，这个目录最好映射到宿主机
-RUN mkdir -p /usr/web/html/
-RUN mkdir -p /usr/nginx/config/
-RUN mkdir -p /usr/app/${SERVICE}/
-RUN mkdir -p /usr/logs/${SERVICE}/
-RUN mkdir -p /usr/attament/${SERVICE}/
+    && mkdir -p /usr/web/html/ \
+    && mkdir -p /usr/nginx/config/ \
+    && mkdir -p /usr/app/${SERVICE}/ \
+    && mkdir -p /usr/logs/${SERVICE}/ \
+    && mkdir -p /usr/attament/${SERVICE}/
 
 ADD run_in_docker_with_nginx.sh /usr/app/${SERVICE}/
 COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
