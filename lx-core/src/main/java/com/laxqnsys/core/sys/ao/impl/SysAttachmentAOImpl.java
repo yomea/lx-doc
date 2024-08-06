@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
     @Autowired
     private LxDocWebProperties lxDocWebProperties;
 
-    private Pattern imgBase64Pattern = Pattern.compile("^data:image/[a-zA-Z]+;base64,.*");
+    private Pattern imgBase64Pattern = Pattern.compile("^data:image/([a-zA-Z]+);base64,");
 
     private final String FIX_STATIC_PATH = "/static/";
 
@@ -62,14 +63,15 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
     @Override
     public String uploadImg(SysAttachmentVO sysAttachmentVO) {
         String encodedString = sysAttachmentVO.getImgData();
-        if (!imgBase64Pattern.matcher(encodedString).matches()) {
+        Matcher matcher = imgBase64Pattern.matcher(encodedString);
+        if(!matcher.find()) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 "上传的图片base64格式不正确，请传入形如：data:image/png;base64,iVBORw0KGgo...的图片格式");
         }
-        String[] split = encodedString.split(",");
-        String dataType = split[0];
-        String suffix = dataType.split(";")[0].split("/")[1];
-        String base64Image = split[1];
+        String matchPrefix = matcher.group(0);
+        // 获取后缀
+        String suffix = matcher.group(1);
+        String base64Image = encodedString.substring(matchPrefix.length());
         byte[] data = Base64.getDecoder().decode(base64Image);
         String fileName = UUID.randomUUID() + "." + suffix;
         String fileUploadPath = lxDocWebProperties.getFileUploadPath();
@@ -80,6 +82,6 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
         } catch (IOException e) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传图片失败！", e);
         }
-        return "/static/" + fileName;
+        return FIX_STATIC_PATH + fileName;
     }
 }
