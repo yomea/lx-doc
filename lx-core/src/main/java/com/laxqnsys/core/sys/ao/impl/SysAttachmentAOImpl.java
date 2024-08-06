@@ -37,9 +37,13 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
     public List<String> uploadFiles(MultipartFile[] file) {
         List<String> urlList = Arrays.stream(file).map(f -> {
             String fileUploadPath = lxDocWebProperties.getFileUploadPath();
-            String randomDir = UUID.randomUUID() + File.separator + f.getOriginalFilename();
-            String path =
-                fileUploadPath + File.separator + randomDir;
+            String randomDir = fileUploadPath + File.separator + UUID.randomUUID();
+            File outFile = new File(randomDir);
+            if (!outFile.exists() && !outFile.mkdirs()) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                    String.format("附件目录%s创建失败！", randomDir));
+            }
+            String path = randomDir + File.separator + f.getOriginalFilename();
             try (InputStream inputStream = f.getInputStream();
                 FileOutputStream outputStream = new FileOutputStream(path)) {
                 IoUtil.copy(inputStream, outputStream);
