@@ -37,14 +37,16 @@ public class SysAttachmentAOImpl implements SysAttachmentAO {
     public List<String> uploadFiles(MultipartFile[] file) {
         List<String> urlList = Arrays.stream(file).map(f -> {
             String fileUploadPath = lxDocWebProperties.getFileUploadPath();
-            String path = fileUploadPath + File.separator + f.getOriginalFilename();
+            String randomDir = UUID.randomUUID() + File.separator + f.getOriginalFilename();
+            String path =
+                fileUploadPath + File.separator + randomDir;
             try (InputStream inputStream = f.getInputStream();
                 FileOutputStream outputStream = new FileOutputStream(path)) {
                 IoUtil.copy(inputStream, outputStream);
             } catch (IOException e) {
                 throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传附件失败！", e);
             }
-            return "/static/" + f.getOriginalFilename();
+            return "/static/" + randomDir;
         }).collect(Collectors.toList());
         return urlList;
     }
