@@ -17,7 +17,9 @@ docker run -d --network host --privileged \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
---name lx-doc lx-doc:1.0
+--name lx-doc \
+--add-host host.docker.internal:host-gateway \
+lx-doc:1.0
 
 # 注意：如果你的 docker 版本较低，可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
 # 可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -d 容器id ifconfig 得到的ip地址和宿主机
@@ -29,13 +31,23 @@ docker run -d --network host --privileged \
 # /usr/logs/lx-doc 应用的日志
 # /usr/attament/lx-doc 上传附件的存放路径
 # /usr/app/mysql mysq存放数据路径
-docker run -d -p 9222:9222 -p 8090:8090 -p 3306:3306 --privileged \
+docker run -d -p 9222:9222 -p 8089:8089 -p 3306:3306 --privileged \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
---name lx-doc lx-doc:1.0
+--name lx-doc \
+--add-host host.docker.internal:host-gateway \
+lx-doc:1.0
+
+可以看到以上启动命令中使用了
+--add-host host.docker.internal:host-gateway
+添加hosts，这是因为需要通过容器内部去访问mysql，除此之外，还可以通过以下命令去桥接网络，
+docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 localNet
+那么对应 application-prod.yml
+的mysql的ip地址请改成 192.168.0.1，也可以连接到mysql
+
 
 # 重启应用
 docker exec -d [containerId] sh /usr/app/lx-doc/run_in_docker_whole.sh restart
