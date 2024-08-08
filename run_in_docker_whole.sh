@@ -2,7 +2,7 @@
 
 SERVICE=$(cd $(dirname $0); pwd | awk -F '/' '{print $(NF)}')
 SERVICE_DIR="/usr/app/${SERVICE}/${SERVICE}"
-MEMORY=512m
+MEMORY=${MEMORY:-"1024m"}
 
 Start() {
     mem=$1
@@ -10,6 +10,7 @@ Start() {
     if [ -z "$mem" ];then
         mem=$MEMORY
     fi
+    echo ${mem}
 
     proc=$(ps -ef | grep "$SERVICE_DIR" | grep -v grep | wc -l)
     if [[ $proc != 0  ]];then
