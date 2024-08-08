@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 mvn -DskipTests -U clean package
 
