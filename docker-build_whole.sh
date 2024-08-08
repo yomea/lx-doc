@@ -17,6 +17,7 @@ docker run -d --network host --privileged \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e MEMORY=1024m \
 --name lx-doc \
 --add-host host.docker.internal:host-gateway \
 lx-doc:1.0
@@ -37,6 +38,7 @@ docker run -d -p 9222:9222 -p 8089:8089 -p 3306:3306 --privileged \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e MEMORY=1024m \
 --name lx-doc \
 --add-host host.docker.internal:host-gateway \
 lx-doc:1.0

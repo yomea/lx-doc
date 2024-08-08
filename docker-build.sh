@@ -17,6 +17,7 @@ docker run -d --network host --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+  -e MEMORY=1024m \
  --name lx-doc lx-doc:1.0
 
 # 注意：如果你的 docker 版本较低，可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
@@ -35,6 +36,7 @@ docker run -d --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+  -e MEMORY=1024m \
  --name lx-doc lx-doc:1.0
 
 # 重启应用

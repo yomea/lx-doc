@@ -143,6 +143,7 @@ docker run -d --network host --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e MEMORY=1024m \
 --name lx-doc lx-doc:1.0
 
 ```
@@ -169,6 +170,7 @@ docker run -d -p 9222:9222 -p 8089:8089 --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e MEMORY=1024m \
 --name lx-doc lx-doc:1.0
 
 ```
