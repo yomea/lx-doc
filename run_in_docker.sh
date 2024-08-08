@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 SERVICE=$(cd $(dirname $0); pwd | awk -F '/' '{print $(NF)}')
 SERVICE_DIR="/usr/app/${SERVICE}/${SERVICE}"
