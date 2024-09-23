@@ -9,7 +9,7 @@ alter table lx_doc.`doc_file_folder`
 
 CREATE TABLE IF NOT EXISTS lx_doc.`doc_share`
 (
-    `id`            bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '文件或文件夹id',
+    `id`            bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `user_id`       bigint(20)          NOT NULL COMMENT '分享人ID',
     `view_count`    int(11)             NOT NULL DEFAULT '0' COMMENT '查看次数',
     `like_count`    int(11)             NOT NULL DEFAULT '0' COMMENT '点赞次数',
@@ -19,6 +19,18 @@ CREATE TABLE IF NOT EXISTS lx_doc.`doc_share`
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='文档-分享';
+
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_comment`
+(
+    `id`            bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `parent_id`     bigint(20)          NOT NULL COMMENT '父评论ID',
+    `file_id`       bigint(20)          NOT NULL COMMENT '评论的文件ID',
+    `user_id`       bigint(20)          NOT NULL COMMENT '评论人ID',
+    `create_at`     DATETIME            NOT NULL COMMENT '分享时间',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8mb4 COMMENT ='文档-评论';
 
 CREATE TABLE IF NOT EXISTS lx_doc.`doc_relation_level`
 (
