@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS lx_doc.`doc_file_folder`
     `update_at`    datetime    NOT NULL COMMENT '更新时间',
     `status`       int(11) NOT NULL DEFAULT '0' COMMENT '0：正常，-1：删除',
     PRIMARY KEY (`id`),
-    key            `idx_parent_id`(parent_id),
+    key            `idx_parent_creator_id`(parent_id, creator_id),
     key            `idx_creator_id`(creator_id)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-文件夹';
 
