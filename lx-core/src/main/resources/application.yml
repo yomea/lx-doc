@@ -19,14 +19,15 @@ mybatis-plus:
 
 lx:
   doc:
-    whiteUrlList: /,/api/login,/api/register,/static/**,/assets/**,/system/error # 白名单url，配置之后将会被登录拦截器拦截
+    whiteUrlList: /api/login # 白名单url，配置之后将会被登录拦截器拦截
+    blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUploadPath: /usr/attament/ # 配置文件上传的地址
-    indexHtmlWebPath: /assets/index.html # 配置欢迎页
+    indexHtmlWebPath: /index.html # 配置欢迎页
     staticResources:
       - pathPatterns: /static/** # 配置静态资源访问的web uri
         resourceLocations: file:///${lx.doc.fileUploadPath} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
-      - pathPatterns: /assets/**
-        resourceLocations: file:///D:/work/lx-doc/workbench/dist/assets/,file:///D:/work/lx-doc/workbench/dist/
+      - pathPatterns: /**
+        resourceLocations: classpath:/static/lx-doc/
 
 spring:
   servlet:

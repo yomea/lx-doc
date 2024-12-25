@@ -6,9 +6,11 @@ spring:
       url: jdbc:mysql://host.docker.internal:3306/lx_doc?useUnicode=true&characterEncoding=utf8&autoReconnect=true&allowMultiQueries=true&useSSL=false&zeroDateTimeBehavior=convertToNull
       username: root
       password: lx_doc_test
+# 文件上传地址
 lx:
   doc:
     fileUploadPath: /usr/attament/${app.name}
+# 日志路径
 log:
   home: /usr/logs/${app.name}
 loglevel: INFO
