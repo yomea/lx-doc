@@ -19,7 +19,7 @@ mybatis-plus:
 
 lx:
   doc:
-    whiteUrlList: /api/login # 白名单url，配置之后将会被登录拦截器拦截
+    whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUploadPath: /usr/attament/ # 配置文件上传的地址
     indexHtmlWebPath: /index.html # 配置欢迎页
