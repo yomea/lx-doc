@@ -1,5 +1,5 @@
 # 拉取基础镜像
-FROM openjdk:8-jdk-alpine
+FROM alpine:latest
 # 维护人
 # MAINTAINER 951645267@qq.com
 LABEL org.opencontainers.image.authors="951645267@qq.com"
@@ -13,6 +13,13 @@ USER root
 EXPOSE 9222
 EXPOSE 80
 EXPOSE 3306
+
+# 安装openjdk11
+ENV JAVA_HOME="/usr/lib/jvm/default-jvm/"
+
+RUN apk add openjdk11
+
+ENV PATH=$PATH:${JAVA_HOME}/bin
 
 # 处理时区
 RUN apk add tzdata  \
