@@ -16,28 +16,7 @@ docker run -d --network host --privileged \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
  -v /usr/attament/lx-doc:/usr/attament/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
- -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
- -e MEMORY=1024m \
---name lx-doc \
---add-host host.docker.internal:host-gateway \
-lx-doc:1.0
-
-# 注意：如果你的 docker 版本较低，可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
-# 可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -d 容器id ifconfig 得到的ip地址和宿主机
-# 不一致，那么这个时候你就不要使用 --network host 这个命令，你手动映射端口，除此之外如果使用了域名去连接mysql或者redis的可以改成
-# ip地址或者修改容器的hosts，修改hosts可以在Dockerfile操作：
-
-# 你可以拉取github上的代码进行构建
-# 挂在的宿主目录请先创建
-# /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
-# /usr/app/mysql mysq存放数据路径
-docker run -d -p 9222:9222 -p 8089:8089 -p 3306:3306 --privileged \
- -v /var/log/nginx/:/var/log/nginx/ \
- -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
- -v /usr/app/mysql:/usr/app/mysql \
- -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e ARGS="--MYSQL_IP=host.docker.internal --spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
  -e MEMORY=1024m \
 --name lx-doc \
 --add-host host.docker.internal:host-gateway \
@@ -49,7 +28,27 @@ lx-doc:1.0
 docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 localNet
 那么对应 application-prod.yml
 的mysql的ip地址请改成 192.168.0.1，也可以连接到mysql
+如果以上这些方法都没法访问到数据库，那么可以在 -e ARGS 这个参数里添加 --MYSQL_IP=ip地址
 
+# 注意：如果你的 docker 版本较低或者是其他原因（比如windows系统或者其他操作系统可能不一样），可能不支持 --network host，这个命令的意思是容器共享宿主机的网络，如果你的docker版本不支持，
+# 可以看到的现象就是你在宿主机上看不到容器启动的端口号，或者你直接执行 docker exec -d 容器id ifconfig 得到的ip地址和宿主机
+# 不一致，那么这个时候你就不要使用 --network host 这个命令，你手动映射端口，除此之外如果使用了域名去连接mysql或者redis的可以改成
+# ip地址或者通过 --add-host 域名:ip地址：
+
+# 你可以拉取github上的代码进行构建
+# 挂在的宿主目录请先创建
+# /usr/logs/lx-doc 应用的日志
+# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/app/mysql mysq存放数据路径
+docker run -d -p 9222:9222 -p 8089:8089 -p 3306:3306 --privileged \
+ -v /var/log/nginx/:/var/log/nginx/ \
+ -v /usr/logs/lx-doc:/usr/logs/lx-doc \
+ -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/app/mysql:/usr/app/mysql \
+ -e ARGS="--MYSQL_IP=127.0.0.1 --spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
+ -e MEMORY=1024m \
+--name lx-doc \
+lx-doc:1.0
 
 # 重启应用
 docker exec -d [containerId] sh /usr/app/lx-doc/run_in_docker_whole.sh restart
