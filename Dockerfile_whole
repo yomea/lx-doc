@@ -50,6 +50,8 @@ COPY lx-core/target/lx-doc.jar /usr/app/${SERVICE}/
 # 如果是在windows下进行 docker 构建的话，要去掉 \r\n 换行符的\r
 RUN sed -i 's/\r$//' /usr/app/${SERVICE}/*.sh
 
+VOLUME /usr/app/mysql
+
 WORKDIR /usr/app/${SERVICE}/
 
 ENTRYPOINT ["sh", "run_in_docker_whole.sh", "initStart"]
