@@ -15,6 +15,7 @@ import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
 import org.springframework.stereotype.Component;
 
+// 如果不是自定义 MybatisConfiguration ，这个类必须要纳入到spring管理，否则不生效
 @Component
 //定义转换器支持的JAVA类型
 @MappedTypes(LocalDateTime.class)

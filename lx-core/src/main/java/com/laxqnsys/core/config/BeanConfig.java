@@ -25,6 +25,7 @@ public class BeanConfig {
 
     @Bean
     public ConfigurationCustomizer configurationCustomizer() {
+        // 用于自定义 MybatisConfiguration
         return configuration ->
         {
             TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
