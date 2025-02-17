@@ -10,6 +10,7 @@ import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocRecycleAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.dao.entity.DocRecycle;
+import com.laxqnsys.core.doc.dao.entity.DocRelationLevel;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
@@ -18,7 +19,6 @@ import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.doc.service.IDocRecycleService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -79,18 +79,16 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     @ConcurrentLock(key = RedissonLockPrefixCons.RESTORE_FOLDER + "${reqVO.id}")
     public void restore(DocRecycleReqVO reqVO) {
         Long id = reqVO.getId();
-        DocRecycle docRecycle = docRecycleService.getOne(Wrappers.<DocRecycle>lambdaQuery()
-            .eq(DocRecycle::getId, id).last("limit 1"));
+        DocRecycle docRecycle = docRecycleService.getById(id);
         if(Objects.isNull(docRecycle)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "该文件夹已被恢复请刷新列表！");
         }
-        String ids = docRecycle.getIds();
-        if(!StringUtils.hasText(ids)) {
+        List<DocRelationLevel> levelList = docRelationLevelService.lambdaQuery().eq(DocRelationLevel::getParentId, id)
+            .list();
+        if(CollectionUtils.isEmpty(levelList)) {
             log.error("id为{}的文件数据恢复异常", id);
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "数据恢复异常，请联系管理员！");
         }
-        List<Long> childIds = Arrays.stream(ids.split(",")).map(Long::parseLong)
-            .distinct().collect(Collectors.toList());
         DocFileFolder docFileFolder = this.getRecycleById(id);
         // 检查父级是否被删除，如果被删除，找到其上未被删除的父级，挂在下面
         Long parentId = docFileFolder.getParentId();
@@ -106,6 +104,8 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
             parentId = parent.getParentId();
         }
         Long finalParentId = parentId;
+        List<Long> childIds = levelList.stream().map(DocRelationLevel::getSonId).collect(Collectors.toList());
+        List<Long> relationLevelIds = levelList.stream().map(DocRelationLevel::getId).collect(Collectors.toList());
         transactionTemplate.execute(status -> {
            docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
                .in(DocFileFolder::getId, childIds)
@@ -113,6 +113,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
            docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
                .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
                .eq(DocRecycle::getId, id));
+           docRelationLevelService.removeBatchByIds(relationLevelIds);
             Integer format = docFileFolder.getFormat();
             if(finalParentId != docFileFolder.getParentId()) {
                 docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()

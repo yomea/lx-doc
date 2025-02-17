@@ -87,9 +87,23 @@ CREATE TABLE IF NOT EXISTS lx_doc.`doc_collect_folder`
 CREATE TABLE IF NOT EXISTS lx_doc.`doc_recycle`
 (
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
-    `ids` varchar(1020) NOT NULL COMMENT '子文件夹ID，逗号分割',
-    `name`      varchar(128) NOT NULL COMMENT '文件名',
-    `user_id`   bigint(20) NOT NULL COMMENT '回收人ID',
-    `create_at` DATETIME    NOT NULL COMMENT '回收时间',
-    PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='文档-回收站';
+    `name`      varchar(128)        NOT NULL COMMENT '文件名',
+    `user_id`   bigint(20)          NOT NULL COMMENT '回收人ID',
+    `create_at` DATETIME            NOT NULL COMMENT '回收时间',
+    PRIMARY KEY (`id`),
+    key `idx_user_id` (`user_id`)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8mb4 COMMENT ='文档-回收站';
+
+CREATE TABLE IF NOT EXISTS lx_doc.`doc_relation_level`
+(
+    `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `parent_id` bigint(20) unsigned NOT NULL COMMENT '父id',
+    `son_id`    bigint(20) unsigned NOT NULL COMMENT '子id',
+    PRIMARY KEY (`id`),
+    key `idx_parent_id` (parent_id),
+    key `idx_son_id` (son_id)
+) ENGINE = InnoDB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8mb4 COMMENT ='文档-关联层级';
