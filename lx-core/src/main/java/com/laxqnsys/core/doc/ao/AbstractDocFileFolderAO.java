@@ -5,13 +5,18 @@ import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
+import com.laxqnsys.core.doc.dao.entity.DocRecycle;
+import com.laxqnsys.core.doc.dao.entity.DocRelationLevel;
 import com.laxqnsys.core.doc.service.IDocFileContentService;
 import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.doc.service.IDocRecycleService;
+import com.laxqnsys.core.doc.service.IDocRelationLevelService;
 import com.laxqnsys.core.enums.DelStatusEnum;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,6 +38,9 @@ public abstract class AbstractDocFileFolderAO {
 
     @Autowired
     protected IDocRecycleService docRecycleService;
+
+    @Autowired
+    protected IDocRelationLevelService docRelationLevelService;
 
     @Autowired
     protected TransactionTemplate transactionTemplate;
@@ -91,5 +99,22 @@ public abstract class AbstractDocFileFolderAO {
         child.addAll(fileFolders);
         List<Long> idList = fileFolders.stream().map(DocFileFolder::getId).distinct().collect(Collectors.toList());
         this.getChild(idList, child);
+    }
+
+    protected void saveRecycleLevel(List<DocRecycle> docRecycleList) {
+        List<DocRelationLevel> levels = docRecycleList.stream().flatMap(docRecycle -> {
+            List<Long> relationIdList = Optional.ofNullable(docRecycle.getIdList())
+                .orElse(Collections.emptyList());
+            return relationIdList.stream().map(relationId -> {
+                DocRelationLevel level = new DocRelationLevel();
+                level.setId(null);
+                level.setParentId(docRecycle.getId());
+                level.setSonId(relationId);
+                return level;
+            });
+        }).collect(Collectors.toList());
+        if(!CollectionUtils.isEmpty(levels)) {
+            docRelationLevelService.saveBatch(levels);
+        }
     }
 }
