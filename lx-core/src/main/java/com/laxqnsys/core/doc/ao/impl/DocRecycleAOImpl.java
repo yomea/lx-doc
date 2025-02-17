@@ -136,10 +136,10 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     @Override
     public void completelyDelete(DocRecycleReqVO reqVO) {
         Long id = reqVO.getId();
-        DocFileFolder docFileFolder = this.getRecycleById(id);
-        docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
-            .eq(DocRecycle::getUserId, docFileFolder.getCreatorId())
-            .eq(DocRecycle::getId, id));
+        this.getRecycleById(id);
+        docRecycleService.removeById(id);
+        docRelationLevelService.remove(Wrappers.<DocRelationLevel>lambdaQuery()
+            .eq(DocRelationLevel::getParentId, id));
     }
 
     @Override
@@ -147,10 +147,15 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
         Long userId = LoginContext.getUserId();
         docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
             .eq(DocRecycle::getUserId, userId));
+        docRelationLevelService.remove(Wrappers.<DocRelationLevel>lambdaQuery()
+            .eq(DocRelationLevel::getUserId, userId));
     }
 
     private DocFileFolder getRecycleById(Long id) {
         DocFileFolder docFileFolder = docFileFolderService.getById(id);
+        if(Objects.isNull(docFileFolder)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "该文件不存在或已被删除！");
+        }
         Long userId = LoginContext.getUserId();
         if(!docFileFolder.getCreatorId().equals(userId)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "禁止访问");

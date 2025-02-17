@@ -35,5 +35,7 @@ public class DocRelationLevel implements Serializable {
     @ApiModelProperty(value = "子id")
     private Long sonId;
 
+    @ApiModelProperty(value = "回收人ID")
+    private Long userId;
 
 }
