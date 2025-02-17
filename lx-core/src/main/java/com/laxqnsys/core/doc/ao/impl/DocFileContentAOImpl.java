@@ -19,6 +19,7 @@ import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -210,7 +211,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         List<DocRecycle> docRecycleList = fileFolders.stream().map(e -> {
             DocRecycle docRecycle = new DocRecycle();
             docRecycle.setId(e.getId());
-            docRecycle.setIds(String.valueOf(e.getId()));
+            docRecycle.setIdList(Collections.singletonList(e.getId()));
             docRecycle.setName(e.getName());
             docRecycle.setUserId(userId);
             docRecycle.setCreateAt(recycleTime);
@@ -225,6 +226,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 //                .set(DocFileContent::getStatus, DelStatusEnum.DEL.getStatus()));
             // 扔回收站
             docRecycleService.saveBatch(docRecycleList);
+            super.saveRecycleLevel(docRecycleList);
             if(!CollectionUtils.isEmpty(updateOldFolderList)) {
                 docFileFolderService.batchDeltaUpdate(updateOldFolderList);
             }
