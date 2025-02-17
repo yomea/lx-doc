@@ -110,6 +110,7 @@ public abstract class AbstractDocFileFolderAO {
                 level.setId(null);
                 level.setParentId(docRecycle.getId());
                 level.setSonId(relationId);
+                level.setUserId(docRecycle.getUserId());
                 return level;
             });
         }).collect(Collectors.toList());

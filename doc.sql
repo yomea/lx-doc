@@ -101,9 +101,11 @@ CREATE TABLE IF NOT EXISTS lx_doc.`doc_relation_level`
     `id`        bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
     `parent_id` bigint(20) unsigned NOT NULL COMMENT '父id',
     `son_id`    bigint(20) unsigned NOT NULL COMMENT '子id',
+    `user_id`   bigint(20)          NOT NULL COMMENT '回收人ID',
     PRIMARY KEY (`id`),
     key `idx_parent_id` (parent_id),
-    key `idx_son_id` (son_id)
+    key `idx_son_id` (son_id),
+    key `idx_user_id` (`user_id`)
 ) ENGINE = InnoDB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8mb4 COMMENT ='文档-关联层级';
