@@ -48,7 +48,7 @@
 - 个人版本：该版本在 personal 分支上，仅支持单机部署
 
 如果你只是给自己或者朋友们平时画画图，导出图片啊之类的操作，也没什么高并发，高可用，性能方面的要求，
-那么直接使用个人版本部署一台机器即可，个人版部署非常简单，只要一台机器，装个mysql就完事了，不用搞那么多的花里花哨。
+那么直接使用个人版本部署一台机器即可，个人版部署非常简单，只要一台机器，装个mysql就完事了，不用搞那么多的花里胡哨。
 
 
 ## 部署
@@ -70,7 +70,7 @@ sh run_no_in_docker.sh start 512m
 
 在启动前，您还需要准备以下环境
 
-- 安装mysql，mysql初始化脚本在本项目的doc.sql里，数据库名默认是lx-doc，如果有需要可以修改成自己的库名
+- 安装mysql，mysql初始化脚本在本项目的doc.sql里，数据库名默认是lx_doc，如果有需要可以修改成自己的库名
 - 安装redis，个人版本，可以忽略(请切换personal分支构建)，自己画画图，根本不需要这么麻烦，安装redis主要是为了解决高可用，分布式集群产生的问题（个人压根不需要集群，也没啥瓶颈）
 
 ### 配置说明
@@ -115,7 +115,7 @@ spring:
         max-idle: 20
         time-between-eviction-runs: 30000
 ```
-如果您不想修改application.yml配置文件，以上配置都可以通过启动参数指定，docker 启动时，可以通过 -e ARGS='--lx.doc.whiteUrlList=/,/api/login,/api/register,/static/**,/assets/**,/system/error' 指定,
+如果您不想修改 application.yml 配置文件，以上配置都可以通过启动参数指定，docker 启动时，可以通过 -e ARGS='--lx.doc.whiteUrlList=/,/api/login,/api/register,/static/**,/assets/**,/system/error' 指定,
 也可以写到 application-prod.yml 的配置文件中，避免参数太长，不直观，启动参数配置可参考如下示例：
 本项目提供了三种docker部署方案，分别对应项目根目录下的 Dockerfile，Dockerfile_with_nginx，Dockerfile_whole
 
