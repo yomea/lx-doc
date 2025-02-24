@@ -16,6 +16,7 @@ import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
+import com.laxqnsys.core.doc.service.IDocContentStorageService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
 import java.time.LocalDateTime;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -38,6 +40,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     public DocFileContentResVO getFileContent(Long id) {
 
         DocFileContent docFileContent = this.getByFileId(id);
+        DocFileFolder docFileFolder = super.getById(id);
         DocFileFolder docFileFolder = docFileFolderService.getById(id);
 
         DocFileContentResVO resVO = new DocFileContentResVO();
@@ -54,7 +57,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 
         DocFileFolder parent = super.getById(createReqVO.getFolderId());
         if(FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只需要在文件夹下创建文件");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能在文件夹下创建文件");
         }
         DocFileFolder fileFolder = new DocFileFolder();
         fileFolder.setParentId(createReqVO.getFolderId());
@@ -69,19 +72,19 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         fileFolder.setCreatorId(LoginContext.getUserId());
         fileFolder.setCreateAt(LocalDateTime.now());
         fileFolder.setUpdateAt(LocalDateTime.now());
-        fileFolder.setStatus(DelStatusEnum.NORMAL.getStatus());
-
-        DocFileContent saveFileContent = new DocFileContent();
-        saveFileContent.setVersion(0);
-        saveFileContent.setCreatorId(fileFolder.getCreatorId());
-        saveFileContent.setCreateAt(fileFolder.getCreateAt());
-        saveFileContent.setUpdateAt(fileFolder.getUpdateAt());
-
+        // 先置为失效
+        fileFolder.setStatus(DelStatusEnum.DEL.getStatus());
+        docFileFolderService.save(fileFolder);
+        // 保存文件内容
+        boolean success = docContentStorageService.create(fileFolder, null);
+        if(!success) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件创建失败！");
+        }
         transactionTemplate.execute(status -> {
-            docFileFolderService.save(fileFolder);
+            docFileFolderService.lambdaUpdate()
+                .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
+                .eq(DocFileFolder::getId, fileFolder.getId()).update();
             docFileFolderService.updateFileCount(createReqVO.getFolderId(), 1);
-            saveFileContent.setId(fileFolder.getId());
-            docFileContentService.save(saveFileContent);
             return null;
         });
 
@@ -97,9 +100,11 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     public void updateFile(DocFileUpdateReqVO updateReqVO) {
         Long fileId = updateReqVO.getId();
         // 校验
-        super.getById(fileId);
-        DocFileContent docFileContent = this.getByFileId(fileId);
+        DocFileFolder docFileFolder = super.getById(fileId);
+        boolean success = docContentStorageService.update(docFileFolder, updateReqVO.getContent());
+        if(success) {
 
+        }
         transactionTemplate.execute(status -> {
             DocFileFolder updateFolder = new DocFileFolder();
             updateFolder.setId(fileId);
@@ -234,16 +239,5 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         });
     }
 
-    private DocFileContent getByFileId(Long fileId) {
-        DocFileContent docFileContent = docFileContentService.getOne(Wrappers.<DocFileContent>lambdaQuery()
-            .eq(DocFileContent::getId, fileId)
-            .last("limit 1"));
-        if (Objects.isNull(docFileContent)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));
-        }
-        if (!docFileContent.getCreatorId().equals(LoginContext.getUserId())) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "非法访问！");
-        }
-        return docFileContent;
-    }
+
 }
