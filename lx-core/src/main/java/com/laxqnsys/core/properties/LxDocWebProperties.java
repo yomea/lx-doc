@@ -19,7 +19,5 @@ public class LxDocWebProperties {
     // 请求路径白名单
     private List<String> whiteUrlList;
 
-    private DocContentStorageProperties docContentStorage;
-
-    private List<StaticResourceProperties> staticResources;
+    private List<StaticResourceProperies> staticResources;
 }

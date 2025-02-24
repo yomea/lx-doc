@@ -3,7 +3,7 @@ package com.laxqnsys.core.config;
 import com.laxqnsys.core.converter.StringToLongConverter;
 import com.laxqnsys.core.interceptor.LoginHandlerInterceptor;
 import com.laxqnsys.core.properties.LxDocWebProperties;
-import com.laxqnsys.core.properties.StaticResourceProperties;
+import com.laxqnsys.core.properties.StaticResourceProperies;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +51,7 @@ public class WebMvcConfigure implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        List<StaticResourceProperties> staticResources = lxDocWebProperties.getStaticResources();
+        List<StaticResourceProperies> staticResources = lxDocWebProperties.getStaticResources();
         if (CollectionUtils.isEmpty(staticResources)) {
             return;
         }
