@@ -21,5 +21,5 @@ public class LxDocWebProperties {
 
     private List<String> blackUrlList;
 
-    private List<StaticResourceProperies> staticResources;
+    private List<StaticResourceProperties> staticResources;
 }
