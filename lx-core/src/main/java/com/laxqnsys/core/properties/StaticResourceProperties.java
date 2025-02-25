@@ -7,7 +7,7 @@ import lombok.Data;
  * @date 2024/5/24 15:21
  */
 @Data
-public class StaticResourceProperies {
+public class StaticResourceProperties {
 
     // 静态资源web路径
     private String[] pathPatterns;
