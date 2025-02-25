@@ -235,9 +235,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     }
 
     private DocFileContent getByFileId(Long fileId) {
-        DocFileContent docFileContent = docFileContentService.getOne(Wrappers.<DocFileContent>lambdaQuery()
-            .eq(DocFileContent::getId, fileId)
-            .last("limit 1"));
+        DocFileContent docFileContent = docFileContentService.getById(fileId);
         if (Objects.isNull(docFileContent)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("id为%s的文件未找到", fileId));
         }
