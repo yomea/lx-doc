@@ -75,4 +75,8 @@ public class DocFileFolder implements Serializable {
 
     @TableField(exist = false)
     private Long oldId;
+
+    @ApiModelProperty(value = "文件数据，excel，思维导图等文件内容")
+    @TableField(exist = false)
+    private String content;
 }
