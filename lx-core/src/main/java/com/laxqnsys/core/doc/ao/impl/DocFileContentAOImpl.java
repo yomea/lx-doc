@@ -46,7 +46,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 
         DocFileFolder parent = super.getById(createReqVO.getFolderId());
         if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只需要在文件夹下创建文件");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能在文件夹下创建文件");
         }
         DocFileFolder fileFolder = new DocFileFolder();
         fileFolder.setParentId(createReqVO.getFolderId());
@@ -86,7 +86,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
                     throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                         "文档保存失败！原因=》更新父文件夹下文件数量时失败！");
                 }
-                return statusUpdate && fileCountUpdate > 0;
+                return true;
             })
         );
         if (!success) {
@@ -179,7 +179,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             return;
         }
         LocalDateTime currentLdt = LocalDateTime.now();
-        fileFolders.stream().forEach(e -> {
+        fileFolders.forEach(e -> {
             e.setOldId(e.getId());
             e.setId(null);
             e.setCollected(false);
@@ -209,7 +209,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
                 if(updateFileCount <= 0) {
                     throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容复制失败！原因=》更新父文件夹文件数量失败！");
                 }
-                return updateStatusResult && updateFileCount > 0;
+                return true;
             });
         });
         if(!success) {
@@ -271,7 +271,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         DocFileFolder docFileFolder = docFileFolderService.getById(id);
         DocFileContentResVO resVO = new DocFileContentResVO();
         resVO.setId(id);
-        resVO.setName(Objects.nonNull(docFileFolder) ? docFileFolder.getName() : "");
+        resVO.setName(docFileFolder.getName());
         resVO.setUpdateAt(docFileFolder.getUpdateAt());
         resVO.setCreateAt(docFileFolder.getCreateAt());
         return resVO;

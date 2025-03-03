@@ -73,6 +73,7 @@ public class AuthorityAspect implements ApplicationContextAware {
         Object bean = this.applicationContext.getBean(beanName);
         Class<?>[] classes = (Class<?>[]) Arrays.stream(finalArgs).map(Object::getClass).toArray();
         Method method1 = ReflectionUtils.findMethod(bean.getClass(), authority.methodName(), classes);
+        assert method1 != null;
         return method1.invoke(bean, finalArgs);
     }
 
