@@ -12,7 +12,6 @@ import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileFolderAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.dao.entity.DocRecycle;
-import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;

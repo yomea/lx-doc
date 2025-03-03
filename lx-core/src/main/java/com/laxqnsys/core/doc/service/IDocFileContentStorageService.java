@@ -3,7 +3,6 @@ package com.laxqnsys.core.doc.service;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 
