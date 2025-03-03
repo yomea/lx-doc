@@ -1,5 +1,6 @@
 package com.laxqnsys.core.doc.model.dto;
 
+import java.io.File;
 import java.io.Serializable;
 import lombok.Data;
 
@@ -12,5 +13,6 @@ public class DocFileCopyDTO implements Serializable {
 
     private Long oldFileId;
     private Long newFileId;
-
+    private File oldFile;
+    private File newFile;
 }

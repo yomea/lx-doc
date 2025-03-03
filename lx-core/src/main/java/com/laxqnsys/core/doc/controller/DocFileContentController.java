@@ -9,6 +9,7 @@ import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +34,31 @@ public class DocFileContentController {
     @Autowired
     private DocFileContentAO docFileContentAO;
 
+    /**
+     * @deprecated replaced by {@link #downloadFileContent(Long, HttpServletResponse)}
+     * @param id
+     * @return
+     */
+    @Deprecated
     @GetMapping(value = "/getFileContent")
     public ResponseResult<DocFileContentResVO> getFileContent(@RequestParam Long id) {
         DocFileContentResVO resVO = docFileContentAO.getFileContent(id);
+        return ResponseResult.ok(resVO);
+    }
+
+    /**
+     * 展示文档内容后续调用该接口
+     * @param id
+     * @param response
+     */
+    @GetMapping(value = "/downloadFileContent")
+    public void downloadFileContent(@RequestParam Long id, HttpServletResponse response) {
+        docFileContentAO.downloadFileContent(id, response);
+    }
+
+    @GetMapping(value = "/getFileBaseInfo")
+    public ResponseResult<DocFileContentResVO> getFileBaseInfo(@RequestParam Long id) {
+        DocFileContentResVO resVO = docFileContentAO.getFileBaseInfo(id);
         return ResponseResult.ok(resVO);
     }
 

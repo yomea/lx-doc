@@ -9,6 +9,9 @@ spring:
 lx:
   doc:
     fileUploadPath: /usr/attament/${app.name}
+    storage:
+      type: dataBase
+      path: /usr/${app.name}/doc/content
 log:
   home: /usr/logs/${app.name}
 loglevel: INFO
