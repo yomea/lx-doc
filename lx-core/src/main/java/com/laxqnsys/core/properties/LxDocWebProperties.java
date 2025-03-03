@@ -20,6 +20,8 @@ public class LxDocWebProperties {
     private List<String> whiteUrlList;
 
     private List<String> blackUrlList;
+    // 存储配置
+    private DocContentStorageProperties storage;
 
     private List<StaticResourceProperties> staticResources;
 }

@@ -12,7 +12,6 @@ import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileFolderAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.dao.entity.DocRecycle;
-import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileAndFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileFolderResVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
@@ -310,37 +309,22 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             // 暂时先不显示
             child.setStatus(DelStatusEnum.DISPLAY.getStatus());
         });
-
-        transactionTemplate.execute(status -> {
-            // 批量保存
-            docFileFolderService.saveBatch(childs);
-            Map<Long, Long> oldMapNew = childs.stream()
-                .collect(Collectors.toMap(DocFileFolder::getOldId, DocFileFolder::getId, (v1, v2) -> v1));
-            List<DocFileFolder> updateList = childs.stream().map(e -> {
-                DocFileFolder update = new DocFileFolder();
-                update.setId(e.getId());
-                if (copyVO.getId().equals(e.getOldId())) {
-                    update.setParentId(copyVO.getFolderId());
-                } else {
-                    update.setParentId(oldMapNew.getOrDefault(e.getParentId(), 0L));
-                }
-                update.setStatus(DelStatusEnum.NORMAL.getStatus());
-                return update;
-            }).collect(Collectors.toList());
-            docFileFolderService.updateBatchById(updateList);
-            List<DocFileCopyDTO> copyList = childs.stream()
-                .filter(e -> FileFolderFormatEnum.FILE.getFormat().equals(e.getFormat())).map(file -> {
-                    DocFileCopyDTO update = new DocFileCopyDTO();
-                    update.setOldFileId(file.getOldId());
-                    update.setNewFileId(file.getId());
-                    return update;
-                }).collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(copyList)) {
-                docFileContentService.copyByFileIdList(copyList, userId);
-            }
-            docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
-            return null;
-        });
+        // 批量保存
+        boolean saveSuccess = docFileFolderService.saveBatch(childs);
+        if(!saveSuccess) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件夹复制失败！");
+        }
+        List<DocFileFolder> copyList = childs.stream()
+            .filter(e -> FileFolderFormatEnum.FILE.getFormat().equals(e.getFormat())).collect(Collectors.toList());
+        boolean success;
+        if (!CollectionUtils.isEmpty(copyList)) {
+            success = docFileContentStorageService.copy(copyList, () -> this.copyFolderOtherDeal(copyVO, targetFolder, childs));
+        } else {
+            success = this.copyFolderOtherDeal(copyVO, targetFolder, childs);
+        }
+        if(!success) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件夹复制失败！");
+        }
     }
 
     @Override
@@ -401,5 +385,32 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
                 resVO.setUpdateAt(fileFolder.getUpdateAt());
                 return resVO;
             }).collect(Collectors.toList());
+    }
+
+    private boolean copyFolderOtherDeal(FileFolderCopyVO copyVO, DocFileFolder targetFolder, List<DocFileFolder> childs) {
+        return transactionTemplate.execute(status -> {
+            Map<Long, Long> oldMapNew = childs.stream()
+                .collect(Collectors.toMap(DocFileFolder::getOldId, DocFileFolder::getId, (v1, v2) -> v1));
+            List<DocFileFolder> updateList = childs.stream().map(e -> {
+                DocFileFolder update = new DocFileFolder();
+                update.setId(e.getId());
+                if (copyVO.getId().equals(e.getOldId())) {
+                    update.setParentId(copyVO.getFolderId());
+                } else {
+                    update.setParentId(oldMapNew.getOrDefault(e.getParentId(), 0L));
+                }
+                update.setStatus(DelStatusEnum.NORMAL.getStatus());
+                return update;
+            }).collect(Collectors.toList());
+            boolean updateResult = docFileFolderService.updateBatchById(updateList);
+            if(!updateResult) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件夹失败！原因=》更新文件元数据失败！");
+            }
+            int updateFileCount = docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
+            if(updateFileCount <= 0) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件夹失败！原因=》更新父文件夹文件数量失败！");
+            }
+            return updateResult && updateFileCount > 0;
+        });
     }
 }

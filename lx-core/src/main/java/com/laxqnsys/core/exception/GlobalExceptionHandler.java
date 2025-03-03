@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ModelAndView defaultErrorHandler(HttpServletRequest request, HttpServletResponse response, Exception ex) {
         String trackId = UUID.randomUUID().toString().replace("-", "");
+        // 打印异常信息
         log.error("defaultErrorHandler->全局拦截异常信息,trackId={}, url={}", trackId, request.getRequestURI(), ex);
         ResponseResult<?> result = this.getMessage(ex);
         result.setTraceId(trackId);

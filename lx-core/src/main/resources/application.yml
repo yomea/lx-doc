@@ -19,6 +19,9 @@ mybatis-plus:
 
 lx:
   doc:
+    storage:
+      type: dataBase
+      path: /usr/${app.name}/doc/content
     whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUploadPath: /usr/attament/ # 配置文件上传的地址

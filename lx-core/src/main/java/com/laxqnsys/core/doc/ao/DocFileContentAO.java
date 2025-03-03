@@ -6,6 +6,7 @@ import com.laxqnsys.core.doc.model.vo.DocFileCreateReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileDelReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author wuzhenhong
@@ -13,6 +14,12 @@ import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
  */
 public interface DocFileContentAO {
 
+
+    void downloadFileContent(Long id, HttpServletResponse response);
+
+    DocFileContentResVO getFileBaseInfo(Long id);
+
+    @Deprecated
     DocFileContentResVO getFileContent(Long id);
 
     DocFileContentResVO createFile(DocFileCreateReqVO createReqVO);
