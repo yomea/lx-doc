@@ -2,7 +2,7 @@ package com.laxqnsys.core.doc.service.impl;
 
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
-import com.laxqnsys.core.doc.service.IDocFileContentStorageService;
+import com.laxqnsys.core.doc.service.AbstractDocFileContentStorageService;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,15 +16,15 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "oss")
-public class OssDocFileContentStorageServiceImpl implements IDocFileContentStorageService {
+public class OssDocFileContentStorageServiceImpl extends AbstractDocFileContentStorageService {
 
     @Override
-    public boolean create(DocFileFolder fileFolder, Runnable afterSuccess) {
+    public boolean create(DocFileFolder fileFolder) {
         return false;
     }
 
     @Override
-    public boolean update(DocFileFolder fileFolder, Runnable afterSuccess) {
+    public boolean update(DocFileFolder fileFolder) {
         return false;
     }
 
@@ -44,7 +44,7 @@ public class OssDocFileContentStorageServiceImpl implements IDocFileContentStora
     }
 
     @Override
-    public boolean copy(List<DocFileFolder> fileFolders, Runnable afterSuccess) {
+    public boolean copy(List<DocFileFolder> fileFolders) {
         return false;
     }
 }

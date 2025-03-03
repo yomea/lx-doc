@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
     private TransactionTemplate transactionTemplate;
 
     @Override
-    public boolean create(DocFileFolder fileFolder, Runnable afterSuccess) {
+    public boolean create(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess) {
         DocFileContent saveFileContent = new DocFileContent();
         saveFileContent.setVersion(0);
         saveFileContent.setCreatorId(fileFolder.getCreatorId());
@@ -52,15 +53,46 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
         saveFileContent.setId(fileFolder.getId());
         return transactionTemplate.execute(status -> {
             boolean success = docFileContentService.save(saveFileContent);
-            if (success) {
-                afterSuccess.run();
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档保存失败！原因=》文件内容保存到数据库失败！");
             }
-            return success;
+            success = afterSuccess.get();
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容保存失败！");
+            }
+            return true;
         });
     }
 
     @Override
-    public boolean update(DocFileFolder fileFolder, Runnable afterSuccess) {
+    public boolean copy(List<DocFileFolder> fileFolders, Supplier<Boolean> afterSuccess) {
+        List<DocFileCopyDTO> updateList = fileFolders.stream().map(file -> {
+            DocFileCopyDTO update = new DocFileCopyDTO();
+            update.setOldFileId(file.getOldId());
+            update.setNewFileId(file.getId());
+            return update;
+        }).collect(Collectors.toList());
+        Long userId = LoginContext.getUserId();
+        return transactionTemplate.execute(status -> {
+            int row = docFileContentService.copyByFileIdList(updateList, userId);
+            boolean success = row > 0;
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件复制失败！原因=》数据库复制插入失败！");
+            }
+            success = afterSuccess.get();
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件复制失败！");
+            }
+            return true;
+        });
+    }
+
+    @Override
+    public boolean update(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess) {
         DocFileContent docFileContent = this.getByFileId(fileFolder.getId());
         DocFileContent update = new DocFileContent();
         update.setId(docFileContent.getId());
@@ -68,10 +100,16 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
         update.setUpdateAt(fileFolder.getUpdateAt());
         return transactionTemplate.execute(status -> {
             boolean success = docFileContentService.updateById(update);
-            if (success) {
-                afterSuccess.run();
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档更新失败！原因=》文件内容更新到数据库失败！");
             }
-            return success;
+            success = afterSuccess.get();
+            if(!success) {
+                // 抛出异常，回滚
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容保存失败！");
+            }
+            return true;
         });
     }
 
@@ -128,25 +166,6 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
                 throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文档内容失败！");
             }
         }
-    }
-
-    @Override
-    public boolean copy(List<DocFileFolder> fileFolders, Runnable afterSuccess) {
-        List<DocFileCopyDTO> updateList = fileFolders.stream().map(file -> {
-            DocFileCopyDTO update = new DocFileCopyDTO();
-            update.setOldFileId(file.getOldId());
-            update.setNewFileId(file.getId());
-            return update;
-        }).collect(Collectors.toList());
-        Long userId = LoginContext.getUserId();
-        return transactionTemplate.execute(status -> {
-            int row = docFileContentService.copyByFileIdList(updateList, userId);
-            boolean success = row > 0;
-            if (success) {
-                afterSuccess.run();
-            }
-            return success;
-        });
     }
 
     private DocFileContent getByFileId(Long fileId) {

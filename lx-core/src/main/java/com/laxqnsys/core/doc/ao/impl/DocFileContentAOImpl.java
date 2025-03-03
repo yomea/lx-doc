@@ -3,6 +3,7 @@ package com.laxqnsys.core.doc.ao.impl;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.aspect.lock.ConcurrentLock;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.ao.AbstractDocFileFolderAO;
 import com.laxqnsys.core.doc.ao.DocFileContentAO;
@@ -65,22 +66,31 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         // 先保存元数据（目前我们文件id是通过mysql的自增id生成的，所以选择先保存）
         boolean saveSuccess = docFileFolderService.save(fileFolder);
         if(!saveSuccess) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档保存失败！");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档保存失败！原因=》文件元数据保存失败！");
         }
+
         // 保存文档内容
-        boolean success = docFileContentStorageService.create(fileFolder, () -> {
+        boolean success = docFileContentStorageService.create(fileFolder, () ->
             transactionTemplate.execute(status -> {
                 // 保存成功之后将文件置为生效状态
-                docFileFolderService.lambdaUpdate()
+                boolean statusUpdate = docFileFolderService.lambdaUpdate()
                     .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
                     .eq(DocFileFolder::getId, fileFolder.getId())
                     .update();
-                docFileFolderService.updateFileCount(createReqVO.getFolderId(), 1);
-                return null;
-            });
-        });
+                if (!statusUpdate) {
+                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                        "文档保存失败！原因=》将文件置为生效状态时失败！");
+                }
+                int fileCountUpdate = docFileFolderService.updateFileCount(createReqVO.getFolderId(), 1);
+                if (fileCountUpdate <= 0) {
+                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                        "文档保存失败！原因=》更新父文件夹下文件数量时失败！");
+                }
+                return statusUpdate && fileCountUpdate > 0;
+            })
+        );
         if (!success) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档保存失败！");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "保存文档内容失败！");
         }
         DocFileContentResVO resVO = new DocFileContentResVO();
         resVO.setId(fileFolder.getId());
@@ -91,6 +101,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     }
 
     @Override
+    @ConcurrentLock(key = "com.laxqnsys.core.doc.ao.impl.DocFileContentAOImpl.updateFile(${updateReqVO.id})")
     public void updateFile(DocFileUpdateReqVO updateReqVO) {
         Long fileId = updateReqVO.getId();
         // 校验
@@ -101,11 +112,19 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         updateFolder.setImg(updateReqVO.getImg());
         updateFolder.setUpdateAt(LocalDateTime.now());
         updateFolder.setContent(updateReqVO.getContent());
+        // 增加文件版本
+        updateFolder.setVersion(fileFolder.getVersion() + 1);
         boolean success = docFileContentStorageService.update(updateFolder, () -> {
-            docFileFolderService.updateById(updateFolder);
-        });
+                boolean updateResult = docFileFolderService.updateById(updateFolder);
+                if (!updateResult) {
+                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                        "文档内容更新失败！原因=》更新文件元数据失败！");
+                }
+                return true;
+            }
+        );
         if(!success) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档更新失败！");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容更新失败！");
         }
     }
 
@@ -176,15 +195,21 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档复制失败！");
         }
         boolean success = docFileContentStorageService.copy(fileFolders, () -> {
-            transactionTemplate.execute(status -> {
+            return transactionTemplate.execute(status -> {
                 // 复制成功之后，将文件置为失效
-                docFileFolderService.lambdaUpdate()
+                boolean updateStatusResult = docFileFolderService.lambdaUpdate()
                     .set(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
                     .in(DocFileFolder::getId, fileFolders.stream().map(DocFileFolder::getId)
                         .collect(Collectors.toList()))
                     .update();
-                docFileFolderService.updateFileCount(reqVO.getNewFolderId(), fileFolders.size());
-                return null;
+                if(!updateStatusResult) {
+                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容复制失败！原因=》更新文件元数据状态失败！");
+                }
+                int updateFileCount = docFileFolderService.updateFileCount(reqVO.getNewFolderId(), fileFolders.size());
+                if(updateFileCount <= 0) {
+                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容复制失败！原因=》更新父文件夹文件数量失败！");
+                }
+                return updateStatusResult && updateFileCount > 0;
             });
         });
         if(!success) {

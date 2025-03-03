@@ -403,9 +403,15 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
                 update.setStatus(DelStatusEnum.NORMAL.getStatus());
                 return update;
             }).collect(Collectors.toList());
-            docFileFolderService.updateBatchById(updateList);
-            docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
-            return true;
+            boolean updateResult = docFileFolderService.updateBatchById(updateList);
+            if(!updateResult) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件夹失败！原因=》更新文件元数据失败！");
+            }
+            int updateFileCount = docFileFolderService.updateFolderCount(targetFolder.getId(), 1);
+            if(updateFileCount <= 0) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件夹失败！原因=》更新父文件夹文件数量失败！");
+            }
+            return updateResult && updateFileCount > 0;
         });
     }
 }

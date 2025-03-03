@@ -3,6 +3,8 @@ package com.laxqnsys.core.doc.service;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -12,9 +14,11 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface IDocFileContentStorageService {
 
-    boolean create(DocFileFolder fileFolder, Runnable afterSuccess);
+    boolean create(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess);
 
-    boolean update(DocFileFolder fileFolder, Runnable afterSuccess);
+    boolean copy(List<DocFileFolder> fileFolders, Supplier<Boolean> afterSuccess);
+
+    boolean update(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess);
 
     boolean delete(DocFileFolder docFileFolder);
 
@@ -22,5 +26,4 @@ public interface IDocFileContentStorageService {
 
     void downloadFileContent(DocFileFolder docFileFolder, HttpServletResponse response);
 
-    boolean copy(List<DocFileFolder> fileFolders, Runnable afterSuccess);
 }
