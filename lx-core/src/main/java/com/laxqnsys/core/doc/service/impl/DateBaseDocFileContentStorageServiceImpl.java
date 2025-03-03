@@ -123,7 +123,7 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
 
         DocFileContentResVO resVO = new DocFileContentResVO();
         resVO.setId(id);
-        resVO.setName(Objects.nonNull(docFileFolder) ? docFileFolder.getName() : "");
+        resVO.setName(docFileFolder.getName());
         resVO.setContent(docFileContent.getContent());
         resVO.setUpdateAt(docFileContent.getUpdateAt());
         resVO.setCreateAt(docFileContent.getCreateAt());
