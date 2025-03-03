@@ -7,7 +7,7 @@ import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.dao.entity.DocRecycle;
 import com.laxqnsys.core.doc.dao.entity.DocRelationLevel;
-import com.laxqnsys.core.doc.service.IDocFileContentService;
+import com.laxqnsys.core.doc.service.IDocFileContentStorageService;
 import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.doc.service.IDocRecycleService;
 import com.laxqnsys.core.doc.service.IDocRelationLevelService;
@@ -34,13 +34,13 @@ public abstract class AbstractDocFileFolderAO {
     protected IDocFileFolderService docFileFolderService;
 
     @Autowired
-    protected IDocFileContentService docFileContentService;
-
-    @Autowired
     protected IDocRecycleService docRecycleService;
 
     @Autowired
     protected IDocRelationLevelService docRelationLevelService;
+
+    @Autowired
+    protected IDocFileContentStorageService docFileContentStorageService;
 
     @Autowired
     protected TransactionTemplate transactionTemplate;
