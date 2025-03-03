@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -37,6 +38,7 @@ import org.springframework.util.StringUtils;
 @ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "local")
 public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileContentStorageService {
 
+    private static final int BUFF_SIZE = 1024 * 4;
     private static final String USER_ID_PREFIX = "user_id_%s";
     private static final String FILE_ID_PREFIX = "file_id_%s";
     // file_{版本}
@@ -91,16 +93,7 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
         copyDTOList.stream().forEach(copyDTO -> {
             File oldFile = copyDTO.getOldFile();
             File newFile = copyDTO.getNewFile();
-            try (FileInputStream inputStream = new FileInputStream(oldFile);
-                OutputStream outputStream = new FileOutputStream(newFile);
-            ) {
-                this.copyFile(inputStream, outputStream);
-                outputStream.flush();
-            } catch (FileNotFoundException e) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件失败！", e);
-            } catch (IOException e) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件失败！", e);
-            }
+            this.copyFile(oldFile, newFile);
         });
         return true;
     }
@@ -127,7 +120,7 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
                 String.format("id为%s的文件不存在！原因=》文件系统中未找到对应的文件内容", id));
         }
         try (FileInputStream inputStream = new FileInputStream(file);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
         ) {
             this.copyFile(inputStream, outputStream);
             byte[] docContentStream = outputStream.toByteArray();
@@ -155,7 +148,7 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
                 String.format("id为%s的文件不存在！原因=》文件系统中未找到对应的文件内容", id));
         }
         try (FileInputStream inputStream = new FileInputStream(file);
-            OutputStream outputStream = response.getOutputStream();
+            OutputStream outputStream = response.getOutputStream()
         ) {
             String fileName = docFileFolder.getName();
             fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
@@ -171,9 +164,26 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
         }
     }
 
+    private void copyFile(File srcFile, File targetFile) {
+        try (FileInputStream fis = new FileInputStream(srcFile);
+            FileOutputStream fos = new FileOutputStream(targetFile);
+            FileChannel inChannel = fis.getChannel();
+            FileChannel outChannel = fos.getChannel()) {
+
+            long size = inChannel.size();
+            long position = 0;
+
+            while (position < size) {
+                position += inChannel.transferTo(position, size - position, outChannel);
+            }
+        } catch (IOException e) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "复制文件失败！", e);
+        }
+    }
+
     private void copyFile(InputStream inputStream, OutputStream outputStream) throws IOException {
         int len;
-        byte[] buff = new byte[1024 * 4];
+        byte[] buff = new byte[BUFF_SIZE];
         while ((len = inputStream.read(buff)) > 0) {
             outputStream.write(buff, 0, len);
         }
