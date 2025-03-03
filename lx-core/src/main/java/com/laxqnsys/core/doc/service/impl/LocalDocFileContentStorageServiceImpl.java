@@ -12,7 +12,6 @@ import com.laxqnsys.core.properties.LxDocWebProperties;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +20,6 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -64,9 +62,6 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
             try (FileOutputStream outputStream = new FileOutputStream(finalFile)) {
                 outputStream.write(content.getBytes(StandardCharsets.UTF_8));
                 outputStream.flush();
-            } catch (FileNotFoundException e) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                    String.format("在文件夹%s下创建文件失败，请检查文件夹权限", this.path), e);
             } catch (IOException e) {
                 throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                     String.format("在文件夹%s下创建文件失败，请检查文件夹权限", this.path), e);
@@ -90,7 +85,7 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
             copyDTO.setNewFile(finalFile);
             return copyDTO;
         }).collect(Collectors.toList());
-        copyDTOList.stream().forEach(copyDTO -> {
+        copyDTOList.forEach(copyDTO -> {
             File oldFile = copyDTO.getOldFile();
             File newFile = copyDTO.getNewFile();
             this.copyFile(oldFile, newFile);
@@ -126,13 +121,11 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
             byte[] docContentStream = outputStream.toByteArray();
             DocFileContentResVO resVO = new DocFileContentResVO();
             resVO.setId(id);
-            resVO.setName(Objects.nonNull(docFileFolder) ? docFileFolder.getName() : "");
+            resVO.setName(docFileFolder.getName());
             resVO.setContent(new String(docContentStream, StandardCharsets.UTF_8));
             resVO.setUpdateAt(docFileFolder.getUpdateAt());
             resVO.setCreateAt(docFileFolder.getCreateAt());
             return resVO;
-        } catch (FileNotFoundException e) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文件失败！", e);
         } catch (IOException e) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文件失败！", e);
         }
@@ -157,8 +150,6 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
             response.setContentType("application/octet-stream; charset=utf-8");
             this.copyFile(inputStream, outputStream);
             outputStream.flush();
-        } catch (FileNotFoundException e) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "下载文件流失败！", e);
         } catch (IOException e) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "下载文件流失败！", e);
         }

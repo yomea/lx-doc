@@ -6,7 +6,6 @@ import com.laxqnsys.core.doc.ao.DocCollectFolderAO;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocCollectReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileResVO;
-import com.laxqnsys.core.doc.service.IDocCollectFolderService;
 import com.laxqnsys.core.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import java.util.List;
@@ -23,9 +22,6 @@ public class DocCollectFolderAOImpl implements DocCollectFolderAO {
 
     @Autowired
     private IDocFileFolderService docFileFolderService;
-
-    @Autowired
-    private IDocCollectFolderService docCollectFolderService;
 
     @Override
     public List<DocFileResVO> getCollectFileList(String name) {

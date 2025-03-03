@@ -1,6 +1,7 @@
 package com.laxqnsys.core.converter;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
 import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
@@ -11,7 +12,7 @@ import org.springframework.util.StringUtils;
 public class StringToLongConverter implements Converter<String, Long> {
 
     @Override
-    public Long convert(String source) {
+    public Long convert(@NonNull String source) {
         if (!StringUtils.hasText(source) || "\"\"".equals(source.trim()) || "''".equals(source.trim())) {
             return null;
         }

@@ -299,7 +299,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         super.getChild(Collections.singletonList(copyVO.getId()), childs);
         Long userId = LoginContext.getUserId();
         LocalDateTime currentLdt = LocalDateTime.now();
-        childs.stream().forEach(child -> {
+        childs.forEach(child -> {
             child.setOldId(child.getId());
             child.setId(null);
             child.setCollected(false);
@@ -388,7 +388,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
     }
 
     private boolean copyFolderOtherDeal(FileFolderCopyVO copyVO, DocFileFolder targetFolder, List<DocFileFolder> childs) {
-        return transactionTemplate.execute(status -> {
+        return transactionTemplate.<Boolean>execute(status -> {
             Map<Long, Long> oldMapNew = childs.stream()
                 .collect(Collectors.toMap(DocFileFolder::getOldId, DocFileFolder::getId, (v1, v2) -> v1));
             List<DocFileFolder> updateList = childs.stream().map(e -> {
