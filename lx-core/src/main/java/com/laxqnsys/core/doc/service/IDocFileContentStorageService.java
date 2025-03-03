@@ -21,7 +21,10 @@ public interface IDocFileContentStorageService {
 
     boolean delete(DocFileFolder docFileFolder);
 
-    DocFileContentResVO getFileContent(DocFileFolder docFileFolder);
+    @Deprecated
+    default DocFileContentResVO getFileContent(DocFileFolder docFileFolder) {
+        throw new UnsupportedOperationException("该接口不再支持使用，避免读取大量数据到内存，造成gc压力！");
+    }
 
     void downloadFileContent(DocFileFolder docFileFolder, HttpServletResponse response);
 

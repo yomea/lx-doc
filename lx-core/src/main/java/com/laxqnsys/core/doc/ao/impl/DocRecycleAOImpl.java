@@ -115,7 +115,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
                .eq(DocRecycle::getId, id));
            docRelationLevelService.removeBatchByIds(relationLevelIds);
             Integer format = docFileFolder.getFormat();
-            if(finalParentId != docFileFolder.getParentId()) {
+            if(!Objects.equals(finalParentId, docFileFolder.getParentId())) {
                 docFileFolderService.update(Wrappers.<DocFileFolder>lambdaUpdate()
                     .set(DocFileFolder::getParentId, finalParentId)
                     .eq(DocFileFolder::getId, id));

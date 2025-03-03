@@ -22,7 +22,7 @@ public class RedisConfig {
     public RedissonClient redissonClient(RedisProperties properties) {
         Config config = new Config();
         List<String> nodes = properties.getSentinel().getNodes();
-        List<String> newNodes = new ArrayList(nodes.size());
+        List<String> newNodes = new ArrayList<>(nodes.size());
 
         for (String node : nodes) {
             newNodes.add(node.startsWith("redis://") ? node : "redis://" + node);

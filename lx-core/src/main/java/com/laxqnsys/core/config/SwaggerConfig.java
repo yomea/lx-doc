@@ -29,21 +29,21 @@ public class SwaggerConfig {
 
     @Bean
     public Docket createApi() {
-        return getRestBody("理想文档API", "com.lxqnsys.doc.controller");
+        return getRestBody();
     }
 
-    private Docket getRestBody(String title, String path) {
+    private Docket getRestBody() {
         // 增加请求头信息
         String osName = System.getProperty("os.name").toLowerCase();
 
         List<Parameter> pars = new ArrayList<>();
         return new Docket(DocumentationType.SWAGGER_2)
-            .apiInfo(apiInfo()).groupName(title)
+            .apiInfo(apiInfo()).groupName("理想文档API")
             .globalOperationParameters(pars)
             .select()
             // 带注解ApiOperation的controller都会扫描出来
             .apis(RequestHandlerSelectors
-                .basePackage(path))
+                .basePackage("com.lxqnsys.doc.controller"))
             .paths(PathSelectors.any()).build()
             .pathMapping(osName.startsWith("win") ? "" : WEBAP);
     }
