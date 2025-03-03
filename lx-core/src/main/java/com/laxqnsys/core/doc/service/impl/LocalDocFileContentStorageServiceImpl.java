@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
@@ -156,6 +157,11 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
         try (FileInputStream inputStream = new FileInputStream(file);
             OutputStream outputStream = response.getOutputStream();
         ) {
+            String fileName = docFileFolder.getName();
+            fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
+            fileName = fileName.replace("+", "%20");    //IE下载文件名空格变+号问题
+            response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+            response.setContentType("application/octet-stream; charset=utf-8");
             this.copyFile(inputStream, outputStream);
             outputStream.flush();
         } catch (FileNotFoundException e) {

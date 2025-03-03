@@ -9,8 +9,6 @@ import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
 import com.laxqnsys.core.doc.service.IDocFileContentService;
 import com.laxqnsys.core.doc.service.IDocFileContentStorageService;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -136,10 +134,7 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
     public void downloadFileContent(DocFileFolder docFileFolder, HttpServletResponse response) {
 
         DocFileContent fileContent = this.getByFileId(docFileFolder.getId());
-        OutputStream os = null;
-        InputStream fis = null;
-        try {
-            os = response.getOutputStream();
+        try (OutputStream os = response.getOutputStream()) {
             String fileName = docFileFolder.getName();
             fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8.toString());
             fileName = fileName.replace("+", "%20");    //IE下载文件名空格变+号问题
@@ -152,19 +147,7 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
             os.flush();
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文档内容失败！");
-        } finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
-                if (fis != null) {
-                    fis.close();
-                }
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文档内容失败！");
-            }
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "获取文档内容失败！", e);
         }
     }
 
