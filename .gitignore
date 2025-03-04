@@ -38,3 +38,4 @@ build/
 .DS_Store
 .idea/
 log.home_IS_UNDEFINED
+lx-core/src/main/resources/static/

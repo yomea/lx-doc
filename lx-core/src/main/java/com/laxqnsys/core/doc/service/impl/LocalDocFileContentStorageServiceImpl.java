@@ -50,7 +50,7 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "存储路径未配置！");
         }
         if (!path.endsWith("/") && !path.endsWith("\\")) {
-            this.path = path + File.pathSeparator;
+            this.path = path + File.separator;
         }
     }
 
@@ -73,13 +73,13 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
     @Override
     public boolean copy(List<DocFileFolder> fileFolders) {
         List<DocFileCopyDTO> copyDTOList = fileFolders.stream().map(fileFolder -> {
-            String filePath = this.getFilePath(fileFolder.getOldId(), fileFolder.getVersion());
+            String filePath = this.getFilePath(fileFolder.getOldId(), fileFolder.getOldVersion());
             File file = new File(filePath);
             if (!file.exists()) {
                 throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                     String.format("id为%s的文件不存在！原因=》文件系统中未找到对应的文件内容", fileFolder.getOldId()));
             }
-            File finalFile = this.createEmptyFile(fileFolder.getId(), 0);
+            File finalFile = this.createEmptyFile(fileFolder.getId(), fileFolder.getVersion());
             DocFileCopyDTO copyDTO = new DocFileCopyDTO();
             copyDTO.setOldFile(file);
             copyDTO.setNewFile(finalFile);
@@ -181,17 +181,17 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileConten
     }
 
     private String getFileDirPath(Long fileId) {
-        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + String.format(FILE_ID_PREFIX,
+        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + File.separator + String.format(FILE_ID_PREFIX,
             fileId);
     }
 
     private String getFilePath(Long fileId, Integer version) {
-        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + String.format(FILE_ID_PREFIX,
-            fileId) + File.pathSeparator + String.format(FILE_VERSION_PREFIX, version);
+        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + File.separator + String.format(FILE_ID_PREFIX,
+            fileId) + File.separator + String.format(FILE_VERSION_PREFIX, version);
     }
 
     private String getFilePath(String dirPath, Integer version) {
-        return dirPath + File.pathSeparator + String.format(FILE_VERSION_PREFIX, version);
+        return dirPath + File.separator + String.format(FILE_VERSION_PREFIX, version);
     }
 
     private File createEmptyFile(Long id, Integer version) {
