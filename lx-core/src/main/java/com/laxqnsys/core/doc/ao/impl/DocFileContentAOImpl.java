@@ -186,6 +186,8 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             e.setCreateAt(currentLdt);
             e.setUpdateAt(currentLdt);
             e.setParentId(reqVO.getNewFolderId());
+            e.setOldVersion(e.getVersion());
+            e.setVersion(0);
             // 新增文件先置为失效，暂时不可见
             e.setStatus(DelStatusEnum.DISPLAY.getStatus());
         });
