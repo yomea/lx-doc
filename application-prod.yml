@@ -10,7 +10,7 @@ lx:
   doc:
     fileUploadPath: /usr/attament/${app.name}
     storage:
-      type: dataBase
+      type: local # 采用本地磁盘存储，个人版提供 dataBase（文档内容数据库存储） 和 local（文档内容本次磁盘存储）
       path: /usr/${app.name}/doc/content
 log:
   home: /usr/logs/${app.name}
