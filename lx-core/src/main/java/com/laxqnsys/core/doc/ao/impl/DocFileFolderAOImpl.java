@@ -306,6 +306,8 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             child.setCreateAt(currentLdt);
             child.setUpdateAt(currentLdt);
             child.setCreatorId(userId);
+            child.setOldVersion(child.getVersion());
+            child.setVersion(0);
             // 暂时先不显示
             child.setStatus(DelStatusEnum.DISPLAY.getStatus());
         });
