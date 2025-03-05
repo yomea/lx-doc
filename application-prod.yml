@@ -8,10 +8,10 @@ spring:
       password: lx_doc_test
 lx:
   doc:
-    fileUploadPath: /usr/attament/${app.name}
+    fileUploadPath: /usr/attachment/${app.name}
     storage:
-      type: local # 采用本地磁盘存储，个人版提供 dataBase（文档内容数据库存储） 和 local（文档内容本次磁盘存储）
-      path: /usr/${app.name}/doc/content
+      type: local # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      path: ${lx.doc.fileUploadPath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
 log:
   home: /usr/logs/${app.name}
 loglevel: INFO

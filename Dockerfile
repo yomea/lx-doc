@@ -19,7 +19,7 @@ RUN apk add tzdata  \
 # 创建目录
 RUN mkdir -p /usr/app/${SERVICE}/ \
     && mkdir -p /usr/logs/${SERVICE}/ \
-    && mkdir -p /usr/attament/${SERVICE}/
+    && mkdir -p /usr/attachment/${SERVICE}/
 
 ADD run_in_docker.sh /usr/app/${SERVICE}/
 # 如果是在windows下进行 docker 构建的话，要去掉 \r\n 换行符的\r
