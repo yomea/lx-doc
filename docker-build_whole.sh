@@ -9,12 +9,12 @@ docker build -t lx-doc:1.0 .
 # 你可以拉取github上的代码进行构建
 # 挂在的宿主目录请先创建
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 # /usr/app/mysql mysq存放数据路径
 docker run -d --network host --privileged \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--MYSQL_IP=host.docker.internal --spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
  -e MEMORY=1024m \
@@ -38,12 +38,12 @@ docker network create -d bridge --subnet 192.168.0.0/24 --gateway 192.168.0.1 lo
 # 你可以拉取github上的代码进行构建
 # 挂在的宿主目录请先创建
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 # /usr/app/mysql mysq存放数据路径
 docker run -d -p 9222:9222 -p 8089:8089 -p 3306:3306 --privileged \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -v /usr/app/mysql:/usr/app/mysql \
  -e ARGS="--MYSQL_IP=127.0.0.1 --spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
  -e MEMORY=1024m \

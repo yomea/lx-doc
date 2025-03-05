@@ -11,11 +11,11 @@ docker build -t lx-doc:1.0 .
 # 挂在的宿主目录请先创建
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 docker run -d --network host --privileged \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
   -e MEMORY=1024m \
  --name lx-doc lx-doc:1.0
@@ -30,11 +30,11 @@ docker run -d --network host --privileged \
 # 挂在的宿主目录请先创建
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 docker run -d --privileged \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
   -e MEMORY=1024m \
  --name lx-doc lx-doc:1.0

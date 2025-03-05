@@ -38,7 +38,7 @@ RUN mkdir -p /var/log/nginx/ \
     && mkdir -p /usr/config/${SERVICE}/ \
     && mkdir -p /usr/app/${SERVICE}/ \
     && mkdir -p /usr/logs/${SERVICE}/ \
-    && mkdir -p /usr/attament/${SERVICE}/
+    && mkdir -p /usr/attachment/${SERVICE}/
 
 # 安装 mysql
 RUN apk add --update mysql mysql-client \

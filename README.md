@@ -79,8 +79,11 @@ sh run_no_in_docker.sh start 512m
 ```yaml
 lx:
   doc:
+    storage:
+      type: dataBase # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      path: ${lx.doc.fileUploadPath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
     whiteUrlList: /,/api/login,/api/register,/static/**,/assets/**,/system/error # 白名单url，配置之后将会被登录拦截器拦截
-    fileUploadPath: /usr/attament/ # 配置文件上传的地址，单机使用时请配置
+    fileUploadPath: /usr/attachment/${app.name} # 配置文件上传的地址，单机使用时请配置
     
     # 如果您使用 nginx 来反向代理，那么不需要配置以下静态资源的映射，可以直接使用 nginx 来代理
     # 如果您不使用 nginx 想直接使用当前服务去请求，请将以下静态资源路径修改成自己的路径，然后在 lx.doc.whiteUrlList 
@@ -134,14 +137,14 @@ spring:
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/nginx/config 放置nginx相关的配置
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 docker run -d --network host --privileged \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/nginx/config:/usr/nginx/config \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
  -e MEMORY=1024m \
 --name lx-doc lx-doc:1.0
@@ -161,14 +164,14 @@ ip地址或者修改容器的hosts，修改hosts可以在Dockerfile操作：
 # /usr/config/lx-doc/ 挂在 lx-doc 启动的配置文件，比如 application-prod.yml 就放在这个目录下面
 # /usr/nginx/config 放置nginx相关的配置
 # /usr/logs/lx-doc 应用的日志
-# /usr/attament/lx-doc 上传附件的存放路径
+# /usr/attachment/lx-doc 上传附件的存放路径
 docker run -d -p 9222:9222 -p 8089:8089 --privileged \
  -v /usr/web/html/:/usr/web/html/ \
  -v /usr/config/lx-doc/:/usr/config/lx-doc/ \
  -v /var/log/nginx/:/var/log/nginx/ \
  -v /usr/nginx/config:/usr/nginx/config \
  -v /usr/logs/lx-doc:/usr/logs/lx-doc \
- -v /usr/attament/lx-doc:/usr/attament/lx-doc \
+ -v /usr/attachment/lx-doc:/usr/attachment/lx-doc \
  -e ARGS="--spring.profiles.active=prod --spring.config.location=classpath:/,/usr/config/lx-doc/ --app.name=lx-doc" \
  -e MEMORY=1024m \
 --name lx-doc lx-doc:1.0
