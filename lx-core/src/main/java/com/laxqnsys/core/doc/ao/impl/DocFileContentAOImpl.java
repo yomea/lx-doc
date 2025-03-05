@@ -112,6 +112,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         updateFolder.setImg(updateReqVO.getImg());
         updateFolder.setUpdateAt(LocalDateTime.now());
         updateFolder.setContent(updateReqVO.getContent());
+        updateFolder.setVersion(fileFolder.getVersion());
         boolean success = docFileContentStorageService.update(updateFolder, () -> {
                 boolean updateResult = docFileFolderService.updateById(updateFolder);
                 if (!updateResult) {
