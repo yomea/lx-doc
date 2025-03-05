@@ -20,11 +20,11 @@ mybatis-plus:
 lx:
   doc:
     storage:
-      type: local # 采用本地磁盘存储，个人版提供 dataBase（文档内容数据库存储） 和 local（文档内容本次磁盘存储）
-      path: /usr/${app.name}/doc/content
+      type: local # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      path: ${lx.doc.fileUploadPath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
     whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
-    fileUploadPath: /usr/attament/ # 配置文件上传的地址
+    fileUploadPath: /usr/attachment/${app.name} # 配置文件上传的地址
     indexHtmlWebPath: /index.html # 配置欢迎页
     staticResources:
       - pathPatterns: /static/** # 配置静态资源访问的web uri
