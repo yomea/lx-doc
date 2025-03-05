@@ -46,6 +46,8 @@ public abstract class AbstractFileSystemStorageService implements IDocFileConten
         boolean success;
         // 磁盘存储，有内容才存储，没有内容不需要实际做存储的操作
         if(StringUtils.hasText(content)) {
+            // 增加文件版本
+            fileFolder.setVersion(fileFolder.getVersion() + 1);
             success = this.update(fileFolder);
         } else {
             success = true;
