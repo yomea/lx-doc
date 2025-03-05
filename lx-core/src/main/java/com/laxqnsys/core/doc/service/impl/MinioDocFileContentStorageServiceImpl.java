@@ -2,7 +2,7 @@ package com.laxqnsys.core.doc.service.impl;
 
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
-import com.laxqnsys.core.doc.service.AbstractDocFileContentStorageService;
+import com.laxqnsys.core.doc.service.AbstractFileSystemStorageService;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "minio")
-public class MinioDocFileContentStorageServiceImpl extends AbstractDocFileContentStorageService {
+public class MinioDocFileContentStorageServiceImpl extends AbstractFileSystemStorageService {
 
     @Override
     public boolean create(DocFileFolder fileFolder) {
