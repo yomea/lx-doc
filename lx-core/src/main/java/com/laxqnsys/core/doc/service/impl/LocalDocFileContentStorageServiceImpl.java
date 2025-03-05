@@ -6,7 +6,7 @@ import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.dto.DocFileCopyDTO;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
-import com.laxqnsys.core.doc.service.AbstractDocFileContentStorageService;
+import com.laxqnsys.core.doc.service.AbstractFileSystemStorageService;
 import com.laxqnsys.core.properties.DocContentStorageProperties;
 import com.laxqnsys.core.properties.LxDocWebProperties;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 @Slf4j
 @Service
 @ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "local")
-public class LocalDocFileContentStorageServiceImpl extends AbstractDocFileContentStorageService {
+public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemStorageService {
 
     private static final int BUFF_SIZE = 1024 * 4;
     private static final String USER_ID_PREFIX = "user_id_%s";
