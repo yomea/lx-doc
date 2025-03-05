@@ -5,12 +5,14 @@ import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import java.util.List;
 import java.util.function.Supplier;
+import org.springframework.util.StringUtils;
 
 /**
+ * 抽象的文件系统存储服务
  * @author wuzhenhong
  * @date 2025/3/3 11:05
  */
-public abstract class AbstractDocFileContentStorageService implements IDocFileContentStorageService {
+public abstract class AbstractFileSystemStorageService implements IDocFileContentStorageService {
 
     @Override
     public boolean create(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess) {
@@ -40,7 +42,14 @@ public abstract class AbstractDocFileContentStorageService implements IDocFileCo
 
     @Override
     public boolean update(DocFileFolder fileFolder, Supplier<Boolean> afterSuccess) {
-        boolean success = this.update(fileFolder);
+        String content = fileFolder.getContent();
+        boolean success;
+        // 磁盘存储，有内容才存储，没有内容不需要实际做存储的操作
+        if(StringUtils.hasText(content)) {
+            success = this.update(fileFolder);
+        } else {
+            success = true;
+        }
         if(!success) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档文件更新失败！");
         }
