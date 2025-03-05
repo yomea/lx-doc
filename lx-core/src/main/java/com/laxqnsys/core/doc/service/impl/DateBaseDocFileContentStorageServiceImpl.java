@@ -96,6 +96,8 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
         update.setId(docFileContent.getId());
         update.setContent(fileFolder.getContent());
         update.setUpdateAt(fileFolder.getUpdateAt());
+        // 增加文件内容更新版本
+        fileFolder.setVersion(fileFolder.getVersion() + 1);
         return transactionTemplate.execute(status -> {
             boolean success = docFileContentService.updateById(update);
             if(!success) {
