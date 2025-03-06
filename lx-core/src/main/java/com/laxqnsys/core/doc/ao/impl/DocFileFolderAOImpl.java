@@ -308,10 +308,10 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             child.setCreatorId(userId);
             child.setOldVersion(child.getVersion());
             child.setVersion(0);
-            // 暂时先不显示
+            // 暂时先不显示（防止后续操作失败，导致页面看到错误的数据）
             child.setStatus(DelStatusEnum.DISPLAY.getStatus());
         });
-        // 批量保存
+        // 批量保存（目前我们文件id是通过mysql的自增id生成的，所以选择先保存）
         boolean saveSuccess = docFileFolderService.saveBatch(childs);
         if(!saveSuccess) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件夹复制失败！");
