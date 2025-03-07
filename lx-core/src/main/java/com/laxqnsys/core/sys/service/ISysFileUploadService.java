@@ -1,7 +1,6 @@
 package com.laxqnsys.core.sys.service;
 
 import com.laxqnsys.core.sys.model.bo.FileUploadBO;
-import java.io.InputStream;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

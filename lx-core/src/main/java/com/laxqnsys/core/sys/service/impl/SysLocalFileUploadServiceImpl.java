@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.function.Supplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -34,14 +34,14 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
 
     public SysLocalFileUploadServiceImpl(LxDocWebProperties lxDocWebProperties) {
         LocalFileUploadProperties localUpload = lxDocWebProperties.getLocalUpload();
-        if(Objects.isNull(localUpload)) {
+        if (Objects.isNull(localUpload)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "选择本地存储文件时，上传附件的路径必须配置！");
         }
         String fileUploadPath = localUpload.getFilePath();
-        if(!StringUtils.hasText(fileUploadPath)) {
+        if (!StringUtils.hasText(fileUploadPath)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "选择本地存储文件时，上传附件的路径必须配置！");
         }
-        if(fileUploadPath.endsWith("/") || fileUploadPath.endsWith("\\")) {
+        if (fileUploadPath.endsWith("/") || fileUploadPath.endsWith("\\")) {
             fileUploadPath += File.separator;
         }
         this.fileUploadPath = fileUploadPath;
@@ -50,6 +50,21 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
 
     @Override
     public FileUploadBO upload(MultipartFile file) {
+        return this.doUpload(() -> {
+            try {
+                return file.getInputStream();
+            } catch (IOException e) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传附件失败！", e);
+            }
+        }, file.getOriginalFilename(), file.getSize());
+    }
+
+    @Override
+    public FileUploadBO upload(byte[] data, String fileName) {
+        return this.doUpload(() -> new ByteArrayInputStream(data), fileName, Long.valueOf(data.length));
+    }
+
+    private FileUploadBO doUpload(Supplier<InputStream> streamSupplier, String fileName, Long size) {
 
         String uuid = UUID.randomUUID().toString();
         String randomDir = fileUploadPath + File.separator + uuid;
@@ -58,9 +73,9 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 String.format("附件目录%s创建失败！", randomDir));
         }
-        String shortPath = uuid + File.separator + file.getOriginalFilename();
+        String shortPath = uuid + File.separator + fileName;
         String path = fileUploadPath + File.separator + shortPath;
-        try (InputStream inputStream = file.getInputStream();
+        try (InputStream inputStream = streamSupplier.get();
             FileOutputStream outputStream = new FileOutputStream(path)) {
             IoUtil.copy(inputStream, outputStream);
         } catch (IOException e) {
@@ -68,23 +83,7 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
         }
         return FileUploadBO.builder()
             .url(FIX_STATIC_PATH + shortPath)
-            .size(file.getSize())
+            .size(size)
             .build();
-    }
-
-    @Override
-    public FileUploadBO upload(byte[] data, String fileName) {
-        String shortPath = UUID.randomUUID() + File.separator + fileName;
-        String path = fileUploadPath + File.separator + shortPath;
-        try (InputStream inputStream = new ByteArrayInputStream(data);
-            FileOutputStream outputStream = new FileOutputStream(path)) {
-            IoUtil.copy(inputStream, outputStream);
-            return FileUploadBO.builder()
-                .url(FIX_STATIC_PATH + shortPath)
-                .size(Long.valueOf(data.length))
-                .build();
-        } catch (IOException e) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传图片失败！", e);
-        }
     }
 }
