@@ -12,8 +12,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 public class LxDocWebProperties {
 
-    // 文件上传路径
-    private String fileUploadPath;
+    // 文件上传类型
+    private String fileUploadType;
 
     private String indexHtmlWebPath;
     // 请求路径白名单
@@ -24,4 +24,8 @@ public class LxDocWebProperties {
     private DocContentStorageProperties storage;
 
     private List<StaticResourceProperties> staticResources;
+
+    private LocalFileUploadProperties localUpload;
+    private OssFileUploadProperties ossUpload;
+    private MinioFileUploadProperties minioUpload;
 }
