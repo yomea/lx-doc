@@ -81,9 +81,11 @@ lx:
   doc:
     storage:
       type: dataBase # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
-      path: ${lx.doc.fileUploadPath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
+      path: ${lx.doc.localUpload.filePath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
     whiteUrlList: /,/api/login,/api/register,/static/**,/assets/**,/system/error # 白名单url，配置之后将会被登录拦截器拦截
-    fileUploadPath: /usr/attachment/${app.name} # 配置文件上传的地址，单机使用时请配置
+    fileUploadType: local # 文件上传类型，目前已实现local，为实现 oss，minio，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+    localUpload:
+      filePath: /usr/attachment/${app.name} # 配置文件上传的地址，设置为 local 时，该属性才有效
     
     # 如果您使用 nginx 来反向代理，那么不需要配置以下静态资源的映射，可以直接使用 nginx 来代理
     # 如果您不使用 nginx 想直接使用当前服务去请求，请将以下静态资源路径修改成自己的路径，然后在 lx.doc.whiteUrlList 
@@ -91,7 +93,7 @@ lx:
     indexHtmlWebPath: /assets/index.html # 配置欢迎页
     staticResources:
       - pathPatterns: /static/** # 配置静态资源访问的web uri
-        resourceLocations: file:///${lx.doc.fileUploadPath} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
+        resourceLocations: file:///${lx.doc.localUpload.filePath} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
       - pathPatterns: /assets/**
         resourceLocations: file:///D:/work/lx-doc/workbench/dist/assets/,file:///D:/work/lx-doc/workbench/dist/
 

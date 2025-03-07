@@ -61,7 +61,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         fileFolder.setCreatorId(LoginContext.getUserId());
         fileFolder.setCreateAt(LocalDateTime.now());
         fileFolder.setUpdateAt(LocalDateTime.now());
-        // 先置为无效状态
+        // 先置为无效状态（防止后续操作失败，导致页面看到错误的数据）
         fileFolder.setStatus(DelStatusEnum.DISPLAY.getStatus());
         // 先保存元数据（目前我们文件id是通过mysql的自增id生成的，所以选择先保存）
         boolean saveSuccess = docFileFolderService.save(fileFolder);
@@ -187,10 +187,10 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             e.setParentId(reqVO.getNewFolderId());
             e.setOldVersion(e.getVersion());
             e.setVersion(0);
-            // 新增文件先置为失效，暂时不可见
+            // 新增文件先置为失效，暂时不可见（防止后续操作失败，导致页面看到错误的数据）
             e.setStatus(DelStatusEnum.DISPLAY.getStatus());
         });
-        // 批量保存复制的文件
+        // 批量保存复制的文件（目前我们文件id是通过mysql的自增id生成的，所以选择先保存）
         boolean saveSuccess = docFileFolderService.saveBatch(fileFolders);
         if(!saveSuccess) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档复制失败！");
