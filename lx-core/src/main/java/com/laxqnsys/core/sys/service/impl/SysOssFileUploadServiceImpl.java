@@ -29,4 +29,9 @@ public class SysOssFileUploadServiceImpl implements ISysFileUploadService {
     public FileUploadBO upload(byte[] data, String fileName) {
         return null;
     }
+
+    @Override
+    public boolean delete(String url) {
+        return false;
+    }
 }
