@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @date 2025/3/6 20:16
  */
 @Service
-@ConditionalOnProperty(prefix = "lx.doc", name = "fileUploadType", havingValue = "minio")
+@ConditionalOnProperty(prefix = "lx.doc.fileUpload", name = "type", havingValue = "minio")
 public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
 
     public SysMinioFileUploadServiceImpl() {
