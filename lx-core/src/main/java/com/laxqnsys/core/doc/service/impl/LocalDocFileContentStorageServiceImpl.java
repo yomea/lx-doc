@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ import org.springframework.util.StringUtils;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "local")
+@ConditionalOnProperty(prefix = "lx.doc.docStorage", name = "type", havingValue = "local")
 public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemStorageService {
 
     private static final int BUFF_SIZE = 1024 * 4;
@@ -44,10 +45,13 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemSto
     private String path;
 
     public LocalDocFileContentStorageServiceImpl(LxDocWebProperties lxDocWebProperties) {
-        DocContentStorageProperties storage = lxDocWebProperties.getStorage();
+        DocContentStorageProperties storage = lxDocWebProperties.getDocStorage();
+        if(Objects.isNull(storage)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容存储路径未配置！");
+        }
         String path = storage.getPath();
         if (!StringUtils.hasText(path)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "存储路径未配置！");
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容存储路径未配置！");
         }
         if (!path.endsWith("/") && !path.endsWith("\\")) {
             this.path = path + File.separator;
