@@ -137,6 +137,13 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         }
         List<Long> idList = reqVO.getIds();
         List<DocFileFolder> fileFolders = super.selectByIdList(idList);
+        List<String> checkFileNames = fileFolders.stream().filter(e -> e.getParentId().equals(newFolderId))
+            .map(DocFileFolder::getName)
+            .collect(Collectors.toList());
+        if (!CollectionUtils.isEmpty(checkFileNames)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("要移动的【%s】已在指定文件夹下，不要重复移入！", checkFileNames
+                .stream().collect(Collectors.joining(","))));
+        }
         Map<Long, Integer> parentIdMapSizeMap = fileFolders.stream()
             .filter(e -> Objects.nonNull(e.getParentId()) && e.getParentId() > 0L)
             .collect(Collectors.groupingBy(DocFileFolder::getParentId,
@@ -172,8 +179,7 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能复制到文件夹下！");
         }
         List<Long> originIdList = reqVO.getIds();
-        List<DocFileFolder> fileFolders = super.selectByIdList(originIdList).stream()
-            .filter(e -> !e.getParentId().equals(reqVO.getNewFolderId())).collect(Collectors.toList());
+        List<DocFileFolder> fileFolders = super.selectByIdList(originIdList);
         if (CollectionUtils.isEmpty(fileFolders)) {
             return;
         }
