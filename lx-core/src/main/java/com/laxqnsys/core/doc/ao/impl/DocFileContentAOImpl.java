@@ -17,6 +17,7 @@ import com.laxqnsys.core.doc.model.vo.DocFileMoveReqVO;
 import com.laxqnsys.core.doc.model.vo.DocFileUpdateReqVO;
 import com.laxqnsys.core.enums.DelStatusEnum;
 import com.laxqnsys.core.enums.FileFolderFormatEnum;
+import com.laxqnsys.core.sys.service.ISysFileUploadService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -24,15 +25,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author wuzhenhong
  * @date 2024/5/15 16:29
  */
+@Slf4j
 @Service
 public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements DocFileContentAO {
+
+    @Autowired
+    private ISysFileUploadService sysFileUploadService;
 
     @Override
     @Deprecated
@@ -124,6 +132,20 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
         );
         if(!success) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容更新失败！");
+        }
+        // 删除老的封面附件
+        try {
+            // 删除老的封面图片不是必须的步骤，即使出错也不要影响主流程
+            // 如果出错可以通过发送邮件等报错信息去提示管理员处理
+            String oldImg = fileFolder.getImg();
+            String newImg = updateReqVO.getImg();
+            if (StringUtils.hasText(oldImg)
+                && StringUtils.hasText(newImg)
+                && !oldImg.equals(newImg)) {
+                sysFileUploadService.delete(oldImg);
+            }
+        } catch (Exception e) {
+            log.error("删除老的封面图片失败！", e);
         }
     }
 

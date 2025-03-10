@@ -64,6 +64,25 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
         return this.doUpload(() -> new ByteArrayInputStream(data), fileName, Long.valueOf(data.length));
     }
 
+    @Override
+    public boolean delete(String url) {
+        if(!StringUtils.hasText(url)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不能为空！");
+        }
+        if(!url.startsWith(FIX_STATIC_PATH)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不合法！");
+        }
+        String shortPath = url.substring(FIX_STATIC_PATH.length());
+        if(!StringUtils.hasText(shortPath)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不合法！");
+        }
+        String path = fileUploadPath + File.separator + shortPath;
+        File file = new File(path);
+        // 如果存在就删除，不存在就忽略
+        file.deleteOnExit();
+        return true;
+    }
+
     private FileUploadBO doUpload(Supplier<InputStream> streamSupplier, String fileName, Long size) {
 
         String uuid = UUID.randomUUID().toString();
