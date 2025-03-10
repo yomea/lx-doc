@@ -13,4 +13,5 @@ public interface ISysFileUploadService {
 
     FileUploadBO upload(byte[] data, String fileName);
 
+    boolean delete(String url);
 }

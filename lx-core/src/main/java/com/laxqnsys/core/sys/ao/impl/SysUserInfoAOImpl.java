@@ -18,6 +18,7 @@ import com.laxqnsys.core.sys.model.vo.UserInfoVO;
 import com.laxqnsys.core.sys.model.vo.UserLoginVO;
 import com.laxqnsys.core.sys.model.vo.UserPwdModifyVO;
 import com.laxqnsys.core.sys.model.vo.UserRegisterVO;
+import com.laxqnsys.core.sys.service.ISysFileUploadService;
 import com.laxqnsys.core.sys.service.ISysUserInfoService;
 import com.laxqnsys.core.util.web.WebUtil;
 import java.time.LocalDateTime;
@@ -27,6 +28,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -35,11 +37,15 @@ import org.springframework.util.StringUtils;
  * @author wuzhenhong
  * @date 2024/5/14 11:07
  */
+@Slf4j
 @Service
 public class SysUserInfoAOImpl implements SysUserInfoAO {
 
     private static final Object OBJECT = new Object();
     private static final Map<String, Object> LOCK = new ConcurrentHashMap<>();
+
+    @Autowired
+    private ISysFileUploadService sysFileUploadService;
 
     @Autowired
     private ISysUserInfoService sysUserInfoService;
@@ -152,11 +158,34 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
                 String.format("未获取到id为%s的登录人信息！", userId));
         }
         this.userStatusCheck(userInfo);
+        // 没有变动，不需要操作更新，如果要操作的字段比较多的时候，需要改成注解的方式标注做比较
+        if (Objects.equals(userInfo.getUserName(), userInfoUpdateVO.getUserName())
+            && Objects.equals(userInfo.getAvatar(), userInfoUpdateVO.getAvatar())) {
+            return;
+        }
         SysUserInfo update = new SysUserInfo();
         update.setId(userId);
         update.setUserName(userInfoUpdateVO.getUserName());
         update.setAvatar(userInfoUpdateVO.getAvatar());
-        sysUserInfoService.updateById(update);
+        boolean success = sysUserInfoService.updateById(update);
+        if(!success) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                "更新用户信息失败！");
+        }
+        try {
+            // 删除老的头像图片不是必须的步骤，即使出错也不要影响主流程
+            // 如果出错可以通过发送邮件等报错信息去提示管理员处理
+            String newAvatar = userInfoUpdateVO.getAvatar();
+            String oldAvatar = userInfo.getAvatar();
+            if (StringUtils.hasText(newAvatar)
+                && StringUtils.hasText(oldAvatar)
+                && !newAvatar.equals(oldAvatar)) {
+                // 删除老的头像附件，节省空间
+                sysFileUploadService.delete(oldAvatar);
+            }
+        } catch (Exception e) {
+            log.error("删除老的头像失败！", e);
+        }
     }
 
     @Override
