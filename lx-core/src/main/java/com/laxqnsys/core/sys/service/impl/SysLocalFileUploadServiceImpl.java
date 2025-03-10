@@ -69,10 +69,14 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
         if(!StringUtils.hasText(url)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不能为空！");
         }
-        if(!url.startsWith(FIX_STATIC_PATH)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不合法！");
+        String shortPath;
+        if(url.startsWith(FIX_STATIC_PATH)) {
+            shortPath = url.substring(FIX_STATIC_PATH.length());
+        } else if(url.startsWith(FIX_STATIC_PATH.substring(1))){
+            shortPath = url.substring(FIX_STATIC_PATH.length() - 1);
+        } else {
+            shortPath = url;
         }
-        String shortPath = url.substring(FIX_STATIC_PATH.length());
         if(!StringUtils.hasText(shortPath)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不合法！");
         }
