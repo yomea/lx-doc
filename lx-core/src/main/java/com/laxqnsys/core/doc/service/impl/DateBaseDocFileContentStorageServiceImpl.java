@@ -31,7 +31,7 @@ import org.springframework.util.StringUtils;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "dataBase", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "lx.doc.docStorage", name = "type", havingValue = "dataBase", matchIfMissing = true)
 public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContentStorageService {
 
     @Autowired

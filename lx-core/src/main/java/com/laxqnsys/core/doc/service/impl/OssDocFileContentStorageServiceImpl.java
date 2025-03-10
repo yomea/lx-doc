@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "oss")
+@ConditionalOnProperty(prefix = "lx.doc.docStorage", name = "type", havingValue = "oss")
 public class OssDocFileContentStorageServiceImpl extends AbstractFileSystemStorageService {
 
     @Override

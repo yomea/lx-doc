@@ -11,21 +11,16 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "lx.doc")
 @Data
 public class LxDocWebProperties {
-
-    // 文件上传类型
-    private String fileUploadType;
-
+    // 首页
     private String indexHtmlWebPath;
     // 请求路径白名单
     private List<String> whiteUrlList;
-
+    // 请求路径黑名单
     private List<String> blackUrlList;
-    // 存储配置
-    private DocContentStorageProperties storage;
-
+    // 文档内容存储配置
+    private DocContentStorageProperties docStorage;
+    // 文档内容存储配置
+    private FileUploadProperties fileUpload;
+    // 静态资源（通常用于前后端不分离）
     private List<StaticResourceProperties> staticResources;
-
-    private LocalFileUploadProperties localUpload;
-    private OssFileUploadProperties ossUpload;
-    private MinioFileUploadProperties minioUpload;
 }

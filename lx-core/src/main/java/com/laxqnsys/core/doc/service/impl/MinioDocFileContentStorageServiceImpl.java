@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-@ConditionalOnProperty(prefix = "lx.doc.storage", name = "type", havingValue = "minio")
+@ConditionalOnProperty(prefix = "lx.doc.docStorage", name = "type", havingValue = "minio")
 public class MinioDocFileContentStorageServiceImpl extends AbstractFileSystemStorageService {
 
     @Override

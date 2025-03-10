@@ -79,13 +79,13 @@ sh run_no_in_docker.sh start 512m
 ```yaml
 lx:
   doc:
-    storage:
+    docStorage:
       type: dataBase # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
-      path: ${lx.doc.localUpload.filePath} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
+      path: ${lx.doc.fileUpload.path} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
     whiteUrlList: /,/api/login,/api/register,/static/**,/assets/**,/system/error # 白名单url，配置之后将会被登录拦截器拦截
-    fileUploadType: local # 文件上传类型，目前已实现local，为实现 oss，minio，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
-    localUpload:
-      filePath: /usr/attachment/${app.name} # 配置文件上传的地址，设置为 local 时，该属性才有效
+    fileUpload:
+      type: local # 文件上传类型，目前已实现local，为实现 oss，minio，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      path: /usr/attachment/${app.name} # 配置文件上传的地址，设置为 local 时，该属性才有效
     
     # 如果您使用 nginx 来反向代理，那么不需要配置以下静态资源的映射，可以直接使用 nginx 来代理
     # 如果您不使用 nginx 想直接使用当前服务去请求，请将以下静态资源路径修改成自己的路径，然后在 lx.doc.whiteUrlList 
@@ -93,7 +93,7 @@ lx:
     indexHtmlWebPath: /assets/index.html # 配置欢迎页
     staticResources:
       - pathPatterns: /static/** # 配置静态资源访问的web uri
-        resourceLocations: file:///${lx.doc.localUpload.filePath} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
+        resourceLocations: file:///${lx.doc.fileUpload.path} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
       - pathPatterns: /assets/**
         resourceLocations: file:///D:/work/lx-doc/workbench/dist/assets/,file:///D:/work/lx-doc/workbench/dist/
 
@@ -187,7 +187,7 @@ docker run -d -p 9222:9222 -p 8089:8089 --privileged \
 
 另外，该项目还有以下需要待优化和扩展的建议：
 - master 分支分布式版本的上传文件的存储还未集成OSS和MINIO。
-- 文档内容目前使用了数据库存储和本地存储两种（可通过lx.doc.storage.type指定存储方式）方案，但数据库存储的文档在内容比较大的时候，容易受数据库字段长度和 mysql max_allowed_packet 的
+- 文档内容目前使用了数据库存储和本地存储两种（可通过lx.doc.docStorage.type指定存储方式）方案，但数据库存储的文档在内容比较大的时候，容易受数据库字段长度和 mysql max_allowed_packet 的
   的制约，另外使用数据库保存大文件数据时性能也比较差，为了提高并发能力和性能可以考虑使用文件系统存储（分布式可以使用OSS和MINIO，
   单机可以本地存储）。
 - 目前文档搜索只支持文档标题的搜索，不支持文档内容的搜索，如果您需要支持文档内容的搜索，可以考虑引入 ES ，将文档内容同步给它。
