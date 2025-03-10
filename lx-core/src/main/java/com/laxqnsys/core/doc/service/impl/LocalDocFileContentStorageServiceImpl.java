@@ -1,6 +1,5 @@
 package com.laxqnsys.core.doc.service.impl;
 
-import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.context.LoginContext;
