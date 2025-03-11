@@ -82,9 +82,7 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
         }
         String path = fileUploadPath + File.separator + shortPath;
         File file = new File(path);
-        // 如果存在就删除，不存在就忽略
-        file.deleteOnExit();
-        return true;
+        return file.exists() ? file.delete() : true;
     }
 
     private FileUploadBO doUpload(Supplier<InputStream> streamSupplier, String fileName, Long size) {
