@@ -18,7 +18,7 @@ lx:
       type: minio # 文件上传类型，目前已实现local，为实现 oss，minio，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
       path: /usr/attachment/${app.name} # 配置文件上传的地址，设置为 local 时，该属性才有效
       minio:
-        endpoint: http://localhost:9001
+        endpoint: http://localhost:9000
         bucket: test
         accessKey: xxx
         secretKey: yyy
