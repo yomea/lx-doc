@@ -11,9 +11,9 @@ public class OssFileUploadProperties {
 
     private String endpoint;
 
-    private String accessKeyId;
+    private String accessKey;
 
-    private String accessKeySecret;
+    private String secretKey;
 
     private String bucket;
 }

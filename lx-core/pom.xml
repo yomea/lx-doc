@@ -190,6 +190,11 @@
       <artifactId>swagger-bootstrap-ui</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>io.minio</groupId>
+      <artifactId>minio</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
