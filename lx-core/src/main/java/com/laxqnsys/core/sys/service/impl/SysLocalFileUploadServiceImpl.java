@@ -80,6 +80,8 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
         if(!StringUtils.hasText(shortPath)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不合法！");
         }
+        // 将url中的正斜杠替换成文件系统的分割符合
+        shortPath = shortPath.replace("/", File.separator);
         String path = fileUploadPath + File.separator + shortPath;
         File file = new File(path);
         return file.exists() ? file.delete() : true;
@@ -103,7 +105,7 @@ public class SysLocalFileUploadServiceImpl implements ISysFileUploadService {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传附件失败！", e);
         }
         return FileUploadBO.builder()
-            .url(FIX_STATIC_PATH + shortPath)
+            .url(FIX_STATIC_PATH + uuid + "/" + fileName)
             .size(size)
             .build();
     }
