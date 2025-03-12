@@ -12,7 +12,6 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -73,7 +72,10 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 "文件上传配置为 lx.doc.fileUpload.type=minio 时 secretKey 必须配置");
         }
-        this.path = StringUtils.hasText(fileUpload.getPath()) ? fileUpload.getPath().trim() : "";
+        String path = fileUpload.getPath();
+        if(StringUtils.hasText(path)) {
+            this.path = path.replace("\\", "/");
+        }
         this.minioClient = MinioClient.builder().endpoint(endpoint)
             .credentials(minio.getAccessKey(), minio.getSecretKey()).build();
         this.endpoint = endpoint;
@@ -178,9 +180,9 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
     private String getFilePath(String fileName) {
 
         String uuid = UUID.randomUUID().toString();
-        String shortPath = uuid + File.separator + fileName;
+        String shortPath = uuid + "/" + fileName;
         if (StringUtils.hasText(this.path)) {
-            return path + File.separator + shortPath;
+            return path + "/" + shortPath;
         } else {
             return shortPath;
         }
