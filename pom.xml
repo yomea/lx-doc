@@ -32,6 +32,7 @@
     <jackson.version>2.9.0</jackson.version>
     <guava.version>29.0-jre</guava.version>
     <jedis.version>2.9.0</jedis.version>
+    <minio.version>8.5.7</minio.version>
   </properties>
 
   <dependencyManagement>
@@ -225,6 +226,12 @@
         <groupId>com.github.xiaoymin</groupId>
         <artifactId>swagger-bootstrap-ui</artifactId>
         <version>1.8.9</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>${minio.version}</version>
       </dependency>
 
     </dependencies>
