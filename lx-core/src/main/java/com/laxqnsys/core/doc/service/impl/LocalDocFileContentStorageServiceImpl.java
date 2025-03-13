@@ -105,8 +105,9 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemSto
 
     @Override
     public boolean delete(DocFileFolder docFileFolder) {
-        // 暂时不去删除实际的文件
-        throw new UnsupportedOperationException("暂不支持物理删除文件！");
+        String filePath = this.getFilePath(docFileFolder.getOldId(), docFileFolder.getOldVersion());
+        File file = new File(filePath);
+        return file.exists() ? file.delete() : true;
     }
 
     @Override
