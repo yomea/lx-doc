@@ -2,6 +2,7 @@ package com.laxqnsys.core.sys.service.impl;
 
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.properties.FileUploadProperties;
 import com.laxqnsys.core.properties.LxDocWebProperties;
 import com.laxqnsys.core.properties.MinioFileUploadProperties;
@@ -50,7 +51,10 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
         this.bucket = minio.getBucket();
         String path = fileUpload.getPath();
         if(StringUtils.hasText(path)) {
-            this.path = path.replace("\\", "/");
+            this.path = path.replace("\\", CommonCons.FORWARD_SLANT);
+            if(!this.path.endsWith(CommonCons.FORWARD_SLANT)) {
+                this.path = this.path + CommonCons.FORWARD_SLANT;
+            }
         }
     }
 
@@ -110,10 +114,10 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
         }
         url = url.trim();
         String endpoint = this.endpoint;
-        if (!endpoint.endsWith("/")) {
-            endpoint = endpoint + "/";
+        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
+            endpoint = endpoint + CommonCons.FORWARD_SLANT;
         }
-        String uriPrefix = endpoint + this.bucket + "/";
+        String uriPrefix = endpoint + this.bucket + CommonCons.FORWARD_SLANT;
         if (!url.startsWith(uriPrefix)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 String.format("url前缀不符合当前minio配置的url=》形入%s[文件路径]文件名", uriPrefix));
@@ -128,11 +132,11 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
 
     private String getFileUrl(String fileName) {
         String endpoint = this.endpoint;
-        if (!endpoint.endsWith("/")) {
-            endpoint = endpoint + "/";
+        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
+            endpoint = endpoint + CommonCons.FORWARD_SLANT;
         }
-        if (!fileName.startsWith("/")) {
-            fileName = "/" + fileName;
+        if (!fileName.startsWith(CommonCons.FORWARD_SLANT)) {
+            fileName = CommonCons.FORWARD_SLANT + fileName;
         }
         return endpoint + this.bucket + fileName;
     }
@@ -140,9 +144,9 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
     private String getFilePath(String fileName) {
 
         String uuid = UUID.randomUUID().toString();
-        String shortPath = uuid + "/" + fileName;
+        String shortPath = uuid + CommonCons.FORWARD_SLANT + fileName;
         if (StringUtils.hasText(this.path)) {
-            return path + "/" + shortPath;
+            return path + shortPath;
         } else {
             return shortPath;
         }
