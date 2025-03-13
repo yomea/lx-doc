@@ -8,7 +8,6 @@ import com.laxqnsys.core.properties.MinioFileUploadProperties;
 import com.laxqnsys.core.sys.model.bo.FileUploadBO;
 import com.laxqnsys.core.sys.service.ISysFileUploadService;
 import com.laxqnsys.core.util.minio.MinioUtils;
-import io.minio.BucketExistsArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
