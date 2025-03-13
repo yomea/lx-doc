@@ -12,6 +12,23 @@ server:
       min-spare: 10 # Minimum amount of worker threads.
   error:
     path: /system/error
+# 开启压缩模式，前后端不分离的时候建议打开这个配置，如果使用 nginx，用 nginx 配置压缩
+#  compression:
+#   enabled: true
+#   min-response-size: 1024
+#   mime-types:
+#     - text/plain
+#     - text/css
+#     - text/javascript
+#     - application/json
+#     - application/javascript
+#     - application/x-javascript
+#     - application/xml
+#     - image/gif
+#     - image/jpeg
+#     - image/png
+#     - image/x-icon
+#     - image/x-ms-bmp
 
 mybatis-plus:
   mapper-locations: classpath*:/mybatis/*.xml
