@@ -24,6 +24,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class LoginHandlerInterceptor implements HandlerInterceptor {
 
     private List<String> whiteUrlList = Lists.newArrayList();
+    private List<String> blackUrlList = Lists.newArrayList();
     private AntPathMatcher antPathMatcher = new AntPathMatcher();
     private StringRedisTemplate stringRedisTemplate;
 
@@ -38,6 +39,10 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         String uri = request.getRequestURI();
         boolean match = whiteUrlList.stream().anyMatch(url -> antPathMatcher.match(url, uri));
         if (match) {
+            return true;
+        }
+        match = blackUrlList.stream().anyMatch(url -> antPathMatcher.match(url, uri));
+        if (!match) {
             return true;
         }
         String token = WebUtil.getCookie(request, CommonCons.TOKEN_KEY);
@@ -59,5 +64,9 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 
     public void addWhiteUrl(String url) {
         whiteUrlList.add(url);
+    }
+
+    public void addBlackUrl(String url) {
+        blackUrlList.add(url);
     }
 }
