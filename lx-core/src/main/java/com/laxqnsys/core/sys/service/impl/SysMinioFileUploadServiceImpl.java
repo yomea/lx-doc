@@ -52,6 +52,9 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
         String path = fileUpload.getPath();
         if(StringUtils.hasText(path)) {
             this.path = path.replace("\\", CommonCons.FORWARD_SLANT);
+            if(this.path.startsWith(CommonCons.FORWARD_SLANT)) {
+                this.path = this.path.substring(1);
+            }
             if(!this.path.endsWith(CommonCons.FORWARD_SLANT)) {
                 this.path = this.path + CommonCons.FORWARD_SLANT;
             }
