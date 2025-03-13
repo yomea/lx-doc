@@ -2,6 +2,7 @@ package com.laxqnsys.core.doc.service.impl;
 
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.context.LoginContext;
 import com.laxqnsys.core.doc.dao.entity.DocFileFolder;
 import com.laxqnsys.core.doc.model.vo.DocFileContentResVO;
@@ -49,7 +50,6 @@ public class MinioDocFileContentStorageServiceImpl extends AbstractFileSystemSto
     private static final String FILE_ID_PREFIX = "file_id_%s";
     // file_{版本}
     private static final String FILE_VERSION_PREFIX = "file_%s";
-    private static final String URL_SEPARATOR = "/";
 
     private MinioClient minioClient;
 
@@ -67,7 +67,10 @@ public class MinioDocFileContentStorageServiceImpl extends AbstractFileSystemSto
         this.bucket = minio.getBucket();
         String path = docStorage.getPath();
         if (StringUtils.hasText(path)) {
-            this.path = path.replace("\\", URL_SEPARATOR);
+            this.path = path.replace("\\", CommonCons.FORWARD_SLANT);
+            if(!this.path.endsWith(CommonCons.FORWARD_SLANT)) {
+                this.path = this.path + CommonCons.FORWARD_SLANT;
+            }
         }
     }
 
@@ -179,9 +182,9 @@ public class MinioDocFileContentStorageServiceImpl extends AbstractFileSystemSto
     }
 
     private String getFilePath(Long fileId, Integer version) {
-        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + URL_SEPARATOR + String.format(
+        return this.path + String.format(USER_ID_PREFIX, LoginContext.getUserId()) + CommonCons.FORWARD_SLANT + String.format(
             FILE_ID_PREFIX,
-            fileId) + URL_SEPARATOR + String.format(FILE_VERSION_PREFIX, version);
+            fileId) + CommonCons.FORWARD_SLANT + String.format(FILE_VERSION_PREFIX, version);
     }
 
     private String upload(Supplier<InputStream> supplier, String objectName, String contentType) {
