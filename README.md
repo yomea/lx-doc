@@ -84,7 +84,8 @@ lx:
         bucket: test
         accessKey: xxx
         secretKey: yyy
-    whiteUrlList: /,/api/login,/api/register,/static/**,/assets/**,/system/error # 白名单url，配置之后将会被登录拦截器拦截
+    whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
+    blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUpload:
       type: minio # 文件上传类型，目前已实现local，为实现 oss，minio，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
       path: ${app.name}/attachment/ # 配置文件上传的地址，设置为 local 时，该属性才有效
@@ -97,13 +98,12 @@ lx:
     # 如果您使用 nginx 来反向代理，那么不需要配置以下静态资源的映射，可以直接使用 nginx 来代理
     # 如果您不使用 nginx 想直接使用当前服务去请求，请将以下静态资源路径修改成自己的路径，然后在 lx.doc.whiteUrlList 
     # 添加 web 请求白名单，另外也要注意，如果您没有将静态资源打入镜像中，那么您需要在容器启动时进行 -v 目录挂载
-    indexHtmlWebPath: /assets/index.html # 配置欢迎页
+    indexHtmlWebPath: /index.html # 配置欢迎页
     staticResources:
       - pathPatterns: /static/** # 配置静态资源访问的web uri
         resourceLocations: file:///${lx.doc.fileUpload.path} # 配置静态资源所在物理磁盘的位置，不过静态资源的访问尽量使用 nginx 反向代理
-      - pathPatterns: /assets/**
-        resourceLocations: file:///D:/work/lx-doc/workbench/dist/assets/,file:///D:/work/lx-doc/workbench/dist/
-
+      - pathPatterns: /**
+        resourceLocations: classpath:/static/lx-doc/
 
 spring:
   datasource:
