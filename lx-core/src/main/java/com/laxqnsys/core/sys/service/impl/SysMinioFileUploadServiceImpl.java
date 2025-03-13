@@ -2,12 +2,13 @@ package com.laxqnsys.core.sys.service.impl;
 
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
+import com.laxqnsys.core.constants.CommonCons;
 import com.laxqnsys.core.properties.FileUploadProperties;
 import com.laxqnsys.core.properties.LxDocWebProperties;
 import com.laxqnsys.core.properties.MinioFileUploadProperties;
 import com.laxqnsys.core.sys.model.bo.FileUploadBO;
 import com.laxqnsys.core.sys.service.ISysFileUploadService;
-import io.minio.BucketExistsArgs;
+import com.laxqnsys.core.util.minio.MinioUtils;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
@@ -45,52 +46,15 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "未配置文件上传属性！");
         }
         MinioFileUploadProperties minio = fileUpload.getMinio();
-        if (Objects.isNull(minio)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件上传配置为 lx.doc.fileUpload.type=minio 时未配置 minio 属性");
-        }
-
-        String endpoint = minio.getEndpoint();
-        if (!StringUtils.hasText(endpoint)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件上传配置为 lx.doc.fileUpload.type=minio 时 endpoint 必须配置");
-        }
-
-        String bucket = minio.getBucket();
-        if (!StringUtils.hasText(bucket)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件上传配置为 lx.doc.fileUpload.type=minio 时 bucket 必须配置");
-        }
-
-        String accessKey = minio.getAccessKey();
-        if (!StringUtils.hasText(accessKey)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件上传配置为 lx.doc.fileUpload.type=minio 时 accessKey 必须配置");
-        }
-        String secretKey = minio.getSecretKey();
-        if (!StringUtils.hasText(secretKey)) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件上传配置为 lx.doc.fileUpload.type=minio 时 secretKey 必须配置");
-        }
+        this.minioClient = MinioUtils.createMinioClient(minio);
+        this.endpoint = minio.getEndpoint();
+        this.bucket = minio.getBucket();
         String path = fileUpload.getPath();
         if(StringUtils.hasText(path)) {
-            this.path = path.replace("\\", "/");
-        }
-        this.minioClient = MinioClient.builder().endpoint(endpoint)
-            .credentials(minio.getAccessKey(), minio.getSecretKey()).build();
-        this.endpoint = endpoint;
-        this.bucket = bucket;
-        // 检查 bucket 是否存在
-        boolean exists;
-        try {
-            exists = this.minioClient.bucketExists(BucketExistsArgs.builder().bucket(this.bucket).build());
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "检查名为【%s】的 bucket 是否存在时出错！", e);
-        }
-        if (!exists) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "名为【%s】的 bucket 不存在，请自行创建并赋予可读权限！");
+            this.path = path.replace("\\", CommonCons.FORWARD_SLANT);
+            if(!this.path.endsWith(CommonCons.FORWARD_SLANT)) {
+                this.path = this.path + CommonCons.FORWARD_SLANT;
+            }
         }
     }
 
@@ -150,10 +114,10 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
         }
         url = url.trim();
         String endpoint = this.endpoint;
-        if (!endpoint.endsWith("/")) {
-            endpoint = endpoint + "/";
+        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
+            endpoint = endpoint + CommonCons.FORWARD_SLANT;
         }
-        String uriPrefix = endpoint + this.bucket + "/";
+        String uriPrefix = endpoint + this.bucket + CommonCons.FORWARD_SLANT;
         if (!url.startsWith(uriPrefix)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 String.format("url前缀不符合当前minio配置的url=》形入%s[文件路径]文件名", uriPrefix));
@@ -168,11 +132,11 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
 
     private String getFileUrl(String fileName) {
         String endpoint = this.endpoint;
-        if (!endpoint.endsWith("/")) {
-            endpoint = endpoint + "/";
+        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
+            endpoint = endpoint + CommonCons.FORWARD_SLANT;
         }
-        if (!fileName.startsWith("/")) {
-            fileName = "/" + fileName;
+        if (!fileName.startsWith(CommonCons.FORWARD_SLANT)) {
+            fileName = CommonCons.FORWARD_SLANT + fileName;
         }
         return endpoint + this.bucket + fileName;
     }
@@ -180,9 +144,9 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
     private String getFilePath(String fileName) {
 
         String uuid = UUID.randomUUID().toString();
-        String shortPath = uuid + "/" + fileName;
+        String shortPath = uuid + CommonCons.FORWARD_SLANT + fileName;
         if (StringUtils.hasText(this.path)) {
-            return path + "/" + shortPath;
+            return path + shortPath;
         } else {
             return shortPath;
         }

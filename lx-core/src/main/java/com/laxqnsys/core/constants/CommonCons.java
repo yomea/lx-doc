@@ -14,4 +14,6 @@ public class CommonCons {
     public static final long LOGIN_TOKEN_EXPIRE_SECONDS = LOGIN_EXPIRE_SECONDS;
 
     public static final String LOGIN_USER_TOKE_KEY = "LOGIN_USER_TOKE_KEY:USER_ID:";
+
+    public static final String FORWARD_SLANT = "/";
 }
