@@ -41,6 +41,9 @@ public class WebMvcConfigure implements WebMvcConfigurer {
         List<String> whiteUrlList = Optional.ofNullable(lxDocWebProperties.getWhiteUrlList())
             .orElse(Collections.emptyList());
         whiteUrlList.forEach(loginHandlerInterceptor::addWhiteUrl);
+        List<String> blackUrlList = Optional.ofNullable(lxDocWebProperties.getBlackUrlList())
+            .orElse(Collections.emptyList());
+        blackUrlList.forEach(loginHandlerInterceptor::addBlackUrl);
         registry.addInterceptor(loginHandlerInterceptor);
     }
 

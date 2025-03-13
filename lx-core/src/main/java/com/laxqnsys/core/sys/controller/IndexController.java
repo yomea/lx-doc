@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * @author wuzhenhong
@@ -16,11 +17,17 @@ public class IndexController {
     @Autowired
     private LxDocWebProperties lxDocWebProperties;
 
-    @GetMapping(value = "/")
+    @GetMapping(value = {"/", "/login", "/workspace", "/workspace/**"})
     public String index() {
         String indexHtmlWebPath = lxDocWebProperties.getIndexHtmlWebPath();
         return "forward:" + (StringUtils.hasText(indexHtmlWebPath)
             ? indexHtmlWebPath
             : "/system/error");
+    }
+
+    @GetMapping(value = {"/{docType}/{id:\\d+}"})
+    public String docType(@PathVariable("docType") String docType) {
+
+        return "forward:/" + docType + "/index.html";
     }
 }
