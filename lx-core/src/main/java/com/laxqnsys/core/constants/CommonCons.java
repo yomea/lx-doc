@@ -16,4 +16,6 @@ public class CommonCons {
     public static final String LOGIN_USER_TOKE_KEY = "LOGIN_USER_TOKE_KEY:USER_ID:";
 
     public static final String FORWARD_SLANT = "/";
+
+    public static final String FS_URL_PREFIX = "/fs/";
 }

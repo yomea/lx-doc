@@ -35,6 +35,12 @@ mybatis-plus:
 
 lx:
   doc:
+    restTemplate:
+      enable: true
+      connectNum: 20
+      keepAliveDuration: 300
+      connectTimeout: 3
+      readTimeout: 10
     docStorage:
       type: local # 文档存储类型，目前已实现的有 dataBase，local，未实现的 oss，minio，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
       path: ${lx.doc.fileUpload.path} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
