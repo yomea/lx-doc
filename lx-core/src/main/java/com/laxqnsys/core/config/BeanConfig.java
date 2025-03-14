@@ -11,15 +11,10 @@ import com.laxqnsys.core.handler.CustomLocalDateTimeTypeHandler;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
-import okhttp3.ConnectionPool;
-import okhttp3.OkHttpClient;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * @author wuzhenhong
