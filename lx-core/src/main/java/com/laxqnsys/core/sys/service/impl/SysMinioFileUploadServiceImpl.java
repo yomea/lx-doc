@@ -34,8 +34,6 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
 
     private MinioClient minioClient;
 
-    private String endpoint;
-
     private String bucket;
 
     private String path;
@@ -47,7 +45,6 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
         }
         MinioFileUploadProperties minio = fileUpload.getMinio();
         this.minioClient = MinioUtils.createMinioClient(minio);
-        this.endpoint = minio.getEndpoint();
         this.bucket = minio.getBucket();
         String path = fileUpload.getPath();
         if(StringUtils.hasText(path)) {
@@ -116,11 +113,7 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "url不能为空！");
         }
         url = url.trim();
-        String endpoint = this.endpoint;
-        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
-            endpoint = endpoint + CommonCons.FORWARD_SLANT;
-        }
-        String uriPrefix = endpoint + this.bucket + CommonCons.FORWARD_SLANT;
+        String uriPrefix = CommonCons.FS_URL_PREFIX + this.bucket + CommonCons.FORWARD_SLANT;
         if (!url.startsWith(uriPrefix)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
                 String.format("url前缀不符合当前minio配置的url=》形入%s[文件路径]文件名", uriPrefix));
@@ -134,14 +127,10 @@ public class SysMinioFileUploadServiceImpl implements ISysFileUploadService {
     }
 
     private String getFileUrl(String fileName) {
-        String endpoint = this.endpoint;
-        if (!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
-            endpoint = endpoint + CommonCons.FORWARD_SLANT;
-        }
         if (!fileName.startsWith(CommonCons.FORWARD_SLANT)) {
             fileName = CommonCons.FORWARD_SLANT + fileName;
         }
-        return endpoint + this.bucket + fileName;
+        return CommonCons.FS_URL_PREFIX + this.bucket + fileName;
     }
 
     private String getFilePath(String fileName) {

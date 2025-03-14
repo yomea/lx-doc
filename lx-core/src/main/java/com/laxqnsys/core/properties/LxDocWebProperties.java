@@ -23,5 +23,7 @@ public class LxDocWebProperties {
     private FileUploadProperties fileUpload;
     // 静态资源（通常用于前后端不分离）
     private List<StaticResourceProperties> staticResources;
+    // http 配置
+    private RestTemplateProperties restTemplate;
 
 }
