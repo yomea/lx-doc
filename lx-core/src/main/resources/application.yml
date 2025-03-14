@@ -37,6 +37,7 @@ mybatis-plus:
 lx:
   doc:
     restTemplate:
+      enable: true
       connectNum: 20
       keepAliveDuration: 300
       connectTimeout: 3

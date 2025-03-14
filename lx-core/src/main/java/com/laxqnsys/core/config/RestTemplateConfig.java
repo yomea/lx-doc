@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
@@ -23,6 +24,7 @@ public class RestTemplateConfig {
     private LxDocWebProperties lxDocWebProperties;
 
     @Bean
+    @ConditionalOnProperty(prefix = "lx.doc.restTemplate", name = "enable", havingValue = "true", matchIfMissing = true)
     public RestTemplate restTemplate() {
         // 配置 okHttp 连接池，主要用于前后端不分离的场景
         RestTemplateProperties restTemplate = lxDocWebProperties.getRestTemplate();

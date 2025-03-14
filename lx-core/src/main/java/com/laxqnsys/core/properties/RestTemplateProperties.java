@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class RestTemplateProperties {
 
+    private Boolean enable;
+
     private Integer connectNum = 20;
 
     private Long keepAliveDuration = 300L;
