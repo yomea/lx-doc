@@ -10,10 +10,10 @@ spring:
 lx:
   doc:
     fileUpload:
-      type: local # 文件上传类型，目前已实现local，minio，未实现 oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      type: local # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
       path: /usr/attachment/${app.name} # 配置文件上传的地址
     docStorage:
-      type: local # 文档存储类型，目前已实现的有 dataBase，local，minio，未实现 oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      type: local # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
       path: ${lx.doc.fileUpload.path} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
 # 日志路径
 log:

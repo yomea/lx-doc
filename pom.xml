@@ -33,6 +33,7 @@
     <guava.version>29.0-jre</guava.version>
     <jedis.version>2.9.0</jedis.version>
     <minio.version>8.5.7</minio.version>
+    <oss.version>3.18.1</oss.version>
     <okhttp3.version>4.12.0</okhttp3.version>
   </properties>
 
@@ -233,6 +234,12 @@
         <groupId>io.minio</groupId>
         <artifactId>minio</artifactId>
         <version>${minio.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.aliyun.oss</groupId>
+        <artifactId>aliyun-sdk-oss</artifactId>
+        <version>${oss.version}</version>
       </dependency>
 
       <dependency>
