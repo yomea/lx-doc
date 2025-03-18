@@ -41,7 +41,7 @@
 
 目前该项目分为两个版本的分支，分别是分布式版本与个人版本：
 
-- 分布式版本：该版本在 master 分支上，目前该版本的上传功能默认实现了 minio，oss的暂未实现，如果有需要可以联系我们。
+- 分布式版本：该版本在 master 分支上，目前该版本的上传功能默认实现了 minio和oss。
 - 个人版本：该版本在 personal 或 back_front_whole（前后端不分离） 分支上，仅支持单机部署，附件和文档内容默认都是保存在本地磁盘上
 
 如果你只是给自己或者朋友们平时画画图，导出图片啊之类的操作，也没什么高并发，高可用，性能方面的要求，
@@ -77,7 +77,7 @@ sh run_no_in_docker.sh start 512m
 lx:
   doc:
     docStorage:
-      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，未实现 oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
       path: ${app.name}/doc/content/ # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
       minio:
         endpoint: http://localhost:9000
@@ -87,7 +87,7 @@ lx:
     whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUpload:
-      type: minio # 文件上传类型，目前已实现local，minio，未实现 oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      type: minio # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
       path: ${app.name}/attachment/ # 配置文件上传的地址
       minio:
         endpoint: http://localhost:9000
@@ -193,8 +193,8 @@ docker run -d -p 9222:9222 -p 8089:8089 --privileged \
 该项目使用 Maven 做包依赖与管理工具，所以您的开发环境需要配置JDK8和Maven3.0及以上版本。
 
 另外，该项目还有以下需要待优化和扩展的建议：
-- master 分支分布式版本的上传文件的分布式存储默认集成MINIO，如果您不想使用MINIO，想使用其他的分布式存储系统，比如OSS，请自行实现对应的接口。
-- 文档内容目前实现了数据库存储、本地存储（单机用）和 MINIO 三种（可通过lx.doc.docStorage.type指定存储方式）方案，但数据库存储的文档在内容比较大的时候，容易受数据库字段长度和 mysql max_allowed_packet 的
+- master 分支分布式版本的上传文件的分布式存储默认集成MINIO，如果您不想使用MINIO，想使用其他的分布式存储系统，比如OSS，将对应上传类型改为OSS即可。
+- 文档内容目前实现了数据库存储、本地存储（单机用）、 MINIO和OSS 四种（可通过lx.doc.docStorage.type指定存储方式）方案，但数据库存储的文档在内容比较大的时候，容易受数据库字段长度和 mysql max_allowed_packet 的
   的制约，另外使用数据库保存大文件数据时性能也比较差，为了提高并发能力和性能可以考虑使用文件系统存储（分布式可以使用OSS和MINIO，
   单机可以本地存储）。
 - 目前文档搜索只支持文档标题的搜索，不支持文档内容的搜索，如果您需要支持文档内容的搜索，可以考虑引入 ES ，将文档内容同步给它。

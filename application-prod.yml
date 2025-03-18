@@ -15,7 +15,7 @@ spring:
 lx:
   doc:
     fileUpload:
-      type: minio # 文件上传类型，目前已实现local，minio，未实现 oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      type: minio # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
       path: ${app.name}/attachment/ # 配置文件上传的地址
       minio:
         endpoint: http://localhost:9000
@@ -23,7 +23,7 @@ lx:
         accessKey: xxx
         secretKey: yyy
     docStorage:
-      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，未实现 oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
       path: ${app.name}/doc/content/ # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
       minio:
         endpoint: http://localhost:9000
