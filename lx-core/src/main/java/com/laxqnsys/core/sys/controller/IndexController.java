@@ -70,7 +70,7 @@ public class IndexController {
             } else if("minio".equals(type)) {
                 endpoint = fileUpload.getMinio().getEndpoint();
             } else {
-                endpoint = fileUpload.getOss().getEndpoint();
+                endpoint = "https://" + fileUpload.getOss().getBucket() + "." + fileUpload.getOss().getEndpoint();
             }
             if(!endpoint.endsWith(CommonCons.FORWARD_SLANT)) {
                 endpoint = endpoint + CommonCons.FORWARD_SLANT;
