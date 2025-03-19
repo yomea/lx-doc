@@ -1,6 +1,7 @@
 package com.laxqnsys.core.sys.service.impl;
 
 import com.aliyun.oss.OSS;
+import com.aliyun.oss.model.ObjectMetadata;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.constants.CommonCons;
@@ -88,7 +89,9 @@ public class SysOssFileUploadServiceImpl implements ISysFileUploadService {
         String filePath = this.getFilePath(fileName);
         try (InputStream inputStream = supplier.get()) {
             int size = inputStream.available();
-            this.ossClient.putObject(this.bucket, filePath, inputStream);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contentType);
+            this.ossClient.putObject(this.bucket, filePath, inputStream, metadata);
             //文件访问 URL
             String url = this.getFileUrl(filePath);
             return FileUploadBO.builder().url(url).size(Long.valueOf(size)).build();
