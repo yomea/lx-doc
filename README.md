@@ -15,7 +15,7 @@
 
 重要提示！！！：
 
-1.不会支持协同编辑；
+1.不会支持协同编辑（有能力的可以研究下协同办公框架：[sharedb](https://github.com/share/sharedb) 或者 [shareJS](https://github.com/josephg/ShareJS)）；
 
 2.不会支持手机端、客户端；
 
