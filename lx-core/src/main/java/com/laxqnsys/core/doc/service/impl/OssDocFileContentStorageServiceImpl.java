@@ -3,6 +3,7 @@ package com.laxqnsys.core.doc.service.impl;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.model.CopyObjectRequest;
 import com.aliyun.oss.model.OSSObject;
+import com.aliyun.oss.model.ObjectMetadata;
 import com.aliyun.oss.model.PutObjectResult;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
@@ -180,7 +181,9 @@ public class OssDocFileContentStorageServiceImpl extends AbstractFileSystemStora
 
     private String upload(Supplier<InputStream> supplier, String objectName, String contentType) {
         try (InputStream inputStream = supplier.get()) {
-            PutObjectResult result = this.ossClient.putObject(this.bucket, objectName, inputStream);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType(contentType);
+            PutObjectResult result = this.ossClient.putObject(this.bucket, objectName, inputStream, metadata);
             return result.getETag();
         } catch (Exception e) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "上传文件失败");
