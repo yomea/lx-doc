@@ -1,7 +1,7 @@
 package com.lxqnsys.doc;
 
-import com.laxqnsys.core.sys.ao.impl.SysAttachmentAOImpl;
-import com.laxqnsys.core.sys.model.vo.SysAttachmentVO;
+import com.laxqnsys.core.buz.sys.ao.impl.SysAttachmentAOImpl;
+import com.laxqnsys.core.buz.sys.model.vo.SysAttachmentVO;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

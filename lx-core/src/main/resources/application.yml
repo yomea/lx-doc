@@ -43,12 +43,12 @@ lx:
       connectTimeout: 3
       readTimeout: 10
     docStorage:
-      type: local # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      type: local # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.buz.doc.service.IDocFileContentStorageService
       path: ${lx.doc.fileUpload.path} # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
     whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUpload:
-      type: local # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      type: local # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.buz.sys.service.ISysFileUploadService
       path: /usr/attachment/${app.name} # 配置文件上传的地址
     indexHtmlWebPath: /index.html # 配置欢迎页
     staticResources:
