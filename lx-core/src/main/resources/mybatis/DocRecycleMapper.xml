@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.laxqnsys.core.doc.dao.mapper.DocRecycleMapper">
+<mapper namespace="com.laxqnsys.core.buz.doc.dao.mapper.DocRecycleMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.laxqnsys.core.doc.dao.entity.DocRecycle">
+    <resultMap id="BaseResultMap" type="com.laxqnsys.core.buz.doc.dao.entity.DocRecycle">
         <id column="id" property="id" />
         <result column="name" property="name" />
         <result column="user_id" property="userId" />

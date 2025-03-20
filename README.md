@@ -77,7 +77,7 @@ sh run_no_in_docker.sh start 512m
 lx:
   doc:
     docStorage:
-      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.doc.service.IDocFileContentStorageService
+      type: minio # 文档存储类型，目前已实现的有 dataBase，local，minio，oss，接口：com.laxqnsys.core.buz.doc.service.IDocFileContentStorageService
       path: ${app.name}/doc/content/ # 文档内容存储的位置，如果类型是 dataBase ，此属性无效
       minio:
         endpoint: http://localhost:9000
@@ -87,7 +87,7 @@ lx:
     whiteUrlList: /api/login,/api/register # 白名单url，配置之后将会被登录拦截器拦截
     blackUrlList: /api/** # 黑名单url，配置之后将会被登录拦截器拦截
     fileUpload:
-      type: minio # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.sys.service.ISysFileUploadService
+      type: minio # 文件上传类型，目前已实现local，minio，oss，接口 com.laxqnsys.core.buz.sys.service.ISysFileUploadService
       path: ${app.name}/attachment/ # 配置文件上传的地址
       minio:
         endpoint: http://localhost:9000
