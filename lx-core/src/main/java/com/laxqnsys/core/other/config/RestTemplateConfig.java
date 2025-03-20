@@ -18,13 +18,13 @@ import org.springframework.web.client.RestTemplate;
  * @date 2024/5/17 9:19
  */
 @Configuration
+@ConditionalOnProperty(prefix = "lx.doc.restTemplate", name = "enable", havingValue = "true", matchIfMissing = true)
 public class RestTemplateConfig {
 
     @Autowired
     private LxDocWebProperties lxDocWebProperties;
 
     @Bean
-    @ConditionalOnProperty(prefix = "lx.doc.restTemplate", name = "enable", havingValue = "true", matchIfMissing = true)
     public RestTemplate restTemplate() {
         // 配置 okHttp 连接池，主要用于前后端不分离的场景
         RestTemplateProperties restTemplate = lxDocWebProperties.getRestTemplate();
