@@ -36,7 +36,7 @@ public class IndexController {
     @Autowired
     private LxDocWebProperties lxDocWebProperties;
 
-    @Autowired
+    @Autowired(required = false)
     private RestTemplate restTemplate;
 
     @GetMapping(value = {"/", "/login", "/workspace", "/workspace/**"})
