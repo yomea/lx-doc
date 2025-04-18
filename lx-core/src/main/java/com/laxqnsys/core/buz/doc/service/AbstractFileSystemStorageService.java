@@ -3,7 +3,9 @@ package com.laxqnsys.core.buz.doc.service;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.buz.doc.dao.entity.DocFileFolder;
+import com.laxqnsys.core.buz.doc.model.vo.DocFileContentResVO;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import org.springframework.util.StringUtils;
 
@@ -46,9 +48,15 @@ public abstract class AbstractFileSystemStorageService implements IDocFileConten
         boolean success;
         // 磁盘存储，有内容才存储，没有内容不需要实际做存储的操作
         if(StringUtils.hasText(content)) {
-            // 增加文件版本
-            fileFolder.setVersion(fileFolder.getVersion() + 1);
-            success = this.update(fileFolder);
+            DocFileContentResVO resVO = this.getFileContent(fileFolder);
+            // 内容未发生变化，不更新文件内容
+            if (Objects.nonNull(resVO) && content.equals(resVO.getContent())) {
+                success = true;
+            } else {
+                // 增加文件版本
+                fileFolder.setVersion(fileFolder.getVersion() + 1);
+                success = this.update(fileFolder);
+            }
         } else {
             success = true;
         }
