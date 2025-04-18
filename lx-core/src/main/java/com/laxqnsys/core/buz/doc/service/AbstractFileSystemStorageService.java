@@ -50,7 +50,10 @@ public abstract class AbstractFileSystemStorageService implements IDocFileConten
         if(StringUtils.hasText(content)) {
             DocFileContentResVO resVO = this.getFileContent(fileFolder);
             // 内容未发生变化，不更新文件内容
-            if (Objects.nonNull(resVO) && content.equals(resVO.getContent())) {
+            if (Objects.nonNull(resVO)
+                && Objects.nonNull(resVO.getContent())
+                && content.length() == resVO.getContent().length()
+                && content.equals(resVO.getContent())) {
                 success = true;
             } else {
                 // 增加文件版本
