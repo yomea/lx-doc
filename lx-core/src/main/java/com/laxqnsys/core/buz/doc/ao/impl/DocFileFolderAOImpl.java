@@ -3,6 +3,7 @@ package com.laxqnsys.core.buz.doc.ao.impl;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.other.aspect.lock.ConcurrentLock;
@@ -31,7 +32,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -40,6 +43,7 @@ import org.springframework.util.StringUtils;
  * @author wuzhenhong
  * @date 2024/5/14 19:36
  */
+@Slf4j
 @Service
 public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocFileFolderAO {
 
@@ -290,7 +294,17 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
      */
     private boolean isDescendantOf(Long targetFolderId, Long ancestorId) {
         Long currentParentId = targetFolderId;
+        Set<Long> visitedIds = Sets.newHashSet();
         while (Objects.nonNull(currentParentId) && currentParentId > 0L) {
+            // 检查当前ID是否已经被访问过（检测循环引用）
+            if (visitedIds.contains(currentParentId)) {
+                log.warn("业务逻辑缺陷！！！检测到循环引用，当前文件夹ID:{}，祖先文件夹ID:{}", currentParentId, ancestorId);
+                return false;
+            }
+            
+            // 将当前ID添加到已访问集合
+            visitedIds.add(currentParentId);
+            
             if (currentParentId.equals(ancestorId)) {
                 return true;
             }
