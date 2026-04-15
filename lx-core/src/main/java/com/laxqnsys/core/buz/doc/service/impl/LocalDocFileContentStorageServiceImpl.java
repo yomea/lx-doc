@@ -53,8 +53,9 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemSto
         if (!StringUtils.hasText(path)) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档内容存储路径未配置！");
         }
+        this.path = path;
         if (!path.endsWith("/") && !path.endsWith("\\")) {
-            this.path = path + File.separator;
+            this.path += File.separator;
         }
     }
 
