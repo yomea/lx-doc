@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.buz.doc.dao.entity.DocRelationLevel;
+import com.laxqnsys.core.buz.doc.model.vo.DocFileResVO;
 import com.laxqnsys.core.buz.doc.service.IDocFileContentStorageService;
 import com.laxqnsys.core.buz.doc.service.IDocRelationLevelService;
 import com.laxqnsys.core.other.context.LoginContext;
@@ -12,6 +13,7 @@ import com.laxqnsys.core.buz.doc.dao.entity.DocRecycle;
 import com.laxqnsys.core.buz.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.buz.doc.service.IDocRecycleService;
 import com.laxqnsys.core.other.enums.DelStatusEnum;
+import com.laxqnsys.core.other.enums.FileFolderFormatEnum;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -117,5 +119,21 @@ public abstract class AbstractDocFileFolderAO {
         if(!CollectionUtils.isEmpty(levels)) {
             docRelationLevelService.saveBatch(levels);
         }
+    }
+
+    protected List<DocFileResVO> filterFileList(List<DocFileFolder> fileFolders) {
+        return fileFolders.stream()
+            .filter(folder -> FileFolderFormatEnum.FILE.getFormat().equals(folder.getFormat()))
+            .map(fileFolder -> {
+                DocFileResVO resVO = new DocFileResVO();
+                resVO.setId(fileFolder.getId());
+                resVO.setName(fileFolder.getName());
+                resVO.setType(fileFolder.getFileType());
+                resVO.setImg(fileFolder.getImg());
+                resVO.setCollected(fileFolder.getCollected());
+                resVO.setCreateAt(fileFolder.getCreateAt());
+                resVO.setUpdateAt(fileFolder.getUpdateAt());
+                return resVO;
+            }).collect(Collectors.toList());
     }
 }

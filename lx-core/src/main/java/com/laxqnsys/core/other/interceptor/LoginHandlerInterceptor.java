@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
 
 /**
  * @author wuzhenhong
@@ -60,6 +61,12 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         userLoginManager.expire(key, CommonCons.LOGIN_TOKEN_EXPIRE_SECONDS);
         return true;
     }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        LoginContext.remove();
+    }
+
 
     public void addWhiteUrl(String url) {
         whiteUrlList.add(url);

@@ -19,11 +19,13 @@ public interface DocFileFolderAO {
 
     List<DocFileFolderResVO> getFolderTree(Long folderId);
 
+    List<DocFileFolderResVO> getFolderTree(Long folderId, Integer format);
+
     DocFileAndFolderResVO getFolderAndFileList(FileFolderQueryVO queryVO);
 
     DocFileAndFolderResVO searchFolderAndFile(FileFolderQueryVO queryVO);
 
-    DocFileFolderResVO crateFolder(FileFolderCreateVO createVO);
+    DocFileFolderResVO createFolder(FileFolderCreateVO createVO);
 
     void updateFolder(FileFolderUpdateVO updateVO);
 
@@ -35,5 +37,13 @@ public interface DocFileFolderAO {
 
     void copyFolder(FileFolderCopyVO copyVO);
 
+    /**
+     * @Deprecated
+     * replaced by
+     * {@link #getFolderTree(Long, Integer)}
+     * 使用懒加载的方式
+     * @return
+     */
+    @Deprecated
     List<DocSynthFileFolderResVO> getAllFolderTree();
 }

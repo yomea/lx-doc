@@ -28,4 +28,8 @@ public class LoginContext {
         UserInfoBO userInfoBO = LoginContext.getUserInfo();
         return Objects.isNull(userInfoBO) ? null : userInfoBO.getAccount();
     }
+
+    public static void remove() {
+        USER_INFO.remove();
+    }
 }
