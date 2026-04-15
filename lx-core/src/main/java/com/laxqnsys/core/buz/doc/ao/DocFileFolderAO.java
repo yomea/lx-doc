@@ -23,7 +23,7 @@ public interface DocFileFolderAO {
 
     DocFileAndFolderResVO searchFolderAndFile(FileFolderQueryVO queryVO);
 
-    DocFileFolderResVO crateFolder(FileFolderCreateVO createVO);
+    DocFileFolderResVO createFolder(FileFolderCreateVO createVO);
 
     void updateFolder(FileFolderUpdateVO updateVO);
 

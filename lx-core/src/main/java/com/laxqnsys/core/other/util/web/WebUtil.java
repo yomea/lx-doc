@@ -29,6 +29,10 @@ public class WebUtil {
         Cookie cookie = new Cookie(CommonCons.TOKEN_KEY, token);
         cookie.setMaxAge(loginExpireSeconds);
         cookie.setPath("/");
+        // 防止XSS攻击读取Cookie
+        cookie.setHttpOnly(true);
+        // HTTPS环境下防止Cookie被窃听
+        // cookie.setSecure(true);
         response.addCookie(cookie);
     }
 

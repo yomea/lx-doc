@@ -68,8 +68,8 @@ public class DocFileFolderController {
     }
 
     @PostMapping(value = "/crateFolder")
-    public ResponseResult<DocFileFolderResVO> crateFolder(@RequestBody @Validated FileFolderCreateVO createVO) {
-        DocFileFolderResVO resVO = docFileFolderAO.crateFolder(createVO);
+    public ResponseResult<DocFileFolderResVO> createFolder(@RequestBody @Validated FileFolderCreateVO createVO) {
+        DocFileFolderResVO resVO = docFileFolderAO.createFolder(createVO);
         return ResponseResult.ok(resVO);
     }
 

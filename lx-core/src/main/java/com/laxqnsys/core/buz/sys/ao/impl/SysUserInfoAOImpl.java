@@ -56,18 +56,14 @@ public class SysUserInfoAOImpl implements SysUserInfoAO {
     @Override
     public void register(UserRegisterVO userRegisterVO) {
 
-        long count = sysUserInfoService.count(Wrappers.<SysUserInfo>lambdaQuery()
-            .eq(SysUserInfo::getAccount, userRegisterVO.getAccount()));
-        if (count > 0L) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("名为%s的账户已存在，请设置其他的账户名！", userRegisterVO.getAccount()));
-        }
-
         String lockKey = RedissonLockPrefixCons.USER_REGISTER + "_" + userRegisterVO.getAccount();
         redissonLock.tryLock(lockKey, 1, TimeUnit.SECONDS, () -> {
-            long c = sysUserInfoService.count(Wrappers.<SysUserInfo>lambdaQuery()
+            // 获取锁后检查账户是否已存在
+            long count = sysUserInfoService.count(Wrappers.<SysUserInfo>lambdaQuery()
                 .eq(SysUserInfo::getAccount, userRegisterVO.getAccount()));
-            if (c > 0L) {
-                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), String.format("名为%s的账户已存在，请设置其他的账户名！", userRegisterVO.getAccount()));
+            if (count > 0L) {
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                    String.format("名为%s的账户已存在，请设置其他的账户名！", userRegisterVO.getAccount()));
             }
             SysUserInfo userInfo = new SysUserInfo();
             userInfo.setAccount(userRegisterVO.getAccount());

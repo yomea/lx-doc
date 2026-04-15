@@ -81,12 +81,13 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             .lambda()
             .eq(DocFileFolder::getParentId, folderId)
             .eq(DocFileFolder::getCreatorId, userId)
-            .apply(StringUtils.hasText(queryVO.getFileType()),
-                String.format("(format = %s or (format = %s and file_type = '%s'))",
-                    FileFolderFormatEnum.FOLDER.getFormat(), FileFolderFormatEnum.FILE.getFormat(),
-                    queryVO.getFileType()))
-            /*.eq(StringUtils.hasText(queryVO.getFileType()), DocFileFolder::getFileType, queryVO.getFileType()
-            )*/.eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .and(StringUtils.hasText(queryVO.getFileType()),
+                wrapper -> wrapper
+                    .eq(DocFileFolder::getFormat, FileFolderFormatEnum.FOLDER.getFormat())
+                    .or()
+                    .eq(DocFileFolder::getFormat, FileFolderFormatEnum.FILE.getFormat())
+                    .eq(DocFileFolder::getFileType, queryVO.getFileType())));
 
         List<DocFileFolderResVO> fileFolderBaseResVOList = fileFolders.stream()
             .filter(folder -> FileFolderFormatEnum.FOLDER.getFormat().equals(folder.getFormat()))
@@ -117,11 +118,13 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         List<DocFileFolder> fileFolders = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
             .like(DocFileFolder::getName, name)
             .eq(DocFileFolder::getCreatorId, userId)
-            .apply(StringUtils.hasText(queryVO.getFileType()),
-                String.format("format = %s or (format = %s and file_type = '%s')",
-                    FileFolderFormatEnum.FOLDER.getFormat(), FileFolderFormatEnum.FILE.getFormat(),
-                    queryVO.getFileType()))
-            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .and(StringUtils.hasText(queryVO.getFileType()),
+                wrapper -> wrapper
+                    .eq(DocFileFolder::getFormat, FileFolderFormatEnum.FOLDER.getFormat())
+                    .or()
+                    .eq(DocFileFolder::getFormat, FileFolderFormatEnum.FILE.getFormat())
+                    .eq(DocFileFolder::getFileType, queryVO.getFileType())));
 
         List<DocFileFolderResVO> fileFolderBaseResVOList = fileFolders.stream()
             .filter(folder -> FileFolderFormatEnum.FOLDER.getFormat().equals(folder.getFormat()))
@@ -142,7 +145,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
     }
 
     @Override
-    public DocFileFolderResVO crateFolder(FileFolderCreateVO createVO) {
+    public DocFileFolderResVO createFolder(FileFolderCreateVO createVO) {
 
         Long parentFolderId = createVO.getParentFolderId();
         if (Objects.isNull(parentFolderId) || parentFolderId <= 0L) {
@@ -190,8 +193,11 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
     @Override
     public void updateFolder(FileFolderUpdateVO updateVO) {
         DocFileFolder docFileFolder = super.getById(updateVO.getId());
+        if (Objects.isNull(docFileFolder)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文件夹不存在！");
+        }
         String newName = docFileFolder.getName();
-        if (newName.trim().equals(updateVO.getName())) {
+        if (Objects.equals(newName.trim(), updateVO.getName())) {
             return;
         }
         DocFileFolder update = new DocFileFolder();
@@ -240,8 +246,15 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         }
         Map<Long, DocFileFolder> map = super.getByIdList(Arrays.asList(id, newFolderId));
         DocFileFolder parent = map.get(newFolderId);
+        if(Objects.isNull(parent)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),  String.format("id为%s的目标文件夹不存在", newFolderId));
+        }
         if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只允许迁移到文件夹下");
+        }
+        // 检测循环引用：目标文件夹是否是源文件夹的子文件夹
+        if (this.isDescendantOf(newFolderId, id)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "不能将文件夹移动到其子文件夹下，会导致循环引用");
         }
         DocFileFolder currentFolder = map.get(id);
         if (currentFolder.getParentId().equals(newFolderId)) {
@@ -261,6 +274,28 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             }
             return null;
         });
+    }
+
+    /**
+     * 检测目标文件夹是否是源文件夹的子文件夹（形成循环引用）
+     *
+     * @param targetFolderId 目标文件夹ID
+     * @param ancestorId 祖先文件夹ID
+     * @return true 如果 targetFolderId 是 ancestorId 的子文件夹
+     */
+    private boolean isDescendantOf(Long targetFolderId, Long ancestorId) {
+        Long currentParentId = targetFolderId;
+        while (Objects.nonNull(currentParentId) && currentParentId > 0L) {
+            if (currentParentId.equals(ancestorId)) {
+                return true;
+            }
+            DocFileFolder folder = docFileFolderService.getById(currentParentId);
+            if (Objects.isNull(folder)) {
+                return false;
+            }
+            currentParentId = folder.getParentId();
+        }
+        return false;
     }
 
     @Override
@@ -325,14 +360,21 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         }
     }
 
+    private static final int MAX_FOLDER_TREE_SIZE = 10000;
+
     @Override
     public List<DocSynthFileFolderResVO> getAllFolderTree() {
         // 获取当前登录人的所有文件夹
         List<DocFileFolder> docFileFolderList = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
             .in(DocFileFolder::getCreatorId, LoginContext.getUserId())
-            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
+            .last("LIMIT " + MAX_FOLDER_TREE_SIZE));
         if(CollectionUtils.isEmpty(docFileFolderList)) {
             return Collections.emptyList();
+        }
+        if (docFileFolderList.size() >= MAX_FOLDER_TREE_SIZE) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
+                "文件夹数量过多，请先整理后再试！");
         }
         Map<Long, List<DocFileFolder>> parentIdMapFolderMap = docFileFolderList.stream().collect(Collectors.groupingBy(DocFileFolder::getParentId));
         // 获取顶级目录
@@ -367,22 +409,6 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         DocFileFolder docFileFolder = docFileFolderService.getById(parentId);
         parentFileFolders.add(docFileFolder);
         this.getParentFolders(docFileFolder.getParentId(), parentFileFolders);
-    }
-
-    private List<DocFileResVO> filterFileList(List<DocFileFolder> fileFolders) {
-        return fileFolders.stream()
-            .filter(folder -> FileFolderFormatEnum.FILE.getFormat().equals(folder.getFormat()))
-            .map(fileFolder -> {
-                DocFileResVO resVO = new DocFileResVO();
-                resVO.setId(fileFolder.getId());
-                resVO.setName(fileFolder.getName());
-                resVO.setType(fileFolder.getFileType());
-                resVO.setImg(fileFolder.getImg());
-                resVO.setCollected(fileFolder.getCollected());
-                resVO.setCreateAt(fileFolder.getCreateAt());
-                resVO.setUpdateAt(fileFolder.getUpdateAt());
-                return resVO;
-            }).collect(Collectors.toList());
     }
 
     private boolean copyFolderOtherDeal(FileFolderCopyVO copyVO, DocFileFolder targetFolder, List<DocFileFolder> childs) {

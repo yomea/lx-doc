@@ -2,7 +2,6 @@ package com.laxqnsys.common.util;
 
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +15,8 @@ import org.redisson.api.RedissonClient;
 @Slf4j
 public class RedissonLock {
 
+    private static final String LOCK_FAILED_MSG = "系统繁忙，请稍后重试！";
+
     private RedissonClient redissonClient;
 
     public RedissonLock(RedissonClient redissonClient) {
@@ -24,17 +25,19 @@ public class RedissonLock {
 
     public void tryLock(String lockKey, long waitTime, long leaseTime, TimeUnit unit, Runnable runnable) {
         RLock lock = redissonClient.getLock(lockKey);
-        if (Objects.isNull(lock)) {
-            return;
-        }
+        boolean locked = false;
         try {
-            if (lock.tryLock(waitTime, leaseTime, unit)) {
-                runnable.run();
+            locked = lock.tryLock(waitTime, leaseTime, unit);
+            if (!locked) {
+                log.warn("获取分布式锁失败: lockKey={}, waitTime={}", lockKey, waitTime);
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), LOCK_FAILED_MSG);
             }
+            runnable.run();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "操作被中断，请重试！");
         } finally {
-            if (lock != null) {
+            if (locked && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
@@ -42,17 +45,19 @@ public class RedissonLock {
 
     public void tryLock(String lockKey, long waitTime, TimeUnit unit, Runnable runnable) {
         RLock lock = redissonClient.getLock(lockKey);
-        if (Objects.isNull(lock)) {
-            return;
-        }
+        boolean locked = false;
         try {
-            if (lock.tryLock(waitTime, unit)) {
-                runnable.run();
+            locked = lock.tryLock(waitTime, unit);
+            if (!locked) {
+                log.warn("获取分布式锁失败: lockKey={}, waitTime={}", lockKey, waitTime);
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), LOCK_FAILED_MSG);
             }
+            runnable.run();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "操作被中断，请重试！");
         } finally {
-            if (lock != null) {
+            if (locked && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
@@ -60,24 +65,26 @@ public class RedissonLock {
 
     public Object tryLock(String lockKey, long waitTime, TimeUnit unit, Callable<Object> runnable) {
         RLock lock = redissonClient.getLock(lockKey);
+        boolean locked = false;
         try {
-            if (lock.tryLock(waitTime, unit)) {
-                try {
-                    return runnable.call();
-                } catch (BusinessException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "调用失败！", e);
-                }
+            locked = lock.tryLock(waitTime, unit);
+            if (!locked) {
+                log.warn("获取分布式锁失败: lockKey={}, waitTime={}", lockKey, waitTime);
+                throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), LOCK_FAILED_MSG);
             }
+            return runnable.call();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "操作被中断，请重试！");
+        } catch (BusinessException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "调用失败！", e);
         } finally {
-            if (lock != null) {
+            if (locked && lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
-        throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "系统繁忙！");
     }
 
 }

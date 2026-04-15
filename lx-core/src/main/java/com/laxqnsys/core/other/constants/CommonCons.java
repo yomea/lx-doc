@@ -8,6 +8,7 @@ public class CommonCons {
 
     public static final String TOKEN_KEY = "lxDocToken";
 
+    // 如果有条件最好不要硬编码，有安全问题，可以使用配置中心或存数据库都行
     public static final String AES_KEY = "23423jAFsdf323ls";
 
     public static final Integer LOGIN_EXPIRE_SECONDS = 30 * 60;
