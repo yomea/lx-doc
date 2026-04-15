@@ -44,7 +44,7 @@ import org.springframework.util.StringUtils;
 public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocFileFolderAO {
 
     @Override
-    public List<DocFileFolderResVO> getFolderTree(Long folderId) {
+    public List<DocFileFolderResVO> getFolderTree(Long folderId, Integer format) {
 
         if (Objects.isNull(folderId) || folderId <= 0L) {
             folderId = 0L;
@@ -53,7 +53,7 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         List<DocFileFolder> fileFolders = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
             .eq(DocFileFolder::getParentId, folderId)
             .eq(DocFileFolder::getCreatorId, userId)
-            .eq(DocFileFolder::getFormat, FileFolderFormatEnum.FOLDER.getFormat())
+            .eq(DocFileFolder::getFormat, format)
             .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
 
         return fileFolders.stream().map(fileFolder -> {
@@ -63,6 +63,11 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
             resVO.setLeaf(fileFolder.getFolderCount() <= 0);
             return resVO;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DocFileFolderResVO> getFolderTree(Long folderId) {
+        return this.getFolderTree(folderId, FileFolderFormatEnum.FOLDER.getFormat());
     }
 
     @Override
@@ -360,21 +365,22 @@ public class DocFileFolderAOImpl extends AbstractDocFileFolderAO implements DocF
         }
     }
 
-    private static final int MAX_FOLDER_TREE_SIZE = 10000;
-
+    /**
+     * @Deprecated
+     * replaced by
+     * {@link #getFolderTree(Long, Integer)}
+     * 使用懒加载的方式
+     * @return
+     */
+    @Deprecated
     @Override
     public List<DocSynthFileFolderResVO> getAllFolderTree() {
         // 获取当前登录人的所有文件夹
         List<DocFileFolder> docFileFolderList = docFileFolderService.list(Wrappers.<DocFileFolder>lambdaQuery()
             .in(DocFileFolder::getCreatorId, LoginContext.getUserId())
-            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus())
-            .last("LIMIT " + MAX_FOLDER_TREE_SIZE));
+            .eq(DocFileFolder::getStatus, DelStatusEnum.NORMAL.getStatus()));
         if(CollectionUtils.isEmpty(docFileFolderList)) {
             return Collections.emptyList();
-        }
-        if (docFileFolderList.size() >= MAX_FOLDER_TREE_SIZE) {
-            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(),
-                "文件夹数量过多，请先整理后再试！");
         }
         Map<Long, List<DocFileFolder>> parentIdMapFolderMap = docFileFolderList.stream().collect(Collectors.groupingBy(DocFileFolder::getParentId));
         // 获取顶级目录
