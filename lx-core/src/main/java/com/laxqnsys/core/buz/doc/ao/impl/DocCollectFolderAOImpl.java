@@ -1,6 +1,8 @@
 package com.laxqnsys.core.buz.doc.ao.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.laxqnsys.common.enums.ErrorCodeEnum;
+import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.buz.doc.ao.DocCollectFolderAO;
 import com.laxqnsys.core.other.context.LoginContext;
 import com.laxqnsys.core.buz.doc.dao.entity.DocFileFolder;
@@ -9,6 +11,7 @@ import com.laxqnsys.core.buz.doc.model.vo.DocFileResVO;
 import com.laxqnsys.core.buz.doc.service.IDocFileFolderService;
 import com.laxqnsys.core.other.enums.DelStatusEnum;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class DocCollectFolderAOImpl implements DocCollectFolderAO {
+
+    private static final String NO_PERMISSION_MSG = "无权操作该文件！";
+    private static final String FILE_NOT_EXIST_MSG = "文件不存在！";
 
     @Autowired
     private IDocFileFolderService docFileFolderService;
@@ -46,7 +52,7 @@ public class DocCollectFolderAOImpl implements DocCollectFolderAO {
 
     @Override
     public void cancelCollect(DocCollectReqVO reqVO) {
-
+        this.checkFilePermission(reqVO.getId());
         DocFileFolder update = new DocFileFolder();
         update.setId(reqVO.getId());
         update.setCollected(false);
@@ -55,9 +61,26 @@ public class DocCollectFolderAOImpl implements DocCollectFolderAO {
 
     @Override
     public void collect(DocCollectReqVO reqVO) {
+        this.checkFilePermission(reqVO.getId());
         DocFileFolder update = new DocFileFolder();
         update.setId(reqVO.getId());
         update.setCollected(true);
         docFileFolderService.updateById(update);
+    }
+
+    /**
+     * 校验当前用户是否有权限操作该文件
+     *
+     * @param fileId 文件ID
+     */
+    private void checkFilePermission(Long fileId) {
+        DocFileFolder fileFolder = docFileFolderService.getById(fileId);
+        if (Objects.isNull(fileFolder)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), FILE_NOT_EXIST_MSG);
+        }
+        Long userId = LoginContext.getUserId();
+        if (!fileFolder.getCreatorId().equals(userId)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), NO_PERMISSION_MSG);
+        }
     }
 }

@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -134,6 +135,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void completelyDelete(DocRecycleReqVO reqVO) {
         Long id = reqVO.getId();
         this.getRecycleById(id);
@@ -143,6 +145,7 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void emptyRecycle() {
         Long userId = LoginContext.getUserId();
         docRecycleService.remove(Wrappers.<DocRecycle>lambdaQuery()
@@ -164,21 +167,5 @@ public class DocRecycleAOImpl extends AbstractDocFileFolderAO implements DocRecy
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "该文件未被删除，无需重复恢复");
         }
         return docFileFolder;
-    }
-
-    private List<DocFileResVO> filterFileList(List<DocFileFolder> fileFolders) {
-        return fileFolders.stream()
-            .filter(folder -> FileFolderFormatEnum.FILE.getFormat().equals(folder.getFormat()))
-            .map(fileFolder -> {
-                DocFileResVO resVO = new DocFileResVO();
-                resVO.setId(fileFolder.getId());
-                resVO.setName(fileFolder.getName());
-                resVO.setType(fileFolder.getFileType());
-                resVO.setImg(fileFolder.getImg());
-                resVO.setCollected(fileFolder.getCollected());
-                resVO.setCreateAt(fileFolder.getCreateAt());
-                resVO.setUpdateAt(fileFolder.getUpdateAt());
-                return resVO;
-            }).collect(Collectors.toList());
     }
 }

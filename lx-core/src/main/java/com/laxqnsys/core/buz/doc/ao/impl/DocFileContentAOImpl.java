@@ -53,6 +53,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
     public DocFileContentResVO createFile(DocFileCreateReqVO createReqVO) {
 
         DocFileFolder parent = super.getById(createReqVO.getFolderId());
+        if (Objects.isNull(parent)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "父文件夹不存在！");
+        }
         if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能在文件夹下创建文件");
         }
@@ -154,6 +157,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 
         Long newFolderId = reqVO.getNewFolderId();
         DocFileFolder parent = super.getById(newFolderId);
+        if (Objects.isNull(parent)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "目标文件夹不存在！");
+        }
         if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能迁移到文件夹下！");
         }
@@ -197,6 +203,9 @@ public class DocFileContentAOImpl extends AbstractDocFileFolderAO implements Doc
 
         Long newFolderId = reqVO.getNewFolderId();
         DocFileFolder parent = super.getById(newFolderId);
+        if (Objects.isNull(parent)) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "目标文件夹不存在！");
+        }
         if (FileFolderFormatEnum.FILE.getFormat().equals(parent.getFormat())) {
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "只能复制到文件夹下！");
         }
