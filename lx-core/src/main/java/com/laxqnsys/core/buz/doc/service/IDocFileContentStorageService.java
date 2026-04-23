@@ -26,6 +26,15 @@ public interface IDocFileContentStorageService {
         throw new UnsupportedOperationException("该接口不再支持使用，避免读取大量数据到内存，造成gc压力！");
     }
 
+    /**
+     * 计算文件的哈希值（流式计算，避免将整个文件加载到内存）
+     * @param docFileFolder 文件信息
+     * @return 文件内容的MD5哈希值，如果文件不存在返回null
+     */
+    default String computeFileHash(DocFileFolder docFileFolder) {
+        throw new UnsupportedOperationException("子类必须实现该方法");
+    }
+
     void downloadFileContent(DocFileFolder docFileFolder, HttpServletResponse response);
 
 }
