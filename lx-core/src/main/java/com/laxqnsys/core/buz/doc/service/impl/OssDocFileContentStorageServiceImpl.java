@@ -23,11 +23,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -107,6 +109,25 @@ public class OssDocFileContentStorageServiceImpl extends AbstractFileSystemStora
     public boolean update(DocFileFolder fileFolder) {
         // 只新增版本
         return this.create(fileFolder);
+    }
+
+    @Override
+    public String computeFileHash(DocFileFolder docFileFolder) {
+        Long id = docFileFolder.getId();
+        String filePath = this.getFilePath(id, docFileFolder.getVersion());
+        OSSObject ossObject = this.getFile(filePath);
+        try (InputStream inputStream = ossObject.getObjectContent()) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = inputStream.read(buffer)) > 0) {
+                md.update(buffer, 0, read);
+            }
+            return Hex.encodeHexString(md.digest());
+        } catch (Exception e) {
+            log.warn("计算OSS文件哈希失败: {}", filePath, e);
+            return null;
+        }
     }
 
     @Override

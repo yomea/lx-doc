@@ -12,12 +12,14 @@ import com.laxqnsys.core.buz.doc.service.IDocFileContentService;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
@@ -116,6 +118,23 @@ public class DateBaseDocFileContentStorageServiceImpl implements IDocFileContent
     @Override
     public boolean delete(DocFileFolder docFileFolder) {
         throw new UnsupportedOperationException("暂不支持物理删除文件！");
+    }
+
+    @Override
+    public String computeFileHash(DocFileFolder docFileFolder) {
+        DocFileContent docFileContent = this.getByFileId(docFileFolder.getId());
+        String content = docFileContent.getContent();
+        if (!StringUtils.hasText(content)) {
+            return null;
+        }
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(content.getBytes(StandardCharsets.UTF_8));
+            return Hex.encodeHexString(digest);
+        } catch (Exception e) {
+            log.warn("计算数据库文件哈希失败: {}", docFileFolder.getId(), e);
+            return null;
+        }
     }
 
     @Override
