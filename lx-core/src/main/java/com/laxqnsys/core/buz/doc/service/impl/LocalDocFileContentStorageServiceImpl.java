@@ -19,11 +19,13 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -109,6 +111,35 @@ public class LocalDocFileContentStorageServiceImpl extends AbstractFileSystemSto
         String filePath = this.getFilePath(docFileFolder.getOldId(), docFileFolder.getOldVersion());
         File file = new File(filePath);
         return file.exists() ? file.delete() : true;
+    }
+
+    @Override
+    public String computeFileHash(DocFileFolder docFileFolder) {
+        Long id = docFileFolder.getId();
+        String filePath = this.getFilePath(id, docFileFolder.getVersion());
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return null;
+        }
+        return this.computeFileHashFromPath(filePath);
+    }
+
+    /**
+     * 流式计算文件的MD5哈希值，避免将整个文件加载到内存
+     */
+    private String computeFileHashFromPath(String filePath) {
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] buffer = new byte[8192];
+            int read;
+            while ((read = fis.read(buffer)) > 0) {
+                md.update(buffer, 0, read);
+            }
+            return Hex.encodeHexString(md.digest());
+        } catch (Exception e) {
+            log.warn("计算文件哈希失败: {}", filePath, e);
+            return null;
+        }
     }
 
     @Override

@@ -3,10 +3,12 @@ package com.laxqnsys.core.buz.doc.service;
 import com.laxqnsys.common.enums.ErrorCodeEnum;
 import com.laxqnsys.common.exception.BusinessException;
 import com.laxqnsys.core.buz.doc.dao.entity.DocFileFolder;
-import com.laxqnsys.core.buz.doc.model.vo.DocFileContentResVO;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import org.apache.commons.codec.binary.Hex;
 import org.springframework.util.StringUtils;
 
 /**
@@ -48,12 +50,8 @@ public abstract class AbstractFileSystemStorageService implements IDocFileConten
         boolean success;
         // 磁盘存储，有内容才存储，没有内容不需要实际做存储的操作
         if(StringUtils.hasText(content)) {
-            DocFileContentResVO resVO = this.getFileContent(fileFolder);
-            // 内容未发生变化，不更新文件内容
-            if (Objects.nonNull(resVO)
-                && Objects.nonNull(resVO.getContent())
-                && content.length() == resVO.getContent().length()
-                && content.equals(resVO.getContent())) {
+            // 内容未发生变化，不更新文件内容（使用哈希比较，避免加载整个文件到内存）
+            if (this.isContentUnchanged(fileFolder, content)) {
                 success = true;
             } else {
                 // 增加文件版本
@@ -71,6 +69,36 @@ public abstract class AbstractFileSystemStorageService implements IDocFileConten
             throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "文档文件更新失败！");
         }
         return true;
+    }
+
+    /**
+     * 使用哈希比较判断内容是否发生变化（流式计算，不占用大量内存）
+     */
+    protected boolean isContentUnchanged(DocFileFolder fileFolder, String newContent) {
+        try {
+            String fileHash = this.computeFileHash(fileFolder);
+            if (Objects.isNull(fileHash)) {
+                return false;
+            }
+            String newHash = this.computeContentHash(newContent);
+            return fileHash.equals(newHash);
+        } catch (Exception e) {
+            // 计算失败时，保守处理，执行更新
+            return false;
+        }
+    }
+
+    /**
+     * 计算字符串内容的MD5哈希值
+     */
+    protected String computeContentHash(String content) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] digest = md.digest(content.getBytes(StandardCharsets.UTF_8));
+            return Hex.encodeHexString(digest);
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCodeEnum.ERROR.getCode(), "计算内容哈希失败！", e);
+        }
     }
 
     public abstract boolean create(DocFileFolder fileFolder);
